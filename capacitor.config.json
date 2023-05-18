@@ -1,0 +1,6 @@
+{
+  "appId": "app.letterlock",
+  "appName": "letter-lock",
+  "webDir": ".output/public",
+  "bundledWebRuntime": false
+}

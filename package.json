@@ -1,0 +1,29 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^4.7.3",
+    "nuxt": "^3.3.3",
+    "tailwindcss": "^3.3.1"
+  },
+  "dependencies": {
+    "@capacitor/android": "^4.7.3",
+    "@capacitor/core": "^4.7.3",
+    "@capacitor/haptics": "^4.1.0",
+    "@capacitor/ios": "^4.7.3",
+    "@capacitor/preferences": "^4.0.2",
+    "@nuxtjs/tailwindcss": "^6.6.5",
+    "@pinia/nuxt": "^0.4.8",
+    "lodash": "^4.17.21",
+    "pinia": "^2.0.34",
+    "sortablejs": "^1.15.0",
+    "sortablejs-vue3": "^1.2.9"
+  }
+}
