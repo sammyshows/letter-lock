@@ -7,7 +7,7 @@
     <div class="flex flex-col grow justify-between z-10">
       <div class="pt-6">
         <div class="flex justify-between px-6">
-          <IconsSettings class="h-8 w-8 mt-1.5" />
+          <IconsSettings @click="showSettings = true" class="h-8 w-8 mt-1.5" />
           <div class="text-4.5xl font-bold text-end leading-10 mb-4 text-ll-orange"><p>LETTER</p><p>LOCK</p></div>
           <div class="flex flex-col">
             <div class="flex gap-x-1 mt-1.5">
@@ -35,7 +35,7 @@
         <p class="mb-4 text-4xl text-center font-medium">LEVEL {{ currentLevelId }}</p>
 
         <div class="h-16 w-full flex items-center justify-center">
-          <button @click="startGame" class="bg-stone-100 text-blue-700 font-medium text-2xl px-10 py-2 rounded-full shadow mb-6 size-change-4 z-10">Play</button>
+          <button @click="startGame" class="size-change bg-stone-100 text-blue-700 font-medium text-2xl px-10 py-2 rounded-full shadow mb-6 z-10">Play</button>
         </div>
 
         <div class="flex justify-center">
@@ -48,16 +48,24 @@
 
       <div class="h-32"></div>
     </div>
+
+    <div v-if="showSettings" @click="showSettings = false" class="absolute h-full w-full flex justify-center items-center z-10">
+      <SettingsModal :open="showSettings"
+                      @close="showSettings = false" />
+    </div>
   </div>
 </template>
 
 <script>
 import { storeToRefs } from "pinia";
 import { useGameStore } from "@/stores/game";
+import SettingsModal from "../components/SettingsModal";
 
 export default {
+  components: {SettingsModal},
   data() {
     return {
+      showSettings: false,
       letters: ['f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g', 'q', 'f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g']
     }
   },
@@ -77,13 +85,13 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /* Size change effect - variation 4 */
-.size-change-4 {
-  animation: size-change-4 1.5s infinite alternate;
+.size-change {
+  animation: size-change 1.5s infinite alternate;
 }
 
-@keyframes size-change-4 {
+@keyframes size-change {
   0%, 100% {
     padding: 8px 40px;
   }

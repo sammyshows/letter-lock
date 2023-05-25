@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300">
+  <div class="h-full w-full bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300 overflow-hidden">
     <NuxtPage v-if="gameStateLoaded" />
   </div>
 </template>
@@ -23,7 +23,7 @@ export default {
   },
 
   async created() {
-    await this.gameStore.setGameState()
+    await this.gameStore.setInitialState()
     this.gameStateLoaded = true
   }
 }

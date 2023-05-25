@@ -2195,7 +2195,7 @@ const levels: IndexedLevelData = {
     isPartOfWord: false,
     letter: ""
   }],
-    validWords: ["ERA", "LACE", "AIR"]
+    validWords: ["ERA", "LACE", "HAIR"]
 },
   41: {
   gridSize: 4,
@@ -2358,7 +2358,7 @@ const levels: IndexedLevelData = {
   }, {
     id: 4,
     isPartOfWord: false,
-    letter: ""
+    letter: "E"
   }, {
     id: 5,
     isPartOfWord: false,
@@ -2437,11 +2437,11 @@ const levels: IndexedLevelData = {
   }, {
     id: 6,
     isPartOfWord: false,
-    letter: "B"
+    letter: ""
   }, {
     id: 7,
     isPartOfWord: false,
-    letter: ""
+    letter: "B"
   }, {
     id: 8,
     isPartOfWord: false,
@@ -2461,7 +2461,7 @@ const levels: IndexedLevelData = {
   }, {
     id: 12,
     isPartOfWord: false,
-    letter: "E"
+    letter: ""
   }, {
     id: 13,
     isPartOfWord: false,
@@ -3285,7 +3285,7 @@ const levels: IndexedLevelData = {
   }, {
     id: 5,
     isPartOfWord: false,
-    letter: ""
+    letter: "C"
   }, {
     id: 6,
     isPartOfWord: false,
@@ -3331,7 +3331,7 @@ const levels: IndexedLevelData = {
     isPartOfWord: false,
     letter: "A"
   }],
-    validWords: ["TANK", "ACT", "SKY"]
+    validWords: ["TANK", "PACT", "SKY"]
 },
   57: {
   gridSize: 4,
@@ -3686,7 +3686,7 @@ const levels: IndexedLevelData = {
     isPartOfWord: false,
     letter: "S"
   }],
-    validWords: ["CUBE"]
+    validWords: ["CUBE", "BIG", "TAGS"]
 },
   62: {
   gridSize: 4,
@@ -4302,7 +4302,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 6,
       isPartOfWord: false,
-      letter: ""
+      letter: "O"
     }, {
       id: 7,
       isPartOfWord: false,

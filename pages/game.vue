@@ -7,10 +7,19 @@
       </div>
       <div class="z-10 grow">
         <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center">LEVEL {{ currentLevelId }}</div>
-        <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end w-max mx-auto">
-          <IconsLock :style="{ filter: lockDropShadow }" class="h-20 w-20 mx-auto text-ll-orange duration-700"></IconsLock>
-          <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
-          <div class="absolute pb-2 text-3xl font-medium">{{ remainingMoves }}</div>
+
+        <div class="flex justify-center">
+          <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
+            <IconsLock :style="{ filter: lockDropShadow }" class="h-20 w-20 mx-auto text-ll-orange duration-700"></IconsLock>
+            <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
+            <div class="absolute pb-2 text-3xl font-medium">{{ remainingMoves }}</div>
+          </div>
+
+          <div v-if="settings.testMode && replayingLevel" :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end ml-2">
+            <IconsLock class="h-12 w-12 mx-auto text-purple-400 duration-700"></IconsLock>
+            <div class="lock-bolt"></div>
+            <div class="absolute pb-0.5 text-lg font-medium">{{ remainingMoves - bestRemainingMoves }}</div>
+          </div>
         </div>
 
         <div class="p-4">
@@ -45,9 +54,16 @@
         </div>
       </div>
 
-      <div v-show="showCompleteModal" :class="{ 'complete-modal': showCompleteModal }" class="absolute flex flex-col justify-center items-center h-1/2 w-5/6 z-20 bg-orange-200 rounded-3xl text-center text-3xl">
-        <p class="text-slate-700">You did it! Well done!</p>
-        <button @click="nextLevel" class="mt-4 px-10 py-2 rounded-lg bg-blue-600 text-white">Next</button>
+      <div v-show="showCompleteModal" :class="{ 'complete-modal': showCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
+        <div class="text-ll-orange text-4xl font-bold">
+          <p class="mr-4">LETTERS</p>
+          <p class="ml-4">LOCKED</p>
+        </div>
+        <p class="px-6 text-xl text-slate-600">Nice job - you crushed it! The next has level has been <span class="text-purple-400 font-medium">UNLOCKED!</span></p>
+        <div class="flex flex-col justify-center gap-y-2 text-lg" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-12' ]">
+          <button v-if="settings.testMode" @click="resetLevel" class="button-pulse rounded-full bg-ll-orange text-white shadow-sm">Retry Level</button>
+          <button @click="nextLevel" class="button-pulse rounded-full bg-purple-400 text-white font-medium shadow-sm">Next Level</button>
+        </div>
       </div>
 
       <div v-show="levelFailed" class="absolute flex flex-col justify-center items-center h-1/2 w-5/6 z-20 bg-orange-200 rounded-3xl text-center text-3xl">
@@ -60,9 +76,9 @@
 <!--        <div :class="{ 'ripple': showCollideEffect }"></div>-->
 <!--      </div>-->
 
-      <div class="absolute bottom-20 left-10 duration-700" :class="[ showStamp ? 'opacity-1' : 'opacity-0' ]">
-        <Stamp />
-      </div>
+<!--      <div class="absolute bottom-20 left-10 duration-700" :class="[ showStamp ? 'opacity-1' : 'opacity-0' ]">-->
+<!--        <Stamp />-->
+<!--      </div>-->
     </div>
   </template>
 
@@ -79,9 +95,9 @@
 
     setup() {
       const gameStore = useGameStore()
-      const { currentLevelId } = storeToRefs(gameStore)
+      const { currentLevelId, bestRemainingMoves, replayingLevel, settings } = storeToRefs(gameStore)
 
-      return { gameStore, currentLevelId }
+      return { gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings }
     },
 
     data() {
@@ -137,6 +153,11 @@
       },
 
       async completeLevel() {
+        await this.gameStore.saveLevelProgress(this.remainingMoves)
+
+        if (!this.settings.showAnimations)
+          return this.showCompleteModal = true
+
         this.levelCompleted = true;
         this.displayBoard = false;
 
@@ -237,17 +258,12 @@
       },
 
       async nextLevel() {
-        await this.gameStore.setNextLevel()
+        await this.gameStore.setCurrentLevel()
         this.$router.push('/')
       },
 
-      async resetLevel() {
-        // await this.getLevelConfig()
-        // await this.$nextTick(() => {
-        //   this.createSortable()
-        //   this.checkWords()
-        // this.levelFailed = false
-        // })
+      resetLevel() {
+        this.gameStore.resetLevel()
         this.$router.push('/')
       },
 
@@ -331,10 +347,11 @@
           }
         }
 
-        this.checkWords();
+        this.checkWords()
       },
 
-      checkWords() {
+      async checkWords() {
+        await this.delay(25)
         const wordsFormed = []
 
         // Reset isPartOfWord property for all tiles
@@ -435,7 +452,7 @@
           this.tiles[newIndex] = this.tiles[oldIndex];
           this.tiles[oldIndex] = temp;
         } else {
-          this.checkWords();
+          this.checkWords()
         }
       },
 
@@ -535,27 +552,27 @@
     transition: background-color 1.3s ease-in-out, max-height 0.2s ease-in;
   }
 
-  .ripple-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-  }
+  /*.ripple-container {*/
+  /*  position: fixed;*/
+  /*  top: 0;*/
+  /*  left: 0;*/
+  /*  width: 100vw;*/
+  /*  height: 100vh;*/
+  /*  pointer-events: none;*/
+  /*}*/
 
-  .ripple {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
-    border-radius: 50%;
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1);
-    animation: ripple 0.4s linear forwards;
-  }
+  /*.ripple {*/
+  /*  position: absolute;*/
+  /*  top: 50%;*/
+  /*  left: 50%;*/
+  /*  width: 200px;*/
+  /*  height: 200px;*/
+  /*  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 100%);*/
+  /*  border-radius: 50%;*/
+  /*  opacity: 0;*/
+  /*  transform: translate(-50%, -50%) scale(1);*/
+  /*  animation: ripple 0.4s linear forwards;*/
+  /*}*/
 
   @keyframes ripple {
     0% {
@@ -573,7 +590,33 @@
   }
 
 
+  /* 'Next' button size changer */
+  .button-pulse {
+    animation: button-pulse 1.5s infinite alternate;
+  }
 
+  @keyframes button-pulse {
+    0%, 100% {
+      padding: 10px 32px;
+    }
+
+    50% {
+      padding: 11px 38px;
+    }
+  }
+
+  @keyframes complete-modal-slide {
+    0% {
+      transform: translateX(130vw);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .complete-modal {
+    animation: complete-modal-slide forwards 1s ease-in-out;
+  }
 
   .shake-and-fall-1,
   .shake-and-fall-2,
@@ -687,16 +730,5 @@
   @keyframes hide-board {
     0% { opacity: 1; }
     100% { opacity: 0; }
-  }
-
-
-
-  .complete-modal {
-    animation: show-modal 0.5s ease-out forwards;
-  }
-
-  @keyframes show-modal {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
   }
   </style>

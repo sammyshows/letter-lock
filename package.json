@@ -19,6 +19,7 @@
     "@capacitor/haptics": "^4.1.0",
     "@capacitor/ios": "^4.7.3",
     "@capacitor/preferences": "^4.0.2",
+    "@headlessui/vue": "^1.7.13",
     "@nuxtjs/tailwindcss": "^6.6.5",
     "@pinia/nuxt": "^0.4.8",
     "lodash": "^4.17.21",

@@ -17,7 +17,7 @@ export interface IndexedLevelData {
 }
 
 export interface LevelHistoryData {
-  bestMoves: number
+  bestRemainingMoves: number
 }
 
 export interface IndexedLevelHistoryData {

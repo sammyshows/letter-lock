@@ -237,7 +237,7 @@ export default {
     },
 
     async nextLevel() {
-      await this.gameStore.setNextLevel()
+      await this.gameStore.setCurrentLevel()
       this.$router.push('/')
     },
 
