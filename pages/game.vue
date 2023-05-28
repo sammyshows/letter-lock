@@ -114,9 +114,9 @@
 
     setup() {
       const gameStore = useGameStore()
-      const { currentLevelId, bestRemainingMoves, replayingLevel, settings } = storeToRefs(gameStore)
+      const { currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
 
-      return { gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings }
+      return { gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives }
     },
 
     data() {

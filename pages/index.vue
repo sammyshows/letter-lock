@@ -12,7 +12,7 @@
           <div class="flex flex-col">
             <div class="flex gap-x-1 mt-1.5">
               <IconsHeart class="h-6 w-6 text-red-500" />
-              <span>3</span>
+              <span>{{ lives.count }}</span>
             </div>
             <div class="flex gap-x-1">
               <IconsDollar class="h-6 w-6 text-yellow-300" />

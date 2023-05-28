@@ -9,7 +9,7 @@
         <!-- This element is to trick the browser into centering the modal contents. -->
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
         <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-          <div class="w-4/5 h-3/5 relative flex flex-col align-bottom rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden bg-gray-800 shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+          <div class="w-4/5 h-3/5 relative flex flex-col align-bottom rounded-lg px-4 pt-5 pb-4 text-left overflow-scroll bg-gray-800 shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
             <div class="sm:flex sm:items-start">
               <div class="text-center sm:mt-0 sm:ml-4 sm:text-left">
                 <DialogTitle as="h3" class="text-2xl leading-6 font-medium">Settings</DialogTitle>
@@ -29,11 +29,19 @@
                   </label>
                 </div>
 
-                <div v-if="settings.testMode" class="w-full flex flex-col items-center mt-4">
-                  <div class="w-full flex justify-between">
+                <div v-if="settings.testMode" class="w-full flex flex-col items-center">
+                  <div class="w-full flex justify-between mt-4">
                     <span class="text-sm font-medium text-gray-300">Animations</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                       <input v-model="settings.showAnimations" type="checkbox" class="sr-only peer">
+                      <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                    </label>
+                  </div>
+         
+                  <div class="w-full flex justify-between mt-4">
+                    <span class="text-sm font-medium text-gray-300">Real Lives</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input v-model="settings.realLives" type="checkbox" class="sr-only peer">
                       <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
                     </label>
                   </div>

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { Preferences } from '@capacitor/preferences';
 import levels from "@/helpers/levels"
-import { Tile, IndexedLevelHistoryData } from "@/types/types"
+import { Tile, IndexedLevelHistoryData, LevelData } from "@/types/types"
 
 export const useGameStore = defineStore('game', {
   state: () => ({
@@ -18,13 +18,14 @@ export const useGameStore = defineStore('game', {
     levelHistory: null as (IndexedLevelHistoryData | null), // it isn't exactly the same data type so feel free to remove
     settings: {
       testMode: false,
-      showAnimations: true
+      showAnimations: true,
+      realLives: true
     },
 
     // Lives
     lives: {
       count: 1,
-      nextLifeTime: null
+      lifeLostTime: null as (number | null) // unix 
     }
   }),
 
@@ -40,13 +41,15 @@ export const useGameStore = defineStore('game', {
       if (settings.value)
         this.settings = JSON.parse((settings.value))
 
-      if (lives.value)
+      if (lives.value) {
         this.lives = JSON.parse((lives.value))
+        this.checkLives()
+      }
 
       this.setCurrentLevel()
     },
 
-    setCurrentLevel(levelId?) {
+    setCurrentLevel(levelId?: number) {
       let level
       if (this.levelHistory) { // retrieve the user's current level
         const keys = Object.keys(this.levelHistory)
@@ -71,7 +74,7 @@ export const useGameStore = defineStore('game', {
       }
     },
 
-    async saveLevelProgress(remainingMoves) {
+    async saveLevelProgress(remainingMoves: number) {
       let mostRemainingMoves = remainingMoves
 
       if (this.levelHistory) {
@@ -94,6 +97,52 @@ export const useGameStore = defineStore('game', {
 
     resetLevel() {
       this.setCurrentLevel(this.currentLevelId)
+      this.handleLives(-1)
+    },
+
+    handleLives(number) { // at this stage only -1 or 1
+      if (this.settings.realLives) {
+        this.lives.count += number;
+
+        if (number < 0) { // life lost
+          this.lives.lifeLostTime = new Date().getTime(); // get current time in milliseconds since Unix epoch
+        } else if (number > 0 && this.lives.count <= 5) { // life gained, and total lives doesn't exceed maximum (5 in this case)
+          this.lives.lifeLostTime = null; // reset the life lost time
+        }
+      }
+
+      Preferences.set({
+        key: 'letterlock-lives',
+        value: JSON.stringify(this.lives)
+      })
+    },
+
+    async checkLives() {
+      const now = new Date().getTime(); // get current time
+
+      if (this.lives.lifeLostTime) {
+        const timePassed = now - this.lives.lifeLostTime; // time passed since a life was lost
+        const timeToRegainLife = 25 * 60 * 1000; // 25 minutes in milliseconds
+
+        // check if enough time has passed to regain a life
+        if (this.lives.count < 5 && timePassed >= timeToRegainLife) {
+          const livesGained = Math.floor(timePassed / timeToRegainLife); // calculate how many lives should be regained
+          this.lives.count += livesGained; // add regained lives
+
+          if (this.lives.count >= 5) { // if maximum lives is reached, reset lifeLostTime
+            this.lives.count = 5;
+            this.lives.lifeLostTime = null;
+          } else { // otherwise, calculate the new lifeLostTime
+            this.lives.lifeLostTime += livesGained * timeToRegainLife;
+          }
+
+          // store updated lives data
+          await Preferences.set({
+            key: 'letterlock-lives',
+            value: JSON.stringify(this.lives)
+          });
+        }
+      }
     },
 
     async resetProgress() {
