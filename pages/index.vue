@@ -32,7 +32,14 @@
 
       <!-- Size changing button - variation 4 -->
       <div>
-        <p class="mb-4 text-4xl text-center font-medium">LEVEL {{ currentLevelId }}</p>
+        <div class="flex justify-center mb-4 text-4xl text-center font-medium">
+          <p class="">LEVEL</p>
+          <div class="relative flex items-end ml-3">
+            <span :class="{ 'old-level-animation': levelUp }">{{ levelUp ? (currentLevelId - 1) : currentLevelId }}</span>
+<!--            <IconsParachute class="parachute-animation w-full absolute -top-full right-1/2" />-->
+            <span :class="{ 'new-level-animation': levelUp }" class="absolute left-0 opacity-0">{{ currentLevelId }}</span>
+          </div>
+        </div>
 
         <div class="h-16 w-full flex items-center justify-center">
           <button @click="startGame" class="size-change bg-stone-100 text-blue-700 font-medium text-2xl px-10 py-2 rounded-full shadow mb-6 z-10">Play</button>
@@ -51,7 +58,7 @@
 
     <div v-if="showSettings" @click="showSettings = false" class="absolute h-full w-full flex justify-center items-center z-10">
       <SettingsModal :open="showSettings"
-                      @close="showSettings = false" />
+                     @close="showSettings = false" />
     </div>
   </div>
 </template>
@@ -62,24 +69,37 @@ import { useGameStore } from "@/stores/game";
 import SettingsModal from "../components/SettingsModal";
 
 export default {
-  components: {SettingsModal},
+  components: { SettingsModal },
+
+  setup() {
+    const gameStore = useGameStore()
+    const { currentLevelId, lives } = storeToRefs(gameStore)
+
+    return { currentLevelId, lives }
+  },
+
+  mounted() {
+    if (this.$route.query.levelUp) {
+      this.levelUp = true
+      this.$router.replace({
+        path: this.$route.path,
+        query: {}
+      })
+    }
+  },
+
   data() {
     return {
       showSettings: false,
+      levelUp: false,
       letters: ['f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g', 'q', 'f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g']
     }
   },
 
-  setup() {
-    const gameStore = useGameStore()
-    const { currentLevelId } = storeToRefs(gameStore)
-
-    return { currentLevelId }
-  },
-
   methods: {
     startGame() {
-      this.$router.push('/game');
+      if (this.lives.count > 0)
+        this.$router.push('/game')
     }
   },
 };
@@ -100,6 +120,49 @@ export default {
     padding: 10px 46px;
   }
 }
+
+
+
+/* Change level number animation */
+
+@keyframes new-level-animation {
+  0% {
+    opacity: 0;
+    transform: translateY(-80%);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.new-level-animation {
+  animation: new-level-animation 0.4s ease-in-out forwards;
+  animation-delay: 0.6s;
+}
+
+
+
+
+@keyframes old-level-animation {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(50%);
+    opacity: 0;
+  }
+}
+
+.old-level-animation {
+  animation: old-level-animation 0.2s ease-in forwards;
+  animation-delay: 0.6s;
+}
+
+
+
+
 
 /* Snowflake animation */
 .snowflake {

@@ -13,10 +13,18 @@ export const useGameStore = defineStore('game', {
     currentLevelTiles: null as (Tile[] | null),
     currentLevelValidWords: null as (string[] | null),
     replayingLevel: false, // used to indicate if this level is being replayed i.e. it's being completed before
+
+    // Settings
     levelHistory: null as (IndexedLevelHistoryData | null), // it isn't exactly the same data type so feel free to remove
     settings: {
       testMode: false,
       showAnimations: true
+    },
+
+    // Lives
+    lives: {
+      count: 1,
+      nextLifeTime: null
     }
   }),
 
@@ -24,12 +32,16 @@ export const useGameStore = defineStore('game', {
     async setInitialState() {
       const levelHistory = await Preferences.get({ key: 'letterlock-levels' })
       const settings = await Preferences.get({ key: 'letterlock-settings' })
+      const lives = await Preferences.get({ key: 'letterlock-lives' })
 
       if (levelHistory.value)
         this.levelHistory = JSON.parse((levelHistory.value))
 
       if (settings.value)
         this.settings = JSON.parse((settings.value))
+
+      if (lives.value)
+        this.lives = JSON.parse((lives.value))
 
       this.setCurrentLevel()
     },

@@ -22,7 +22,7 @@
             <div class="flex flex-col justify-between items-center grow">
               <div class="w-full flex flex-col items-center mt-10">
                 <div class="w-full flex justify-between">
-                  <span class="text-sm font-medium text-gray-900 dark:text-gray-300">Test Mode</span>
+                  <span class="text-sm font-medium text-gray-300">Test Mode</span>
                   <label class="relative inline-flex items-center cursor-pointer">
                     <input v-model="settings.testMode" type="checkbox" class="sr-only peer">
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
@@ -31,17 +31,17 @@
 
                 <div v-if="settings.testMode" class="w-full flex flex-col items-center mt-4">
                   <div class="w-full flex justify-between">
-                    <span class="text-sm font-medium text-gray-900 dark:text-gray-300">Animations</span>
+                    <span class="text-sm font-medium text-gray-300">Animations</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                       <input v-model="settings.showAnimations" type="checkbox" class="sr-only peer">
                       <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
                     </label>
                   </div>
 
-                  <span class="mt-4 text-sm font-medium text-gray-900 dark:text-gray-300">Current Level</span>
+                  <span class="mt-4 text-sm font-medium text-gray-300">Current Level</span>
                   <div class="flex items-center mt-2">
                     <button type="button" style="touch-action: manipulation" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" @click="changeLevel(-1)">Prev</button>
-                    <input type="number" v-model="currentLevelId" class="w-20 text-2xl text-center text-green-300 bg-transparent focus:outline-none" />
+                    <input type="number" :value="currentLevelId" @keyup="setLevel" class="w-20 text-2xl text-center text-green-300 bg-transparent focus:outline-none" />
                     <button type="button" style="touch-action: manipulation" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" @click="changeLevel(1)">Next</button>
                   </div>
 
@@ -101,6 +101,10 @@ export default defineComponent({
   methods: {
     changeLevel(levelIncrement) {
       this.gameStore.setCurrentLevel(this.currentLevelId + levelIncrement)
+    },
+
+    setLevel(event) {
+      this.gameStore.setCurrentLevel(event.target.valueAsNumber)
     }
   }
 })

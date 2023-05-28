@@ -10,7 +10,7 @@
 
         <div class="flex justify-center">
           <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
-            <IconsLock :style="{ filter: lockDropShadow }" class="h-20 w-20 mx-auto text-ll-orange duration-700"></IconsLock>
+            <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange"></IconsLock>
             <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
             <div class="absolute pb-2 text-3xl font-medium">{{ remainingMoves }}</div>
           </div>
@@ -54,23 +54,42 @@
         </div>
       </div>
 
-      <div v-show="showCompleteModal" :class="{ 'complete-modal': showCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
+      <div v-show="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
         <div class="text-ll-orange text-4xl font-bold">
-          <p class="mr-4">LETTERS</p>
-          <p class="ml-4">LOCKED</p>
+          <p class="word-slide-left">LETTERS</p>
+          <p class="word-slide-right">LOCKED</p>
         </div>
         <p class="px-6 text-xl text-slate-600">Nice job - you crushed it! The next has level has been <span class="text-purple-400 font-medium">UNLOCKED!</span></p>
         <div class="flex flex-col justify-center gap-y-2 text-lg" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-12' ]">
-          <button v-if="settings.testMode" @click="resetLevel" class="button-pulse rounded-full bg-ll-orange text-white shadow-sm">Retry Level</button>
-          <button @click="nextLevel" class="button-pulse rounded-full bg-purple-400 text-white font-medium shadow-sm">Next Level</button>
+          <button v-if="settings.testMode" @click="resetLevel" class="button-pulse self-center rounded-full bg-ll-orange text-white shadow-sm">Retry Level</button>
+          <button @click="nextLevel" class="button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm">Next Level</button>
         </div>
       </div>
 
-      <div v-show="levelFailed" class="absolute flex flex-col justify-center items-center h-1/2 w-5/6 z-20 bg-orange-200 rounded-3xl text-center text-3xl">
-        <p class="text-slate-700">Bad luck, you failed...</p>
-        <p class="text-slate-700">It's still all messed up!</p>
-        <button @click="resetLevel" class="mt-4 px-10 py-2 rounded-lg bg-cyan-600 text-white">Retry</button>
+      <div v-show="showFailedModal || hideFailedModal" :class="{ 'modal-slide-in': showFailedModal,  'modal-slide-out': hideFailedModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
+        <div class="relative text-ll-orange text-4xl font-bold">
+          <p class="word-slide-left mr-4">LETTERS</p>
+          <p class="drop-not absolute bottom-1.5 -left-8 text-2xl text-purple-400 underline underline-offset-2 opacity-0">NOT</p>
+          <p class="word-slide-right ml-4">LOCKED</p>
+        </div>
+        <p class="px-6 text-xl text-slate-600">Oh no! You are so close to locking all the words!</p>
+        <div class="flex flex-col justify-center gap-y-2 w-full h-24 text-lg">
+          <div class="h-2/5 flex justify-center">
+            <button @click="resetLevel" class="my-auto self-center rounded-full bg-red-400 py-1 px-4 text-base text-white shadow-sm">Give Up</button>
+          </div>
+          <div class="h-3/5 flex justify-center">
+            <button @click="resetLevel" class="button-pulse self-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white shadow-sm">Watch Ad</button>
+          </div>
+        </div>
       </div>
+
+      <div :class="[ showFailedModal || showCompleteModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-700 pointer-events-none z-10"></div>
+
+<!--      <div v-show="showFailedModal" class="absolute flex flex-col justify-center items-center h-1/2 w-5/6 z-20 bg-orange-200 rounded-3xl text-center text-3xl">-->
+<!--        <p class="text-slate-700">Bad luck, you failed...</p>-->
+<!--        <p class="text-slate-700">It's still all messed up!</p>-->
+<!--        <button @click="resetLevel" class="mt-4 px-10 py-2 rounded-lg bg-cyan-600 text-white">Retry</button>-->
+<!--      </div>-->
 
 <!--      <div class="ripple-container">-->
 <!--        <div :class="{ 'ripple': showCollideEffect }"></div>-->
@@ -109,18 +128,20 @@
         validWords: [],
         levelCompleted: false,
         showCompleteModal: false,
-        levelFailed: false,
+        hideCompleteModal: false,
+        showFailedModal: false,
+        hideFailedModal: false,
         animationClasses: null,
         borderRadiusClasses: null,
         dragging: false,
         initialTilePosition: null,
         showCollideEffect: false,
         displayBoard: true,
-        showStamp: false,
         gridCSS: 'gap-2',
         lockBoltHeight: '0.60rem',
         lockBoltColor: '#337aff',
         lockDropShadow: 'drop-shadow(0 0 0 rgb(251, 163, 69))',
+        lockTransitionDuration: '700ms', // also gets sets back to 700ms at end of failLevel()
         colors: ["#ff9054", "#22ff32", "#FFF176", "#214aff", "#ffbb2e", "#79f37c"]
       }
     },
@@ -140,7 +161,7 @@
       this.checkWords()
       this.setAnimationClasses()
       this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-xl rounded-tr-xl rounded-br-xl rounded-tl-xl')
-      // this.completeLevel()
+      // this.failLevel()
     },
 
     methods: {
@@ -150,6 +171,37 @@
         this.gridSize = this.gameStore.gridSize
         this.remainingMoves = this.gameStore.maxMoves
         this.validWords = this.gameStore.currentLevelValidWords
+      },
+
+      async failLevel() {
+        if (!this.settings.showAnimations)
+          return this.showFailedModal = true
+
+        this.lockTransitionDuration = '300ms' // reduce duration for a nice strobe effect
+
+        await this.delay(200);
+        this.lockDropShadow = "drop-shadow(0 0 15px rgb(251, 163, 69))";
+
+        await this.delay(300);
+        this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
+
+        await this.delay(300);
+        this.lockDropShadow = "drop-shadow(0 0 15px rgb(251, 163, 69))";
+
+        await this.delay(300);
+        this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
+
+        await this.delay(300);
+        this.lockDropShadow = "drop-shadow(0 0 15px rgb(251, 163, 69))";
+
+        await this.delay(300);
+        this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
+
+        await this.delay(300)
+        this.lockTransitionDuration = '700ms' // restore original duration
+
+        await this.delay(300);
+        this.showFailedModal = true
       },
 
       async completeLevel() {
@@ -168,13 +220,13 @@
         this.gridCSS = "gap-1 duration-100 ease-in";
         this.setBorderRadiusClasses();
 
-        await this.delay(100);
+        await this.delay(75);
         this.showCollideEffect = true;
 
         await this.delay(50);
         await Haptics.impact({ style: ImpactStyle.Light });
 
-        await this.delay(825);
+        await this.delay(775);
         this.lockBoltColor = "#4C9BFF";
 
         await this.delay(1500);
@@ -188,17 +240,15 @@
 
         let intervalID;
         const totalRemainingMoves = this.remainingMoves
-        await this.delay(500);
         intervalID = setInterval(async () => {
           if (this.remainingMoves > 0) {
             this.remainingMoves -= 1;
             await Haptics.impact({ style: ImpactStyle.Light });
           } else {
             clearInterval(intervalID);
-            this.showStamp = true
-            setTimeout(() => this.showCompleteModal = true, 1000);
+            this.showCompleteModal = true
           }
-        }, 1000 / totalRemainingMoves);
+        }, totalRemainingMoves > 1 ? (1000 / totalRemainingMoves) : 500);
       },
 
       delay(ms) {
@@ -258,11 +308,21 @@
       },
 
       async nextLevel() {
-        await this.gameStore.setCurrentLevel()
-        this.$router.push('/')
+        this.hideCompleteModal = true // 25/03/23 - the complete modal only shows if one of these two are true. That might cause issues if there's a split second where they're both false.
+        this.showCompleteModal = false
+
+        await this.delay(1000)
+        await this.gameStore.setCurrentLevel(this.currentLevelId + 1)
+        this.$router.push({ path: '/', query: { levelUp: true } })
       },
 
-      resetLevel() {
+      async resetLevel() {
+        if (this.showFailedModal)
+          this.hideFailedModal = true
+        else if (this.showCompleteModal)
+          this.hideCompleteModal = true
+
+        await this.delay(1000)
         this.gameStore.resetLevel()
         this.$router.push('/')
       },
@@ -408,9 +468,9 @@
         }
 
         if (this.arraysEqual(this.validWords, wordsFormed))
-          this.completeLevel()
+          await this.completeLevel()
         else if (this.remainingMoves <= 0)
-          this.levelFailed = true
+          await this.failLevel()
       },
 
       arraysEqual(arr1, arr2) {
@@ -540,7 +600,7 @@
   }
 
   .glow {
-    filter: drop-shadow(0 0 20px rgb(251, 191, 36));
+    filter: drop-shadow(0 0 12px rgb(251, 191, 36));
   }
 
   .lock-bolt {
@@ -574,23 +634,79 @@
   /*  animation: ripple 0.4s linear forwards;*/
   /*}*/
 
-  @keyframes ripple {
+  /*@keyframes ripple {*/
+  /*  0% {*/
+  /*    opacity: 0;*/
+  /*    transform: translate(-50%, -50%) scale(1);*/
+  /*  }*/
+  /*  20% {*/
+  /*    opacity: 1;*/
+  /*    transform: translate(-50%, -50%) scale(2);*/
+  /*  }*/
+  /*  100% {*/
+  /*    opacity: 0;*/
+  /*    transform: translate(-50%, -50%) scale(2.5);*/
+  /*  }*/
+  /*}*/
+
+
+  /* Word Slides */
+
+  @keyframes word-slide-left {
     0% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(1);
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-16px);
+    }
+  }
+
+  .word-slide-left {
+    animation: word-slide-left forwards 1.3s ease-out;
+    animation-delay: 0.3s;
+  }
+
+
+  @keyframes word-slide-right {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(16px);
+    }
+  }
+
+  .word-slide-right {
+    animation: word-slide-right forwards 1.3s ease-out;
+    animation-delay: 0.3s;
+  }
+
+
+  /* Dropping the word NOT in the modal :) */
+
+  @keyframes drop-not {
+    0% {
+      opacity: 1;
+      transform: scale(2.5) rotate(12deg);
     }
     20% {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(2);
+      transform: scale(2.2) rotate(12deg);
     }
     100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(2.5);
+      opacity: 1;
+      transform: scale(1) rotate(12deg);
     }
+  }
+
+  .drop-not {
+    animation: drop-not forwards 0.3s ease-out;
+    animation-delay: 1.7s;
   }
 
 
   /* 'Next' button size changer */
+
   .button-pulse {
     animation: button-pulse 1.5s infinite alternate;
   }
@@ -605,18 +721,49 @@
     }
   }
 
-  @keyframes complete-modal-slide {
+
+
+  /* Modal slide in */
+
+  @keyframes modal-slide-in {
     0% {
-      transform: translateX(130vw);
+      transform: translateY(-130vh) rotate(12deg);
+    }
+    55% {
+      transform: translateY(5vh) rotate(-3deg);
+    }
+    77% {
+      transform: translateY(-3vh) rotate(2deg);
     }
     100% {
-      transform: translateX(0);
+      transform: translateY(0) rotate(0deg);
     }
   }
 
-  .complete-modal {
-    animation: complete-modal-slide forwards 1s ease-in-out;
+  .modal-slide-in {
+    animation: modal-slide-in forwards 1.2s ease-in-out;
   }
+
+
+
+  /* Modal slide out */
+
+  @keyframes modal-slide-out {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    23% {
+      transform: translateY(3vh) rotate(-3deg);
+    }
+    100% {
+      transform: translateY(-130vh) rotate(12deg);
+    }
+  }
+
+  .modal-slide-out {
+    animation: modal-slide-out forwards 0.8s ease-in-out;
+  }
+
 
   .shake-and-fall-1,
   .shake-and-fall-2,
@@ -681,15 +828,15 @@
     60% { transform: rotate(10deg); }
     70% { transform: rotate(-11deg); }
     80% { transform: rotate(12deg); }
-    90% { transform: rotate(-15deg); margin-top: 0; }
-    100% { transform: rotate(0deg); opacity: 0; margin-top: 2vh; }
+    90% { transform: rotate(-15deg); }
+    100% { transform: rotate(0deg); opacity: 0; }
   }
 
 
 
   .slide-right {
     animation: slide-right 0.7s ease-in forwards;
-    animation-delay: 4.5s
+    animation-delay: 4.2s
   }
 
   @keyframes slide-right {
