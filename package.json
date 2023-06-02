@@ -14,8 +14,10 @@
     "tailwindcss": "^3.3.1"
   },
   "dependencies": {
-    "@capacitor/android": "^4.7.3",
-    "@capacitor/core": "^4.7.3",
+    "@capacitor-community/admob": "^4.1.0",
+    "@capacitor/android": "^4.4.0",
+    "@capacitor/core": "^4.3.0",
+    "@capacitor/device": "^4.1.0",
     "@capacitor/haptics": "^4.1.0",
     "@capacitor/ios": "^4.7.3",
     "@capacitor/preferences": "^4.0.2",

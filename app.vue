@@ -6,14 +6,16 @@
 
 <script>
 import { useGameStore } from "@/stores/game";
+import { useAdsStore } from "@/stores/ads";
 
 export default {
   name: 'App',
 
   setup() {
     const gameStore = useGameStore()
+    const adsStore = useAdsStore()
 
-    return { gameStore }
+    return { gameStore, adsStore }
   },
 
   data() {
@@ -24,6 +26,8 @@ export default {
 
   async created() {
     await this.gameStore.setInitialState()
+    this.adsStore.initialiseRewardAd()
+    this.adsStore.prepareRewardAd()
     this.gameStateLoaded = true
   }
 }

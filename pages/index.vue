@@ -7,7 +7,7 @@
     <div class="flex flex-col grow justify-between z-10">
       <div class="pt-6">
         <div class="flex justify-between px-6">
-          <IconsSettings @click="showSettings = true" class="h-8 w-8 mt-1.5" />
+          <IconsSettings @click="showSettingsModal = true" class="h-8 w-8 mt-1.5" />
           <div class="text-4.5xl font-bold text-end leading-10 mb-4 text-ll-orange"><p>LETTER</p><p>LOCK</p></div>
           <div class="flex flex-col">
             <div class="flex gap-x-1 mt-1.5">
@@ -27,16 +27,13 @@
           </div>
         </div>
       </div>
-<!--        <div class="text-sm text-white mb-8 px-6 text-center">Slide, Solve, and Progress! Unleash the word master within!</div>-->
 
 
-      <!-- Size changing button - variation 4 -->
       <div>
         <div class="flex justify-center mb-4 text-4xl text-center font-medium">
           <p class="">LEVEL</p>
           <div class="relative flex items-end ml-3">
             <span :class="{ 'old-level-animation': levelUp }">{{ levelUp ? (currentLevelId - 1) : currentLevelId }}</span>
-<!--            <IconsParachute class="parachute-animation w-full absolute -top-full right-1/2" />-->
             <span :class="{ 'new-level-animation': levelUp }" class="absolute left-0 opacity-0">{{ currentLevelId }}</span>
           </div>
         </div>
@@ -56,10 +53,19 @@
       <div class="h-32"></div>
     </div>
 
-    <div v-if="showSettings" @click="showSettings = false" class="absolute h-full w-full flex justify-center items-center z-10">
-      <SettingsModal :open="showSettings"
-                     @close="showSettings = false" />
-    </div>
+
+    <SettingsModal :showSettingsModal="showSettingsModal"
+                    :hideSettingsModal="hideSettingsModal"
+                    @close="closeSettingsModal()" />
+
+
+    <LivesModal v-if="showLivesModal || hideLivesModal"
+                :showLivesModal="showLivesModal"
+                :hideLivesModal="hideLivesModal"
+                @close="closeLivesModal()" />
+
+
+    <div :class="[ showLivesModal && !hideLivesModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-700 pointer-events-none z-10"></div>
   </div>
 </template>
 
@@ -73,12 +79,13 @@ export default {
 
   setup() {
     const gameStore = useGameStore()
-    const { currentLevelId, lives } = storeToRefs(gameStore)
+    const { currentLevelId, lives, maxLives } = storeToRefs(gameStore)
 
-    return { currentLevelId, lives }
+    return { gameStore, currentLevelId, lives, maxLives }
   },
 
   mounted() {
+    // Show animation if levelled up
     if (this.$route.query.levelUp) {
       this.levelUp = true
       this.$router.replace({
@@ -86,26 +93,154 @@ export default {
         query: {}
       })
     }
+
+    // Check life count
+    this.lifeCheckInterval = window.setInterval(() => {
+      if (this.lives.count < this.maxLives) {
+        this.gameStore.checkLives();
+      }
+    }, 6000);
+  },
+
+  beforeUnmount() {
+    clearInterval(this.lifeCheckInterval);
   },
 
   data() {
     return {
-      showSettings: false,
+      showSettingsModal: false,
+      hideSettingsModal: false,
+      showLivesModal: false,
+      hideLivesModal: false,
       levelUp: false,
       letters: ['f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g', 'q', 'f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g']
     }
   },
 
   methods: {
-    startGame() {
+    async startGame() {
       if (this.lives.count > 0)
         this.$router.push('/game')
+      else {
+        await this.gameStore.checkLives()
+
+        if (this.lives.count > 0) {
+          this.$router.push('/game')
+        } else {
+          this.showLivesModal = true
+        }
+      }
+    },
+
+    closeLivesModal() {
+      this.hideLivesModal = true
+
+      // Not the prettiest, but this resets the modal animations 
+      setTimeout(() => {
+        this.showLivesModal = false
+        this.hideLivesModal = false
+      }, 700) // delay should match utility-modal-slide-out time
+    },
+
+    closeSettingsModal() {
+      this.hideSettingsModal = true
+
+      // Not the prettiest, but this resets the modal animations 
+      setTimeout(() => {
+        this.showSettingsModal = false
+        this.hideSettingsModal = false
+      }, 700) // delay should match utility-modal-slide-out time
     }
   },
 };
 </script>
 
-<style scoped>
+<style>
+input,
+textarea,
+button,
+select,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Modal slide in */
+
+@keyframes utility-modal-slide-in {
+  0% {
+    transform: translateY(-130vh) rotate(12deg);
+  }
+  55% {
+    transform: translateY(5vh) rotate(-3deg);
+  }
+  77% {
+    transform: translateY(-3vh) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+.utility-modal-slide-in {
+  animation: utility-modal-slide-in forwards 1s ease-in-out;
+}
+
+
+
+/* Modal slide out */
+
+@keyframes utility-modal-slide-out {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  23% {
+    transform: translateY(3vh) rotate(-3deg);
+  }
+  100% {
+    transform: translateY(-130vh) rotate(12deg);
+  }
+}
+
+.utility-modal-slide-out {
+  animation: utility-modal-slide-out forwards 0.7s ease-in-out;
+}
+
+
+
+
+/* Word Slides */
+
+@keyframes word-slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-16px);
+  }
+}
+
+.word-slide-left {
+  animation: word-slide-left forwards 1.3s ease-out;
+  animation-delay: 0.3s;
+}
+
+
+@keyframes word-slide-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(16px);
+  }
+}
+
+.word-slide-right {
+  animation: word-slide-right forwards 1.3s ease-out;
+  animation-delay: 0.3s;
+}
+
+
+
 /* Size change effect - variation 4 */
 .size-change {
   animation: size-change 1.5s infinite alternate;

@@ -23,3 +23,14 @@ export interface LevelHistoryData {
 export interface IndexedLevelHistoryData {
   [index: number]: LevelHistoryData;
 }
+
+
+
+// ===========================================
+// ================== ADS ====================
+// ===========================================
+
+export interface Reward {
+  type: string,
+  quantity: number
+}

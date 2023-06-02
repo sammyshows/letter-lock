@@ -78,7 +78,7 @@
             <button @click="resetLevel" class="my-auto self-center rounded-full bg-red-400 py-1 px-4 text-base text-white shadow-sm">Give Up</button>
           </div>
           <div class="h-3/5 flex justify-center">
-            <button @click="resetLevel" class="button-pulse self-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white shadow-sm">Watch Ad</button>
+            <button @click="resetLevel" class="button-pulse self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500 text-white shadow-sm drop-shadow">Watch Ad</button>
           </div>
         </div>
       </div>
@@ -107,6 +107,7 @@
   import { storeToRefs } from "pinia"
   import { Haptics, ImpactStyle } from '@capacitor/haptics';
   import { useGameStore } from "@/stores/game";
+
   Sortable.mount(new Swap());
 
   export default {
@@ -114,6 +115,7 @@
 
     setup() {
       const gameStore = useGameStore()
+
       const { currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
 
       return { gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives }
@@ -127,6 +129,7 @@
         remainingMoves: 0,
         validWords: [],
         levelCompleted: false,
+        levelFailed: false,
         showCompleteModal: false,
         hideCompleteModal: false,
         showFailedModal: false,
@@ -164,6 +167,18 @@
       // this.failLevel()
     },
 
+    watch: {
+      levelCompleted(newValue, oldValue) {
+        if (newValue) // i.e. if levelCompleted is true
+          this.sortable.option("disabled", true)
+      },
+
+      levelFailed(newValue, oldValue) {
+        if (newValue) // i.e. if levelCompleted is true
+          this.sortable.option("disabled", true)
+      }
+    },
+
     methods: {
       getLevelConfig() {
         this.tiles = _.cloneDeep(this.gameStore.currentLevelTiles)
@@ -176,6 +191,8 @@
       async failLevel() {
         if (!this.settings.showAnimations)
           return this.showFailedModal = true
+
+        this.levelFailed = true
 
         this.lockTransitionDuration = '300ms' // reduce duration for a nice strobe effect
 
@@ -439,15 +456,16 @@
           }
         };
 
-
         // Check the rows for valid words
         for (let rowIndex = 0; rowIndex < this.gridSize; rowIndex++) {
           const rowTiles = this.tiles.slice(rowIndex * this.gridSize, rowIndex * this.gridSize + this.gridSize);
-          const rowString = rowTiles.map((tile) => tile.letter).join("");
+          const rowLetters = rowTiles.map((tile) => tile.letter);
           this.validWords.forEach((word) => {
-            if (rowString.includes(word)) {
-              console.log(`Found valid word: ${word}`);
-              highlightTiles(word, rowTiles);
+            for (let i = 0; i <= rowLetters.length - word.length; i++) {
+              if (rowLetters.slice(i, i + word.length).join('') === word) {
+                console.log(`Found valid word: ${word}`);
+                highlightTiles(word, rowTiles.slice(i, i + word.length));
+              }
             }
           });
         }
@@ -458,11 +476,13 @@
           for (let rowIndex = 0; rowIndex < this.gridSize; rowIndex++) {
             colTiles.push(this.tiles[rowIndex * this.gridSize + colIndex]);
           }
-          const colString = colTiles.map((tile) => tile.letter).join("");
+          const colLetters = colTiles.map((tile) => tile.letter);
           this.validWords.forEach((word) => {
-            if (colString.includes(word)) {
-              console.log(`Found valid word: ${word}`);
-              highlightTiles(word, colTiles);
+            for (let i = 0; i <= colLetters.length - word.length; i++) {
+              if (colLetters.slice(i, i + word.length).join('') === word) {
+                console.log(`Found valid word: ${word}`);
+                highlightTiles(word, colTiles.slice(i, i + word.length));
+              }
             }
           });
         }
@@ -649,37 +669,6 @@
   /*  }*/
   /*}*/
 
-
-  /* Word Slides */
-
-  @keyframes word-slide-left {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-16px);
-    }
-  }
-
-  .word-slide-left {
-    animation: word-slide-left forwards 1.3s ease-out;
-    animation-delay: 0.3s;
-  }
-
-
-  @keyframes word-slide-right {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(16px);
-    }
-  }
-
-  .word-slide-right {
-    animation: word-slide-right forwards 1.3s ease-out;
-    animation-delay: 0.3s;
-  }
 
 
   /* Dropping the word NOT in the modal :) */

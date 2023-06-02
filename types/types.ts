@@ -1,1 +1,7 @@
-export { Tile, LevelData, IndexedLevelData, IndexedLevelHistoryData } from "@/types/interfaces";
+export { 
+  Tile,
+  LevelData,
+  IndexedLevelData,
+  IndexedLevelHistoryData,
+  Reward
+} from "@/types/interfaces";
