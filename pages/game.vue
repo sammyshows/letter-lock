@@ -49,7 +49,7 @@
           </div>
 
           <div class="mt-6 duration-1000" :class="{ 'opacity-0': !displayBoard }">
-            <p v-for="word in validWords" class="text-2xl text-center">{{ word }}</p>
+            <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500">{{ word }}</p>
           </div>
         </div>
       </div>
@@ -66,38 +66,16 @@
         </div>
       </div>
 
-      <div v-show="showFailedModal || hideFailedModal" :class="{ 'modal-slide-in': showFailedModal,  'modal-slide-out': hideFailedModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
-        <div class="relative text-ll-orange text-4xl font-bold">
-          <p class="word-slide-left mr-4">LETTERS</p>
-          <p class="drop-not absolute bottom-1.5 -left-8 text-2xl text-purple-400 underline underline-offset-2 opacity-0">NOT</p>
-          <p class="word-slide-right ml-4">LOCKED</p>
-        </div>
-        <p class="px-6 text-xl text-slate-600">Oh no! You are so close to locking all the words!</p>
-        <div class="flex flex-col justify-center gap-y-2 w-full h-24 text-lg">
-          <div class="h-2/5 flex justify-center">
-            <button @click="resetLevel" class="my-auto self-center rounded-full bg-red-400 py-1 px-4 text-base text-white shadow-sm">Give Up</button>
-          </div>
-          <div class="h-3/5 flex justify-center">
-            <button @click="resetLevel" class="button-pulse self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500 text-white shadow-sm drop-shadow">Watch Ad</button>
-          </div>
-        </div>
-      </div>
+      <!-- FAILED MODAL -->
+      <FailedModal v-if="showFailedModal || hideFailedModal"
+                :showFailedModal="showFailedModal"
+                :hideFailedModal="hideFailedModal"
+                @close="closeFailedModal" />
 
       <div :class="[ showFailedModal || showCompleteModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-700 pointer-events-none z-10"></div>
-
-<!--      <div v-show="showFailedModal" class="absolute flex flex-col justify-center items-center h-1/2 w-5/6 z-20 bg-orange-200 rounded-3xl text-center text-3xl">-->
-<!--        <p class="text-slate-700">Bad luck, you failed...</p>-->
-<!--        <p class="text-slate-700">It's still all messed up!</p>-->
-<!--        <button @click="resetLevel" class="mt-4 px-10 py-2 rounded-lg bg-cyan-600 text-white">Retry</button>-->
-<!--      </div>-->
-
-<!--      <div class="ripple-container">-->
-<!--        <div :class="{ 'ripple': showCollideEffect }"></div>-->
-<!--      </div>-->
-
-<!--      <div class="absolute bottom-20 left-10 duration-700" :class="[ showStamp ? 'opacity-1' : 'opacity-0' ]">-->
-<!--        <Stamp />-->
-<!--      </div>-->
+     <div class="ripple-container">
+       <div :class="{ 'ripple': showCollideEffect }"></div>
+     </div>
     </div>
   </template>
 
@@ -116,9 +94,9 @@
     setup() {
       const gameStore = useGameStore()
 
-      const { currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
+      const { event, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
 
-      return { gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives }
+      return { event, gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives }
     },
 
     data() {
@@ -128,6 +106,7 @@
         gridSize: 3,
         remainingMoves: 0,
         validWords: [],
+        wordsFormed: [],
         levelCompleted: false,
         levelFailed: false,
         showCompleteModal: false,
@@ -164,19 +143,29 @@
       this.checkWords()
       this.setAnimationClasses()
       this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-xl rounded-tr-xl rounded-br-xl rounded-tl-xl')
-      // this.failLevel()
     },
 
     watch: {
       levelCompleted(newValue, oldValue) {
-        if (newValue) // i.e. if levelCompleted is true
-          this.sortable.option("disabled", true)
+        // levelCompleted (newValue)
+        this.sortable.option("disabled", newValue)
       },
 
       levelFailed(newValue, oldValue) {
-        if (newValue) // i.e. if levelCompleted is true
-          this.sortable.option("disabled", true)
-      }
+        // levelFailed (newValue)
+        this.sortable.option("disabled", newValue)
+      },
+
+      event: {
+        deep: true,
+        handler: async function (newAdEvent, oldAdEvent) {
+          await this.closeFailedModal(false)
+
+          await this.delay(200)
+          this.levelFailed = false
+          this.addMoves(newAdEvent.quantity) // after modal is closed add the moves, visible to the user
+        }
+      },
     },
 
     methods: {
@@ -194,35 +183,12 @@
 
         this.levelFailed = true
 
-        this.lockTransitionDuration = '300ms' // reduce duration for a nice strobe effect
-
-        await this.delay(200);
-        this.lockDropShadow = "drop-shadow(0 0 15px rgb(251, 163, 69))";
-
-        await this.delay(300);
-        this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
-
-        await this.delay(300);
-        this.lockDropShadow = "drop-shadow(0 0 15px rgb(251, 163, 69))";
-
-        await this.delay(300);
-        this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
-
-        await this.delay(300);
-        this.lockDropShadow = "drop-shadow(0 0 15px rgb(251, 163, 69))";
-
-        await this.delay(300);
-        this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
-
-        await this.delay(300)
-        this.lockTransitionDuration = '700ms' // restore original duration
-
-        await this.delay(300);
+        await this.delay(1000);
         this.showFailedModal = true
       },
 
       async completeLevel() {
-        await this.gameStore.saveLevelProgress(this.remainingMoves)
+        await this.gameStore.saveLevelProgress()
 
         if (!this.settings.showAnimations)
           return this.showCompleteModal = true
@@ -230,7 +196,7 @@
         this.levelCompleted = true;
         this.displayBoard = false;
 
-        await this.delay(2800);
+        await this.delay(2300);
         this.gridCSS = "gap-5 duration-700 ease-in-out";
 
         await this.delay(800);
@@ -243,13 +209,13 @@
         await this.delay(50);
         await Haptics.impact({ style: ImpactStyle.Light });
 
-        await this.delay(775);
+        await this.delay(875);
         this.lockBoltColor = "#4C9BFF";
 
         await this.delay(1500);
         this.lockBoltHeight = "0";
 
-        await this.delay(150);
+        await this.delay(75);
         this.lockDropShadow = "drop-shadow(0 0 40px rgb(251, 163, 69))";
 
         await this.delay(50);
@@ -487,6 +453,8 @@
           });
         }
 
+        this.wordsFormed = wordsFormed
+
         if (this.arraysEqual(this.validWords, wordsFormed))
           await this.completeLevel()
         else if (this.remainingMoves <= 0)
@@ -581,27 +549,42 @@
           }
 
           this.borderRadiusClasses[sortableTileIndex] = borderClasses
-          console.log(this.borderRadiusClasses[index])
         });
       },
 
-      particleStyle(fireworkIndex, index) {
-        const radians = [0, 0, 0.7853981633974483, 1.5707963267948966, 2.356194490192345, 3.141592653589793, 3.9269908169872414, 4.71238898038469, 5.497787143782138, 0, 0.5711986642890533, 1.1423973285781066, 1.71359599286716, 2.284794657156213, 2.855993321445266, 3.42719198573432, 3.998390650023373, 4.569589314312426, 5.14078797860148, 5.711986642890532, 0, 0.4487989505128276, 0.8975979010256552, 1.3463968515384828, 1.7951958020513104, 2.2439947525641384, 2.6927937030769655, 3.141592653589793, 3.5903916041026207, 4.039190554615448, 4.487989505128277, 4.9367884556411035, 5.385587406153931, 5.834386356666759, 0, 0.36959913571644626, 0.7391982714328925, 1.1087974071493387, 1.478396542865785, 1.8479956785822311, 2.2175948142986774, 2.587193950015124, 2.95679308573157, 3.3263922214480166, 3.6959913571644623, 4.065590492880909, 4.435189628597355, 4.804788764313802, 5.174387900030248, 5.543987035746693, 5.91358617146314]
-        const distances = [0, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.43, 0.43, 0.43, 0.43, 0.43, 0.43, 0.43, 0.43, 0.43, 0.43, 0.43, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.61, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85, 0.85]
-        const distance = distances[index] * 135;
-        const radian = radians[index];
-        const angle = (radian * 180) / Math.PI;
-        const translateX = distance * Math.cos(radian);
-        const translateY = distance * Math.sin(radian);
-        const animationDelay = `${fireworkIndex * 0.3}s`;
+      async closeFailedModal(resetLevel) {
+        this.hideFailedModal = true
 
-        return {
-          '--angle': angle + 'deg',
-          '--translateX': translateX + 'px',
-          '--translateY': translateY + 'px',
-          '--animation-delay': animationDelay,
-        };
+        await this.delay(700)  // delay should match utility-modal-slide-out time
+
+        this.showFailedModal = false
+        this.hideFailedModal = false
+
+        if (resetLevel) {
+          this.gameStore.resetLevel()
+          this.$router.push('/')
+        }
       },
+
+      async addMoves(quantity) {
+        this.lockTransitionDuration = '200ms' // reduce duration for a nice strobe effect
+        let intervalID
+        
+        intervalID = setInterval(async () => {
+          if (quantity > 0) {
+            quantity -= 1;
+            this.remainingMoves += 1
+
+            this.lockDropShadow = "drop-shadow(0 0 15px rgb(251, 163, 69))";
+            await this.delay(200)
+            this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
+
+            await Haptics.impact({ style: ImpactStyle.Light });
+          } else {
+            clearInterval(intervalID);
+          }
+        }, 400)
+      }
     },
   };
   </script>
@@ -629,45 +612,45 @@
     height: 0.8rem;
     bottom: 2.98rem;
     left: 1.39rem;
-    transition: background-color 1.3s ease-in-out, max-height 0.2s ease-in;
+    transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
   }
 
-  /*.ripple-container {*/
-  /*  position: fixed;*/
-  /*  top: 0;*/
-  /*  left: 0;*/
-  /*  width: 100vw;*/
-  /*  height: 100vh;*/
-  /*  pointer-events: none;*/
-  /*}*/
+  .ripple-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+  }
 
-  /*.ripple {*/
-  /*  position: absolute;*/
-  /*  top: 50%;*/
-  /*  left: 50%;*/
-  /*  width: 200px;*/
-  /*  height: 200px;*/
-  /*  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 100%);*/
-  /*  border-radius: 50%;*/
-  /*  opacity: 0;*/
-  /*  transform: translate(-50%, -50%) scale(1);*/
-  /*  animation: ripple 0.4s linear forwards;*/
-  /*}*/
+  .ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    border-radius: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+    animation: ripple 0.4s linear forwards;
+  }
 
-  /*@keyframes ripple {*/
-  /*  0% {*/
-  /*    opacity: 0;*/
-  /*    transform: translate(-50%, -50%) scale(1);*/
-  /*  }*/
-  /*  20% {*/
-  /*    opacity: 1;*/
-  /*    transform: translate(-50%, -50%) scale(2);*/
-  /*  }*/
-  /*  100% {*/
-  /*    opacity: 0;*/
-  /*    transform: translate(-50%, -50%) scale(2.5);*/
-  /*  }*/
-  /*}*/
+  @keyframes ripple {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    20% {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(2);
+    }
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(2.5);
+    }
+  }
 
 
 
@@ -824,20 +807,35 @@
 
 
   .slide-right {
-    animation: slide-right 0.7s ease-in forwards;
-    animation-delay: 4.2s
+    animation: slide-right 0.9s ease-in forwards;
+    animation-delay: 4s
   }
 
-  @keyframes slide-right {
+  /* @keyframes slide-right {
     0% { opacity: 1; transform: translateX(0); }
     100% { opacity: 1; transform: translateX(100vw); }
+  } */
+
+  @keyframes slide-right {
+    0% {
+      opacity: 1;
+      transform: translateY(0) rotate(0deg);
+    }
+    70% {
+      opacity: 0;
+      transform: translateY();
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(20vh) rotate(5deg);
+    }
   }
 
 
 
   .slide-down {
     animation: slide-down 1.3s ease-in-out forwards;
-    animation-delay: 4.5s;
+    animation-delay: 4.1s;
   }
 
   @keyframes slide-down {
@@ -849,7 +847,7 @@
 
   .slide-down-and-grow {
     animation: slide-down-and-grow 1.3s ease-in-out forwards;
-    animation-delay: 4.5s
+    animation-delay: 4.1s
   }
 
   @keyframes slide-down-and-grow {

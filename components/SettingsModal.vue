@@ -109,7 +109,10 @@ export default defineComponent({
     },
 
     setLevel(event) {
-      this.gameStore.setCurrentLevel(event.target.valueAsNumber)
+      if (!event.target.valueAsNumber)
+        this.gameStore.setCurrentLevel(1)
+      else
+        this.gameStore.setCurrentLevel(event.target.valueAsNumber)
     },
 
     changeLives(lifeIncrement) {
@@ -125,7 +128,7 @@ export default defineComponent({
       this.gameStore.$patch({ 
         lives: { 
           count: event.target.valueAsNumber,
-          nextLifeTime: null 
+          nextLifeTime: Date.now() + 1800000 
         } 
       })
     }

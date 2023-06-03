@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import { Preferences } from '@capacitor/preferences';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+
 import levels from "@/helpers/levels"
 import { Tile, IndexedLevelHistoryData } from "@/types/types"
 
@@ -7,16 +9,21 @@ export const useGameStore = defineStore('game', {
   state: () => ({
     currentLevelId: 0,
     gridSize: 3,
-    bestRemainingMoves: 0,
     maxMoves: 0,
+    bestRemainingMoves: 0,
     par: 0,
     currentLevelTiles: null as (Tile[] | null),
     currentLevelValidWords: null as (string[] | null),
     replayingLevel: false, // used to indicate if this level is being replayed i.e. it's being completed before
     timeToRegainLife: 1800000, // 30 mins in ms
-    // timeToRegainLife: 8000, // 3 secs in ms
+    // timeToRegainLife: 8000, // 8 secs in ms
     maxLives: 5,
     processingLife: false,
+
+    event: {
+      type: '',
+      quantity: 0
+    },
 
     // Settings
     levelHistory: null as (IndexedLevelHistoryData | null), // it isn't exactly the same data type so feel free to remove
@@ -30,6 +37,11 @@ export const useGameStore = defineStore('game', {
     lives: {
       count: 1,
       nextLifeTime: null as (number | null) // unix 
+    },
+
+    // Currency
+    currency: {
+      amount: 0
     }
   }),
 
@@ -38,6 +50,7 @@ export const useGameStore = defineStore('game', {
       const levelHistory = await Preferences.get({ key: 'letterlock-levels' })
       const settings = await Preferences.get({ key: 'letterlock-settings' })
       const lives = await Preferences.get({ key: 'letterlock-lives' })
+      const currency = await Preferences.get({ key: 'letterlock-currency' })
 
       if (levelHistory.value)
         this.levelHistory = JSON.parse((levelHistory.value))
@@ -49,6 +62,9 @@ export const useGameStore = defineStore('game', {
         this.lives = JSON.parse((lives.value))
         this.checkLives()
       }
+
+      if (currency.value)
+        this.currency = JSON.parse((currency.value))
 
       this.setCurrentLevel()
     },
@@ -80,7 +96,6 @@ export const useGameStore = defineStore('game', {
 
     async saveLevelProgress(remainingMoves: number) {
       let mostRemainingMoves = remainingMoves
-
       if (this.levelHistory) {
         if (this.levelHistory[this.currentLevelId]) {
           mostRemainingMoves = Math.max(remainingMoves, this.bestRemainingMoves)
@@ -90,7 +105,7 @@ export const useGameStore = defineStore('game', {
           bestRemainingMoves: mostRemainingMoves
         }
       } else {
-        this.levelHistory = { 1: { bestRemainingMoves: remainingMoves } }
+        this.levelHistory = { 1: { bestRemainingMoves: mostRemainingMoves } }
       }
 
       await Preferences.set({

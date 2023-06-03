@@ -3,13 +3,15 @@ import { Capacitor } from '@capacitor/core';
 import { AdMob, RewardAdPluginEvents, RewardAdOptions } from '@capacitor-community/admob';
 
 import { useGameStore } from '@/stores/game'
+import { Reward } from "@/types/types"
 
 export const useAdsStore = defineStore('ads', {
   state: () => {
     return {// these routes can show banner ads, routes that can't are /auth, /terms etc.
       platform: Capacitor.getPlatform(),
       rewardAdsLoaded: 0,
-      currentReward: null as ({} | null)
+      adCompleted: false,
+      currentReward: null as (Reward | null)
     }
   },
 
@@ -35,7 +37,15 @@ export const useAdsStore = defineStore('ads', {
       AdMob.addListener(RewardAdPluginEvents.Dismissed, () => {
         console.log('DISMISSED')
         this.rewardAdsLoaded -= 1
-        this.prepareRewardAd()
+        
+        if (this.adCompleted && this.currentReward) {
+          if (this.currentReward.type === 'lives')
+            gameStore.handleLives(this.currentReward.quantity)
+          else if (this.currentReward.type === 'additionalMoves')
+            gameStore.event = { type: 'userReceivedExtraMoves', quantity: this.currentReward.quantity}
+        }
+
+        this.adCompleted = false
         this.currentReward = null
       });
 
@@ -43,19 +53,11 @@ export const useAdsStore = defineStore('ads', {
         console.log('FAILED TO SHOW')
 
         this.rewardAdsLoaded -= 1
-        this.prepareRewardAd()
         this.currentReward = null
       });
 
       AdMob.addListener(RewardAdPluginEvents.Rewarded, () => {
-        gameStore.handleLives(1)
-        this.rewardAdsLoaded -= 1
-        this.prepareRewardAd()
-        if (this.currentReward) {
-          if (this.currentReward.type === 'life')
-            gameStore.handleLives(this.currentReward.count)
-        }
-        this.currentReward = null
+        this.adCompleted = true;
       });
 
       AdMob.addListener(RewardAdPluginEvents.Showed, () => {
@@ -85,8 +87,9 @@ export const useAdsStore = defineStore('ads', {
       this.rewardAdsLoaded += 1
     },
 
-    async showRewardAd(reward: object) {
+    async showRewardAd(reward: Reward) {
       this.currentReward = reward
+      this.prepareRewardAd()
       await AdMob.showRewardVideoAd()
     }
   }

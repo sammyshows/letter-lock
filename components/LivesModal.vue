@@ -33,8 +33,8 @@
             <IconsHeart class="h-12 w-12 text-pink-500 drop-shadow-xl" />
             <div @click="gameStore.handleLives(1)" class="absolute w-full h-full top-0 flex justify-center items-center text-base font-medium">+1</div>
           </div>
-          <div class="w-3/4">
-            <button @click="watchRewardAd()" :disabled="rewardAdsLoaded <= 0" class="button-pulse self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500 text-white shadow-sm drop-shadow">Watch Ad</button>
+          <div class="w-3/4 flex justify-center">
+            <ButtonsWatchAd @click="watchRewardAd()" text="Watch Ad!" />
           </div>
         </div>
       </div>
@@ -99,14 +99,19 @@ export default defineComponent({
         })
       },
       deep: true
+    },
+
+    showLiveseModal(newValue) {
+      if (!newValue)
+      this.showHeart = false
     }
   },
 
   methods: {
     watchRewardAd() {
       const lifeReward = {
-        type: 'life',
-        count: 1
+        type: 'lives',
+        quantity: 1
       }
 
       this.adStore.showRewardAd(lifeReward)
