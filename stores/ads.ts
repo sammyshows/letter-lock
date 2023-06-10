@@ -64,8 +64,6 @@ export const useAdsStore = defineStore('ads', {
         console.log('SHOWED')
         this.rewardAdsLoaded -= 1
       });
-
-      this.prepareRewardAd()
     },
 
     async prepareRewardAd(): Promise<void> {

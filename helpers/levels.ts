@@ -691,7 +691,7 @@ const levels: IndexedLevelData = {
 },
   24: {
   gridSize: 4,
-    maxMoves: 16,
+    maxMoves: 15,
     par: 15,
     tiles: [{
     id: 1,
@@ -700,7 +700,7 @@ const levels: IndexedLevelData = {
   }, {
     id: 2,
     isPartOfWord: false,
-    letter: "O"
+    letter: "B"
   }, {
     id: 3,
     isPartOfWord: false,
@@ -716,7 +716,7 @@ const levels: IndexedLevelData = {
   }, {
     id: 6,
     isPartOfWord: false,
-    letter: "B"
+    letter: "O"
   }, {
     id: 7,
     isPartOfWord: false,
@@ -1302,7 +1302,7 @@ const levels: IndexedLevelData = {
 },
   32: {
   gridSize: 4,
-    maxMoves: 18,
+    maxMoves: 11,
     par: 16,
     tiles: [{
     id: 1,
@@ -1986,7 +1986,7 @@ const levels: IndexedLevelData = {
 },
   38: {
   gridSize: 4,
-    maxMoves: 11,
+    maxMoves: 25,
     par: 19,
     tiles: [{
     id: 1,
@@ -2019,7 +2019,7 @@ const levels: IndexedLevelData = {
   }, {
     id: 8,
     isPartOfWord: false,
-    letter: ""
+    letter: "I"
   }, {
     id: 9,
     isPartOfWord: false,
@@ -2199,7 +2199,7 @@ const levels: IndexedLevelData = {
 },
   41: {
   gridSize: 4,
-    maxMoves: 18,
+    maxMoves: 14,
     par: 19,
     tiles: [{
     id: 1,
@@ -5912,7 +5912,7 @@ const levels: IndexedLevelData = {
   },
   113: {
     gridSize: 3,
-    maxMoves: 2,
+    maxMoves: 3,
     par: 30,
     tiles: [{
       id: 1,
@@ -5945,17 +5945,17 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: "T"
+      letter: ""
     }, {
       id: 9,
       isPartOfWord: false,
-      letter: ""
+      letter: "T"
     }],
     validWords: ["ROT", "IT"]
   },
   114: {
     gridSize: 3,
-    maxMoves: 50, //
+    maxMoves: 7,
     par: 30,
     tiles: [{
       id: 1,
@@ -6127,7 +6127,7 @@ const levels: IndexedLevelData = {
   },
   118: {
     gridSize: 3,
-    maxMoves: 3,
+    maxMoves: 4,
     par: 30,
     tiles: [{
       id: 1,
@@ -6148,11 +6148,11 @@ const levels: IndexedLevelData = {
     }, {
       id: 5,
       isPartOfWord: false,
-      letter: "M"
+      letter: ""
     }, {
       id: 6,
       isPartOfWord: false,
-      letter: "O"
+      letter: ""
     }, {
       id: 7,
       isPartOfWord: false,
@@ -6160,11 +6160,11 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: ""
+      letter: "M"
     }, {
       id: 9,
       isPartOfWord: false,
-      letter: ""
+      letter: "O"
     }],
     validWords: ["AM", "AND", "DO"]
   },
@@ -8403,7 +8403,7 @@ const levels: IndexedLevelData = {
   },
   154: {
     gridSize: 4,
-    maxMoves: 50, //
+    maxMoves: 19,
     par: 30,
     tiles: [{
       id: 1,
@@ -9899,7 +9899,7 @@ const levels: IndexedLevelData = {
   },
   170: {
     gridSize: 5,
-    maxMoves: 50, //
+    maxMoves: 30,
     par: 30,
     tiles: [{
       id: 1,
@@ -10113,7 +10113,7 @@ const levels: IndexedLevelData = {
   },
   172: {
     gridSize: 5,
-    maxMoves: 41,
+    maxMoves: 31,
     par: 30,
     tiles: [{
       id: 1,
@@ -10434,7 +10434,7 @@ const levels: IndexedLevelData = {
   },
   175: {
     gridSize: 5,
-    maxMoves: 31,
+    maxMoves: 23,
     par: 30,
     tiles: [{
       id: 1,
@@ -15034,6 +15034,113 @@ const levels: IndexedLevelData = {
     validWords: ["BOAR", "RIGHT", "LEFT"]
   },
   218: { // FAKE FOR TESTING REMOVE
+    gridSize: 5,
+    maxMoves: 50,
+    par: 30,
+    tiles: [{
+      id: 1,
+      isPartOfWord: false,
+      letter: "F"
+    }, {
+      id: 2,
+      isPartOfWord: false,
+      letter: "E"
+    }, {
+      id: 3,
+      isPartOfWord: false,
+      letter: "E"
+    }, {
+      id: 4,
+      isPartOfWord: false,
+      letter: "T"
+    }, {
+      id: 5,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 6,
+      isPartOfWord: false,
+      letter: "L"
+    }, {
+      id: 7,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 8,
+      isPartOfWord: false,
+      letter: "A"
+    }, {
+      id: 9,
+      isPartOfWord: false,
+      letter: "H"
+    }, {
+      id: 10,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 11,
+      isPartOfWord: false,
+      letter: "O"
+    }, {
+      id: 12,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 13,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 14,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 15,
+      isPartOfWord: false,
+      letter: "L"
+    }, {
+      id: 16,
+      isPartOfWord: false,
+      letter: "T"
+    }, {
+      id: 17,
+      isPartOfWord: false,
+      letter: "E"
+    }, {
+      id: 18,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 19,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 20,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 21,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 22,
+      isPartOfWord: false,
+      letter: "O"
+    }, {
+      id: 23,
+      isPartOfWord: false,
+      letter: ""
+    }, {
+      id: 24,
+      isPartOfWord: false,
+      letter: "F"
+    }, {
+      id: 25,
+      isPartOfWord: false,
+      letter: "G"
+    }],
+    validWords: ["FEET", "LOT", "EE"]
+  },
+  219: { // FAKE FOR TESTING REMOVE
     gridSize: 5,
     maxMoves: 50,
     par: 30,

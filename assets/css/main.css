@@ -2,6 +2,15 @@
 /*@import 'tailwindcss/components';*/
 /*@import 'tailwindcss/utilities';*/
 
+
+/* Luckiest Guy font */
+@font-face {
+  font-family: 'Luckiest Guy';
+  src: url('../fonts/LuckiestGuy/LuckiestGuy-Regular.ttf')  format('truetype');
+  font-weight: 400;
+}
+
+
 /* Poppins font */
 @font-face {
   font-family: 'Poppins';

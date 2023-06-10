@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { Preferences } from '@capacitor/preferences';
-import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 import levels from "@/helpers/levels"
 import { Tile, IndexedLevelHistoryData } from "@/types/types"
@@ -8,6 +7,7 @@ import { Tile, IndexedLevelHistoryData } from "@/types/types"
 export const useGameStore = defineStore('game', {
   state: () => ({
     currentLevelId: 0,
+    maxLevelId: 0,
     gridSize: 3,
     maxMoves: 0,
     bestRemainingMoves: 0,
@@ -25,9 +25,19 @@ export const useGameStore = defineStore('game', {
       quantity: 0
     },
 
+    // Level History
+    levelHistory: { 1: { 
+      bestRemainingMoves: 0,
+      attemptTally: 0,
+      successTally: 0,
+      extraMovesUsed: false
+    } } as IndexedLevelHistoryData, // it isn't exactly the same data type so feel free to remove
+    
     // Settings
-    levelHistory: null as (IndexedLevelHistoryData | null), // it isn't exactly the same data type so feel free to remove
     settings: {
+      notifications: true,
+      sound: true,
+      vibrations: true,
       testMode: false,
       showAnimations: true,
       realLives: true
@@ -42,6 +52,12 @@ export const useGameStore = defineStore('game', {
     // Currency
     currency: {
       amount: 0
+    },
+
+    stats: {
+      streak: 0,
+      adsWatchedForLives: 0,
+      zeroLivesTally: 0
     }
   }),
 
@@ -51,6 +67,7 @@ export const useGameStore = defineStore('game', {
       const settings = await Preferences.get({ key: 'letterlock-settings' })
       const lives = await Preferences.get({ key: 'letterlock-lives' })
       const currency = await Preferences.get({ key: 'letterlock-currency' })
+      const stats = await Preferences.get({ key: 'letterlock-stats' })
 
       if (levelHistory.value)
         this.levelHistory = JSON.parse((levelHistory.value))
@@ -66,6 +83,9 @@ export const useGameStore = defineStore('game', {
       if (currency.value)
         this.currency = JSON.parse((currency.value))
 
+      if (stats.value)
+        this.stats = JSON.parse((stats.value))
+
       this.setCurrentLevel()
     },
 
@@ -73,9 +93,12 @@ export const useGameStore = defineStore('game', {
       let level
       if (this.levelHistory) { // retrieve the user's current level
         const keys = Object.keys(this.levelHistory)
-        const currentLevelId = levelId || parseInt(keys[keys.length - 1]) + 1 // Be carefully if considering simplifying this. The current approach is safe...
+        this.maxLevelId = parseInt(keys[keys.length - 1]) + 1
+
+        const currentLevelId = levelId || this.maxLevelId // Be carefully if considering simplifying this. The current approach is safe...
         level = levels[currentLevelId]
         this.currentLevelId = currentLevelId
+        console.log('currentLevelId', currentLevelId)
       } else { // set the first level
         level = levels[levelId || 1]
         this.currentLevelId = levelId || 1
@@ -89,34 +112,52 @@ export const useGameStore = defineStore('game', {
       if (this.levelHistory && this.levelHistory[this.currentLevelId]) {
         this.bestRemainingMoves = this.levelHistory[this.currentLevelId].bestRemainingMoves
         this.replayingLevel = true
+      } else if (this.levelHistory && !this.levelHistory[this.currentLevelId]) {
+        this.levelHistory[this.currentLevelId] = {
+          bestRemainingMoves: 0,
+          attemptTally: 0,
+          successTally: 0,
+          extraMovesUsed: false
+        }
       } else {
         this.replayingLevel = false
       }
     },
 
-    async saveLevelProgress(remainingMoves: number) {
-      let mostRemainingMoves = remainingMoves
-      if (this.levelHistory) {
-        if (this.levelHistory[this.currentLevelId]) {
-          mostRemainingMoves = Math.max(remainingMoves, this.bestRemainingMoves)
-        }
+    async saveLevelProgress(levelSuccess: boolean, remainingMoves: number, extraMovesUsed: boolean) {
+      let mostRemainingMoves = Math.max(remainingMoves, this.bestRemainingMoves)
+      if (levelSuccess)
+        this.stats.streak += 1
 
-        this.levelHistory[this.currentLevelId] = {
-          bestRemainingMoves: mostRemainingMoves
-        }
-      } else {
-        this.levelHistory = { 1: { bestRemainingMoves: mostRemainingMoves } }
-      }
+      this.levelHistory[this.currentLevelId].bestRemainingMoves = mostRemainingMoves
+      this.levelHistory[this.currentLevelId].attemptTally += 1
+      if (levelSuccess)
+        this.levelHistory[this.currentLevelId].successTally += 1
+      if (extraMovesUsed && (remainingMoves > this.bestRemainingMoves))
+        this.levelHistory[this.currentLevelId].extraMovesUsed = true
+      else if (remainingMoves > this.bestRemainingMoves)
+        this.levelHistory[this.currentLevelId].extraMovesUsed = true
 
       await Preferences.set({
         key: 'letterlock-levels',
         value: JSON.stringify(this.levelHistory)
       })
+
+      await Preferences.set({
+        key: 'letterlock-stats',
+        value: JSON.stringify(this.stats)
+      })
     },
 
-    resetLevel() {
+    async resetLevel() {
+      this.stats.streak = 0
       this.setCurrentLevel(this.currentLevelId)
       this.handleLives(-1)
+
+      await Preferences.set({
+        key: 'letterlock-stats',
+        value: JSON.stringify(this.stats)
+      })
     },
 
     handleLives(number) { // at this stage only -1 or 1

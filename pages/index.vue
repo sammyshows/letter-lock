@@ -1,56 +1,55 @@
 <template>
   <div class="min-h-screen mb-10 flex relative overflow-hidden duration-300 bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300">
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
-      <div v-for="(letter, index) in letters" :key="index" class="snowflake border border-slate-300 w-6 h-6 rounded m-auto flex justify-center items-center capitalize text-slate-300">{{ letter }}</div>
+      <div v-for="(letter, index) in letters" :key="index" class="snowflake border border-slate-300 w-6 h-6 rounded m-auto flex justify-center items-center capitalize text-slate-300 md:w-12 md:h-12 md:text-3xl">{{ letter }}</div>
     </div>
 
-    <div class="flex flex-col grow justify-between z-10">
-      <div class="pt-6">
-        <div class="flex justify-between px-6">
-          <IconsSettings @click="showSettingsModal = true" class="h-8 w-8 mt-1.5" />
-          <div class="text-4.5xl font-bold text-end leading-10 mb-4 text-ll-orange"><p>LETTER</p><p>LOCK</p></div>
-          <div class="flex flex-col">
-            <div class="flex gap-x-1 mt-1.5">
-              <IconsHeart class="h-6 w-6 text-red-500" />
-              <span>{{ lives.count }}</span>
+    <img class="absolute w-80 -top-20 left-1/2 -translate-x-1/2 drop-shadow-xl" src="@/assets/images/letter-lock-logo-3.svg" alt="Letter Lock Logo">
+
+    <div class="flex flex-col grow justify-around mt-20 z-10">
+      <div></div>
+      
+      <div>
+        <div>
+          <div class="flex justify-center items-center mt-16 text-4xl text-center tracking-wider font-medium md:text-7xl" style="font-family: 'Luckiest Guy';">
+            <!-- <IconsMap class="h-10 mb-2.5 text-slate-200" /> -->
+            <p>LEVEL</p>
+  
+            <div v-if="(currentLevelId - 1).toString().length !== currentLevelId.toString().length" class="relative flex items-end ml-3 text-6xl pt-4 px-4 rounded-full" style="background-image: linear-gradient(-180deg, rgb(37, 77, 257) 0%, rgb(37, 67, 237) 100%);">
+              <span>{{ currentLevelId }}</span>
             </div>
-            <div class="flex gap-x-1">
-              <IconsDollar class="h-6 w-6 text-yellow-300" />
-              <span>200</span>
+  
+            <div v-else class="relative flex justify-center items-end ml-3 mb-3 text-6xl pt-4 px-4 rounded-full" style="background-image: linear-gradient(-180deg, rgb(37, 77, 257) 0%, rgb(37, 67, 237) 100%);">
+              <span :class="{ 'old-level-animation': levelUp }">{{ levelUp ? (currentLevelId - 1) : currentLevelId }}</span>
+              <span :class="{ 'new-level-animation': levelUp }" class="absolute opacity-0">{{ currentLevelId }}</span>
             </div>
           </div>
-        </div>
-        <div class="flex justify-between px-10 mt-5">
-          <IconsCart class="h-10 w-10 text-yellow-300" />
-          <div>
-            <IconsEllipsis class="h-10 w-10 text-emerald-400" />
+  
+          <div class="relative h-16 mt-4 w-full flex items-center justify-center md:h-24">
+            <div @click="startGame" class="play-button">Play</div>
+          </div>
+
+          <div v-if="stats.streak >= 2" class="flex justify-center items-center mt-5">
+            <IconsFire class="h-12 w-12 md:h-8 md:w-8" />
+            <p class="mt-3 ml-1 text-3xl md:text-2xl" style="font-family: 'Luckiest Guy';">{{ stats.streak }}</p>
           </div>
         </div>
       </div>
-
 
       <div>
-        <div class="flex justify-center mb-4 text-4xl text-center font-medium">
-          <p class="">LEVEL</p>
-          <div class="relative flex items-end ml-3">
-            <span :class="{ 'old-level-animation': levelUp }">{{ levelUp ? (currentLevelId - 1) : currentLevelId }}</span>
-            <span :class="{ 'new-level-animation': levelUp }" class="absolute left-0 opacity-0">{{ currentLevelId }}</span>
-          </div>
-        </div>
+        <div class="flex justify-around items-center mt-12">
+          <IconsSettings @click="showSettingsModal = true" class="h-10 drop-shadow md:h-14 md:w-14" />
 
-        <div class="h-16 w-full flex items-center justify-center">
-          <button @click="startGame" class="size-change bg-stone-100 text-blue-700 font-medium text-2xl px-10 py-2 rounded-full shadow mb-6 z-10">Play</button>
-        </div>
+          <NuxtLink :to="{ path: '/levels' }">
+            <IconsMap class="h-10 m-0" />
+          </NuxtLink>
 
-        <div class="flex justify-center">
-          <div class="bg-red-600/30 rounded-2xl mr-2">
-            <IconsFire class="h-6 w-6" />
+          <div class="relative drop-shadow">
+            <IconsHeart class="h-12 w-12 text-red-500 md:h-10 md:w-10" />
+            <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xl md:text-3xl font-medium">{{ lives.count }}</span>
           </div>
-          <p>3 IN A ROW!</p>
         </div>
       </div>
-
-      <div class="h-32"></div>
     </div>
 
 
@@ -79,9 +78,9 @@ export default {
 
   setup() {
     const gameStore = useGameStore()
-    const { currentLevelId, lives, maxLives } = storeToRefs(gameStore)
+    const { currentLevelId, lives, maxLives, stats } = storeToRefs(gameStore)
 
-    return { gameStore, currentLevelId, lives, maxLives }
+    return { gameStore, currentLevelId, lives, maxLives, stats }
   },
 
   mounted() {
@@ -166,6 +165,42 @@ a {
 
 /* Modal slide in */
 
+.play-button {
+  position: relative;
+  border: 0;
+  border-radius: 50px;
+  display: flex;
+  font-size: 2rem;
+  font-weight: 500;
+  color: white;
+  cursor: pointer;
+  outline: 0;
+  background-image: linear-gradient(-180deg, rgb(37, 77, 257) 0%, rgb(37, 67, 237) 100%);
+  box-shadow: 0 0.3rem 1.25rem 0 rgba(37, 72, 247, 0.50), 0 -0.25rem 1.5rem 
+              rgba(37, 57, 227, 1) inset, 0 0.75rem 0.5rem 
+              rgba(255,255,255, 0.15) inset, 0 0.25rem 0.5rem 0 
+              rgba(37, 67, 242, 1) inset;
+  animation: size-change 1.5s infinite alternate;
+}
+
+.play-button:active {
+  transform: scale(0.95);
+}
+
+@keyframes size-change {
+  0%, 100% {
+    padding: 4px 40px;
+  }
+
+  50% {
+    padding: 6px 44px;
+  }
+}
+
+
+
+
+
 @keyframes utility-modal-slide-in {
   0% {
     transform: translateY(-130vh) rotate(12deg);
@@ -241,21 +276,6 @@ a {
 
 
 
-/* Size change effect - variation 4 */
-.size-change {
-  animation: size-change 1.5s infinite alternate;
-}
-
-@keyframes size-change {
-  0%, 100% {
-    padding: 8px 40px;
-  }
-
-  50% {
-    padding: 10px 46px;
-  }
-}
-
 
 
 /* Change level number animation */
@@ -273,7 +293,7 @@ a {
 
 .new-level-animation {
   animation: new-level-animation 0.4s ease-in-out forwards;
-  animation-delay: 0.6s;
+  animation-delay: 0.3s;
 }
 
 
@@ -292,7 +312,7 @@ a {
 
 .old-level-animation {
   animation: old-level-animation 0.2s ease-in forwards;
-  animation-delay: 0.6s;
+  animation-delay: 0.3s;
 }
 
 

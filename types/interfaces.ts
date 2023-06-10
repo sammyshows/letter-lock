@@ -17,7 +17,10 @@ export interface IndexedLevelData {
 }
 
 export interface LevelHistoryData {
-  bestRemainingMoves: number
+  bestRemainingMoves: number,
+  attemptTally: number,
+  successTally: number,
+  extraMovesUsed: boolean
 }
 
 export interface IndexedLevelHistoryData {

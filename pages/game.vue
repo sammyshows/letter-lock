@@ -1,18 +1,23 @@
   <template>
     <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300">
-      <div class="z-10 w-full flex px-4">
+      <div class="w-full flex justify-between px-4 z-10">
         <NuxtLink :to="{ path: '/' }">
-          <IconsArrowLeft class="h-10 w-10" />
+          <IconsArrowLeft class="h-10 w-10 md:w-20 md:h-20 md:ml-3 md:mt-2" />
         </NuxtLink>
+
+        <div class="relative h-5 h-5 drop-shadow opacity-50">
+          <IconsHeart class="h-5 w-5 text-red-400 md:h-10 md:w-10" />
+          <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-tiny md:text-3xl font-medium">{{ lives.count }}</span>
+        </div>
       </div>
       <div class="z-10 grow">
-        <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center">LEVEL {{ currentLevelId }}</div>
+        <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center md:text-5xl">LEVEL {{ currentLevelId }}</div>
 
         <div class="flex justify-center">
           <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
-            <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange"></IconsLock>
+            <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange md:h-32 md:w-32"></IconsLock>
             <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
-            <div class="absolute pb-2 text-3xl font-medium">{{ remainingMoves }}</div>
+            <div class="absolute pb-2 text-3xl font-medium md:text-5xl md:pb-4">{{ remainingMoves }}</div>
           </div>
 
           <div v-if="settings.testMode && replayingLevel" :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end ml-2">
@@ -23,8 +28,8 @@
         </div>
 
         <div class="p-4">
-          <div :class="{ 'hide-board': !displayBoard }" class="absolute p-3 bg-gray-100 rounded-xl" style="width: 90vw; height: 90vw;"></div>
-          <div :class="{ 'slide-right': !displayBoard }" class="p-3" style="width: 90vw; height: 90vw;">
+          <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute p-3 bg-gray-100 rounded-xl"></div>
+          <div :class="{ 'slide-right': !displayBoard }" class="board-size p-3">
             <div
               ref="gameBoard"
               :class="[ gridCSS ]"
@@ -41,7 +46,7 @@
                     levelCompleted ? animationClasses[index] : '',
                     borderRadiusClasses ? borderRadiusClasses[index] : ''
                 ]"
-                class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center"
+                class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center md:text-5xl"
               >
                 {{ tile.letter }}
               </div>
@@ -49,7 +54,7 @@
           </div>
 
           <div class="mt-6 duration-1000" :class="{ 'opacity-0': !displayBoard }">
-            <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500">{{ word }}</p>
+            <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 md:text-4xl">{{ word }}</p>
           </div>
         </div>
       </div>
@@ -70,12 +75,13 @@
       <FailedModal v-if="showFailedModal || hideFailedModal"
                 :showFailedModal="showFailedModal"
                 :hideFailedModal="hideFailedModal"
+                :allowExtraMoves="!extraMovesUsed"
                 @close="closeFailedModal" />
 
       <div :class="[ showFailedModal || showCompleteModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-700 pointer-events-none z-10"></div>
-     <div class="ripple-container">
-       <div :class="{ 'ripple': showCollideEffect }"></div>
-     </div>
+      <div class="ripple-container">
+        <div :class="{ 'ripple': showCollideEffect }"></div>
+      </div>
     </div>
   </template>
 
@@ -83,7 +89,6 @@
   import _ from 'lodash'
   import Sortable, { Swap } from "sortablejs";
   import { storeToRefs } from "pinia"
-  import { Haptics, ImpactStyle } from '@capacitor/haptics';
   import { useGameStore } from "@/stores/game";
 
   Sortable.mount(new Swap());
@@ -105,6 +110,7 @@
         sortableTiles: [], // copy used for sortable. Changes are not made to this array by sortable so tiles could be swapped and this array wouldn't reflect it.
         gridSize: 3,
         remainingMoves: 0,
+        extraMovesUsed: false,
         validWords: [],
         wordsFormed: [],
         levelCompleted: false,
@@ -120,7 +126,7 @@
         showCollideEffect: false,
         displayBoard: true,
         gridCSS: 'gap-2',
-        lockBoltHeight: '0.60rem',
+        lockBoltHeight: this.getResponsiveValue('lockBoltHeight'),
         lockBoltColor: '#337aff',
         lockDropShadow: 'drop-shadow(0 0 0 rgb(251, 163, 69))',
         lockTransitionDuration: '700ms', // also gets sets back to 700ms at end of failLevel()
@@ -161,9 +167,9 @@
         handler: async function (newAdEvent, oldAdEvent) {
           await this.closeFailedModal(false)
 
-          await this.delay(200)
-          this.levelFailed = false
+          await this.delay(100)
           this.addMoves(newAdEvent.quantity) // after modal is closed add the moves, visible to the user
+          this.extraMovesUsed = true
         }
       },
     },
@@ -188,7 +194,7 @@
       },
 
       async completeLevel() {
-        await this.gameStore.saveLevelProgress()
+        await this.gameStore.saveLevelProgress(true, this.remainingMoves, this.extraMovesUsed)
 
         if (!this.settings.showAnimations)
           return this.showCompleteModal = true
@@ -207,7 +213,7 @@
         this.showCollideEffect = true;
 
         await this.delay(50);
-        await Haptics.impact({ style: ImpactStyle.Light });
+        this.$vibrateLight()
 
         await this.delay(875);
         this.lockBoltColor = "#4C9BFF";
@@ -219,14 +225,14 @@
         this.lockDropShadow = "drop-shadow(0 0 40px rgb(251, 163, 69))";
 
         await this.delay(50);
-        await Haptics.impact({ style: ImpactStyle.Light });
+        this.$vibrateLight()
 
         let intervalID;
         const totalRemainingMoves = this.remainingMoves
         intervalID = setInterval(async () => {
           if (this.remainingMoves > 0) {
             this.remainingMoves -= 1;
-            await Haptics.impact({ style: ImpactStyle.Light });
+            this.$vibrateLight()
           } else {
             clearInterval(intervalID);
             this.showCompleteModal = true
@@ -330,9 +336,9 @@
           // Deduct 1 from the remaining moves, if not the same character
           if (this.tiles[oldIndex].letter !== this.tiles[newIndex].letter) {
             this.remainingMoves -= 1
-            await Haptics.impact({ style: ImpactStyle.Light });
+            this.$vibrateLight()
           } else {
-            await Haptics.vibrate({ duration: 25 })
+            this.$vibrateMedium()
           }
 
           // Schedule a swap after the current frame
@@ -402,13 +408,25 @@
           tile.isPartOfWord = false;
         });
 
+        function isAlphabet(char) {
+          return /^[A-Z]$/i.test(char);
+        }
+
         const highlightTiles = (word, tiles) => {
           wordsFormed.push(word)
           let startIndex = -1;
           for (let i = 0; i < tiles.length; i++) {
             if (tiles.slice(i, i + word.length).map(t => t.letter).join('') === word) {
-              startIndex = i;
-              break;
+              // Check the letters before and after the word
+              const prevLetter = i > 0 ? tiles[i-1].letter : null;
+              const nextLetter = i + word.length < tiles.length ? tiles[i + word.length].letter : null;
+              
+              // If the letters before and after the word are not part of the word or are not present (null), 
+              // then this is not part of another word, so we can highlight it
+              if ((!prevLetter || !word.includes(prevLetter)) && (!nextLetter || !word.includes(nextLetter))) {
+                startIndex = i;
+                break;
+              }
             }
           }
 
@@ -422,13 +440,19 @@
           }
         };
 
+        // Sort valid words by length, from shortest to longest
+        const sortedValidWords = this.validWords.sort((a, b) => a.length - b.length);
+
         // Check the rows for valid words
         for (let rowIndex = 0; rowIndex < this.gridSize; rowIndex++) {
           const rowTiles = this.tiles.slice(rowIndex * this.gridSize, rowIndex * this.gridSize + this.gridSize);
           const rowLetters = rowTiles.map((tile) => tile.letter);
-          this.validWords.forEach((word) => {
+          sortedValidWords.forEach((word) => {
             for (let i = 0; i <= rowLetters.length - word.length; i++) {
-              if (rowLetters.slice(i, i + word.length).join('') === word) {
+              let slicedLetters = rowLetters.slice(i, i + word.length).join('');
+              if (slicedLetters === word &&
+                  (i === 0 || !isAlphabet(rowLetters[i - 1])) && // Check preceding letter
+                  (i + word.length === rowLetters.length || !isAlphabet(rowLetters[i + word.length]))) { // Check succeeding letter
                 console.log(`Found valid word: ${word}`);
                 highlightTiles(word, rowTiles.slice(i, i + word.length));
               }
@@ -443,9 +467,12 @@
             colTiles.push(this.tiles[rowIndex * this.gridSize + colIndex]);
           }
           const colLetters = colTiles.map((tile) => tile.letter);
-          this.validWords.forEach((word) => {
+          sortedValidWords.forEach((word) => {
             for (let i = 0; i <= colLetters.length - word.length; i++) {
-              if (colLetters.slice(i, i + word.length).join('') === word) {
+              let slicedLetters = colLetters.slice(i, i + word.length).join('');
+              if (slicedLetters === word &&
+                  (i === 0 || !isAlphabet(colLetters[i - 1])) && // Check preceding letter
+                  (i + word.length === colLetters.length || !isAlphabet(colLetters[i + word.length]))) { // Check succeeding letter
                 console.log(`Found valid word: ${word}`);
                 highlightTiles(word, colTiles.slice(i, i + word.length));
               }
@@ -553,6 +580,9 @@
       },
 
       async closeFailedModal(resetLevel) {
+        if (resetLevel)
+          await this.gameStore.saveLevelProgress(false, this.remainingMoves, this.extraMovesUsed)
+        
         this.hideFailedModal = true
 
         await this.delay(700)  // delay should match utility-modal-slide-out time
@@ -579,17 +609,40 @@
             await this.delay(200)
             this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
 
-            await Haptics.impact({ style: ImpactStyle.Light });
+            this.$vibrateLight()
           } else {
+            this.levelFailed = false
             clearInterval(intervalID);
           }
         }, 400)
-      }
+      },
+
+      getResponsiveValue(variableName) {
+        const values = {
+          lockBoltHeight: window.innerWidth >= 768 ? '0.96rem' : '0.60rem',
+          // Add other variables and their values here
+        };
+
+        return values[variableName];
+      },
     },
   };
   </script>
 
   <style>
+    .board-size {
+    width: 90vw;
+    height: 90vw;
+  }
+
+  @media (min-width: 768px) { /* The value 768px is commonly used to target tablets and above */
+    .board-size {
+      width: 60vw;
+      height: 60vw;
+    }
+  }
+
+
   .highlight {
     background-color: rgba(0, 0, 0, 0.1);
   }
@@ -613,6 +666,17 @@
     bottom: 2.98rem;
     left: 1.39rem;
     transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
+  }
+
+  @media (min-width: 768px) { /* The value 768px is commonly used to target tablets and above */
+    .lock-bolt {
+      position: absolute;
+      width: 0.56rem;
+      height: 1.28rem;
+      bottom: 4.75rem;
+      left: 2.23rem;
+      transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
+    }
   }
 
   .ripple-container {
