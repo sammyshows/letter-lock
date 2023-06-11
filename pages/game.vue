@@ -56,22 +56,18 @@
           </div>
         </div>
       </div>
-
-      <div v-show="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
-        <div class="text-ll-orange text-4xl font-bold">
-          <p class="word-slide-left">LETTERS</p>
-          <p class="word-slide-right">LOCKED</p>
-        </div>
-        <p class="px-6 text-xl text-slate-600">Nice job - you crushed it! The next has level has been <span class="text-purple-400 font-medium">UNLOCKED!</span></p>
-        <div class="flex flex-col justify-center gap-y-2 text-lg" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-12' ]">
-          <button v-if="settings.testMode" @click="resetLevel" class="button-pulse self-center rounded-full bg-ll-orange text-white shadow-sm">Retry Level</button>
-          <button @click="nextLevel" class="button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm">Next Level</button>
-        </div>
-      </div>
-
+      
       <div class="ripple-container">
         <div :class="{ 'ripple': showCollideEffect }"></div>
       </div>
+
+      <!-- LEVEL COMPLETE MODAL -->
+      <LevelCompleteModal v-if="showLevelCompleteModal || hideLevelCompleteModal"
+                :showLevelCompleteModal="showLevelCompleteModal"
+                :hideLevelCompleteModal="hideLevelCompleteModal"
+                @nextLevel="nextLevel"
+                @resetLevel="resetLevel"
+                @close="closeLoseLifeModal" />
 
       <!-- LOSE LIFE MODAL -->
       <LoseLifeModal v-if="showLoseLifeModal || hideLoseLifeModal"
@@ -87,7 +83,7 @@
                 @close="closeFailedModal" />
 
       <div v-if="showLoseLifeModal" @click="closeLoseLifeModal(false)" class="h-screen w-full bg-transparent absolute z-10"></div>
-      <div :class="[ showFailedModal || showCompleteModal || showLoseLifeModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-500 pointer-events-none z-10"></div>
+      <div :class="[ showFailedModal || showLevelCompleteModal || showLoseLifeModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-700 pointer-events-none z-10"></div>
     </div>
   </template>
 
@@ -121,8 +117,8 @@
         wordsFormed: [],
         levelCompleted: false,
         levelFailed: false,
-        showCompleteModal: false,
-        hideCompleteModal: false,
+        showLevelCompleteModal: true,
+        hideLevelCompleteModal: false,
         showLoseLifeModal: false,
         hideLoseLifeModal: false,
         showFailedModal: false,
@@ -205,7 +201,7 @@
         await this.gameStore.saveLevelProgress(true, this.remainingMoves, this.extraMovesUsed)
 
         if (!this.settings.showAnimations)
-          return this.showCompleteModal = true
+          return this.showLevelCompleteModal = true
 
         this.levelCompleted = true;
         this.displayBoard = false;
@@ -243,7 +239,7 @@
             this.$vibrateLight()
           } else {
             clearInterval(intervalID);
-            this.showCompleteModal = true
+            this.showLevelCompleteModal = true
           }
         }, totalRemainingMoves > 1 ? (1000 / totalRemainingMoves) : 500);
       },
@@ -305,10 +301,10 @@
       },
 
       async nextLevel() {
-        this.hideCompleteModal = true // 25/03/23 - the complete modal only shows if one of these two are true. That might cause issues if there's a split second where they're both false.
-        this.showCompleteModal = false
+        this.hideLevelCompleteModal = true // 25/03/23 - the complete modal only shows if one of these two are true. That might cause issues if there's a split second where they're both false.
+        this.showLevelCompleteModal = false
 
-        await this.delay(1000)
+        await this.delay(700)
         await this.gameStore.setCurrentLevel(this.currentLevelId + 1)
         this.$router.push({ path: '/', query: { levelUp: true } })
       },
@@ -316,8 +312,8 @@
       async resetLevel() {
         if (this.showFailedModal)
           this.hideFailedModal = true
-        else if (this.showCompleteModal)
-          this.hideCompleteModal = true
+        else if (this.showLevelCompleteModal)
+          this.hideLevelCompleteModal = true
 
         await this.delay(1000)
         this.gameStore.resetLevel()
