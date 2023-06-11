@@ -10,7 +10,7 @@
       <div></div>
       
       <div>
-        <div>
+        <div v-if="currentLevelId <= totalLevelCount">
           <div class="flex justify-center items-center mt-16 text-4xl text-center tracking-wider font-medium md:text-7xl" style="font-family: 'Luckiest Guy';">
             <!-- <IconsMap class="h-10 mb-2.5 text-slate-200" /> -->
             <p>LEVEL</p>
@@ -33,6 +33,12 @@
             <IconsFire class="h-12 w-12 md:h-8 md:w-8" />
             <p class="mt-3 ml-1 text-3xl md:text-2xl" style="font-family: 'Luckiest Guy';">{{ stats.streak }}</p>
           </div>
+        </div>
+
+        <div v-else class="flex flex-col justify-center items-center mt-16 text-4xl text-center tracking-wider font-medium md:text-7xl" style="font-family: 'Luckiest Guy';">
+          <p>ALL</p>
+          <p>LEVELS</p>
+          <p>COMPLETE</p>
         </div>
       </div>
 
@@ -57,14 +63,17 @@
                    :hideSettingsModal="hideSettingsModal"
                    @close="closeSettingsModal" />
 
-
     <LivesModal v-if="showLivesModal || hideLivesModal"
                 :showLivesModal="showLivesModal"
                 :hideLivesModal="hideLivesModal"
                 @close="closeLivesModal" />
 
+    <AllLevelsCompleteModal v-if="showAllLevelsCompleteModal || hideAllLevelsCompleteModal"
+                :showAllLevelsCompleteModal="showAllLevelsCompleteModal"
+                :hideAllLevelsCompleteModal="hideAllLevelsCompleteModal"
+                @close="closeAllLevelsCompleteModal" />
 
-    <div :class="[ showLivesModal && !hideLivesModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-700 pointer-events-none z-10"></div>
+    <div :class="[ showSettingsModal || showLivesModal || showAllLevelsCompleteModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-500 pointer-events-none z-10"></div>
   </div>
 </template>
 
@@ -78,9 +87,9 @@ export default {
 
   setup() {
     const gameStore = useGameStore()
-    const { currentLevelId, lives, maxLives, stats } = storeToRefs(gameStore)
+    const { totalLevelCount, currentLevelId, lives, maxLives, stats } = storeToRefs(gameStore)
 
-    return { gameStore, currentLevelId, lives, maxLives, stats }
+    return { gameStore, totalLevelCount, currentLevelId, lives, maxLives, stats }
   },
 
   mounted() {
@@ -99,6 +108,10 @@ export default {
         this.gameStore.checkLives();
       }
     }, 6000);
+
+    console.log(this.currentLevelId, this.totalLevelCount)
+    if (this.currentLevelId > this.totalLevelCount)
+      this.showAllLevelsCompleteModal = true
   },
 
   beforeUnmount() {
@@ -111,6 +124,8 @@ export default {
       hideSettingsModal: false,
       showLivesModal: false,
       hideLivesModal: false,
+      showAllLevelsCompleteModal: false,
+      hideAllLevelsCompleteModal: false,
       levelUp: false,
       letters: ['f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g', 'q', 'f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g']
     }
@@ -148,6 +163,16 @@ export default {
       setTimeout(() => {
         this.showSettingsModal = false
         this.hideSettingsModal = false
+      }, 700) // delay should match utility-modal-slide-out time
+    },
+
+    closeAllLevelsCompleteModal() {
+      this.hideAllLevelsCompleteModal = true
+
+      // Not the prettiest, but this resets the modal animations 
+      setTimeout(() => {
+        this.showAllLevelsCompleteModal = false
+        this.hideAllLevelsCompleteModal = false
       }, 700) // delay should match utility-modal-slide-out time
     }
   },

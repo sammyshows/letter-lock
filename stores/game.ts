@@ -6,6 +6,7 @@ import { Tile, IndexedLevelHistoryData } from "@/types/types"
 
 export const useGameStore = defineStore('game', {
   state: () => ({
+    totalLevelCount: Object.keys(levels).length,
     currentLevelId: 0,
     maxLevelId: 0,
     gridSize: 3,
@@ -91,25 +92,30 @@ export const useGameStore = defineStore('game', {
       this.setCurrentLevel()
     },
 
-    setCurrentLevel(levelId?: number) {
+    async setCurrentLevel(levelId?: number) {
       let level
       if (this.levelHistory) { // retrieve the user's current level
         const keys = Object.keys(this.levelHistory)
-        this.maxLevelId = parseInt(keys[keys.length - 1]) + 1
+        this.maxLevelId = parseInt(keys[keys.length - 1])
 
-        const currentLevelId = levelId || this.maxLevelId // Be carefully if considering simplifying this. The current approach is safe...
+        const currentLevelId = levelId || this.maxLevelId
         level = levels[currentLevelId]
         this.currentLevelId = currentLevelId
-        console.log('currentLevelId', currentLevelId)
       } else { // set the first level
-        level = levels[levelId || 1]
-        this.currentLevelId = levelId || 1
+        const levelHistory = await Preferences.get({ key: 'letterlock-levels' })
+        if (!levelHistory.value) { // if no level history, set the first level. Checking a second time to be safe, this will overwrite any existing levelHistory
+          level = levels[levelId || 1]
+          this.currentLevelId = levelId || 1
+        }
       }
-      this.gridSize = level.gridSize
-      this.maxMoves = level.maxMoves
-      this.par = level.par
-      this.currentLevelTiles = level.tiles
-      this.currentLevelValidWords = level.validWords
+
+      if (level) {
+        this.gridSize = level.gridSize
+        this.maxMoves = level.maxMoves
+        this.par = level.par
+        this.currentLevelTiles = level.tiles
+        this.currentLevelValidWords = level.validWords
+      }
 
       if (this.levelHistory && this.levelHistory[this.currentLevelId]) {
         this.bestRemainingMoves = this.levelHistory[this.currentLevelId].bestRemainingMoves
@@ -121,6 +127,11 @@ export const useGameStore = defineStore('game', {
           successTally: 0,
           extraMovesUsed: false
         }
+
+        await Preferences.set({
+          key: 'letterlock-levels',
+          value: JSON.stringify(this.levelHistory)
+        })
       } else {
         this.replayingLevel = false
       }

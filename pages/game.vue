@@ -69,6 +69,10 @@
         </div>
       </div>
 
+      <div class="ripple-container">
+        <div :class="{ 'ripple': showCollideEffect }"></div>
+      </div>
+
       <!-- LOSE LIFE MODAL -->
       <LoseLifeModal v-if="showLoseLifeModal || hideLoseLifeModal"
                 :showLoseLifeModal="showLoseLifeModal"
@@ -82,10 +86,8 @@
                 :allowExtraMoves="!extraMovesUsed"
                 @close="closeFailedModal" />
 
-      <div :class="[ showFailedModal || showCompleteModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-700 pointer-events-none z-10"></div>
-      <div class="ripple-container">
-        <div :class="{ 'ripple': showCollideEffect }"></div>
-      </div>
+      <div v-if="showLoseLifeModal" @click="closeLoseLifeModal(false)" class="h-screen w-full bg-transparent absolute z-10"></div>
+      <div :class="[ showFailedModal || showCompleteModal || showLoseLifeModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-500 pointer-events-none z-10"></div>
     </div>
   </template>
 
@@ -121,7 +123,7 @@
         levelFailed: false,
         showCompleteModal: false,
         hideCompleteModal: false,
-        showLoseLifeModal: true,
+        showLoseLifeModal: false,
         hideLoseLifeModal: false,
         showFailedModal: false,
         hideFailedModal: false,

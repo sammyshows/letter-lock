@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showLoseLifeModal || hideLoseLifeModal" :class="{ 'modal-slide-in': showLoseLifeModal,  'modal-slide-out': hideLoseLifeModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
+  <div v-show="showLoseLifeModal || hideLoseLifeModal" :class="{ 'modal-slide-in': showLoseLifeModal,  'modal-slide-out': hideLoseLifeModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl z-20">    
     <div @click="$emit('close', false)" class="absolute top-2 right-3">
       <IconsX class="absolute z-40 -top-0 -right-0  w-8 h-8 text-red-400" />
     </div>
