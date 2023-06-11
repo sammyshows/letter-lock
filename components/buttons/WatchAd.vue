@@ -1,7 +1,7 @@
 <template>
-  <div class="button-pulse flex self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500">
+  <div @click="$emit('watchAd')" class="button-pulse flex self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500">
     <IconsClapperboard class="w-6 h-6 mr-3 -rotate-6 text-white" />
-    <button @click="$emit('watchAd')" class="text-sm text-white font-medium shadow-sm drop-shadow">{{ text }}</button>
+    <button class="text-sm text-white font-medium shadow-sm drop-shadow">{{ text }}</button>
   </div>
 </template>
 

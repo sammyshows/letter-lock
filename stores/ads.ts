@@ -39,31 +39,34 @@ export const useAdsStore = defineStore('ads', {
         this.rewardAdsLoaded -= 1
         
         if (this.adCompleted && this.currentReward) {
-          if (this.currentReward.type === 'lives')
+          if (this.currentReward.type === 'lives') {
             gameStore.handleLives(this.currentReward.quantity)
+            gameStore.stats.adsWatchedForLives += 1
+            gameStore.saveStats()
+          }
           else if (this.currentReward.type === 'additionalMoves')
             gameStore.event = { type: 'userReceivedExtraMoves', quantity: this.currentReward.quantity}
         }
 
         this.adCompleted = false
         this.currentReward = null
-      });
+      })
 
       AdMob.addListener(RewardAdPluginEvents.FailedToShow, () => {
         console.log('FAILED TO SHOW')
 
         this.rewardAdsLoaded -= 1
         this.currentReward = null
-      });
+      })
 
       AdMob.addListener(RewardAdPluginEvents.Rewarded, () => {
-        this.adCompleted = true;
-      });
+        this.adCompleted = true
+      })
 
       AdMob.addListener(RewardAdPluginEvents.Showed, () => {
         console.log('SHOWED')
         this.rewardAdsLoaded -= 1
-      });
+      })
     },
 
     async prepareRewardAd(): Promise<void> {

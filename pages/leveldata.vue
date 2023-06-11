@@ -27,13 +27,15 @@ import { useGameStore } from "@/stores/game"
 import levels from "@/helpers/levels"
 
 export default defineComponent({
-  name: 'Delete Confirmation',
+  name: 'Level Data',
 
   setup() {
     const gameStore = useGameStore()
-    const { levelHistory } = storeToRefs(gameStore)
+    const { levelHistory, stats } = storeToRefs(gameStore)
 
-    return { levelHistory }
+    console.log('stats', stats)
+
+    return { levelHistory, stats }
   },
 
   data() {

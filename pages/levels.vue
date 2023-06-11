@@ -16,7 +16,8 @@
         <div 
           v-for="n in 20"
           @click="goToLevel(n)"
-          class="h-14 w-14 bg-gray-200 flex items-center justify-center rounded-full"
+          style="font-family: Luckiest Guy;"
+          class="h-14 w-14 bg-gray-200 flex items-center justify-center rounded-full text-2xl pt-2"
           :class="[
             (n + (currentPage - 1) * 20) <= maxLevelId ? 'bg-ll-orange' : 'bg-slate-300'
           ]"

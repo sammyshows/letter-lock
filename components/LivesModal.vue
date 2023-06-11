@@ -31,7 +31,7 @@
         <div class="w-full flex justify-between pl-8 pr-4">
           <div class="relative w-1/4 h-min flex justify-center drop-shadow">
             <IconsHeart class="h-12 w-12 text-pink-500 drop-shadow-xl" />
-            <div @click="gameStore.handleLives(1)" class="absolute w-full h-full top-0 flex justify-center items-center text-base font-medium">+1</div>
+            <div class="absolute w-full h-full top-0 flex justify-center items-center text-base font-medium">+1</div>
           </div>
           <div class="w-3/4 flex justify-center">
             <ButtonsWatchAd @click="watchRewardAd()" text="Watch Ad!" />

@@ -26,12 +26,14 @@ export const useGameStore = defineStore('game', {
     },
 
     // Level History
-    levelHistory: { 1: { 
-      bestRemainingMoves: 0,
-      attemptTally: 0,
-      successTally: 0,
-      extraMovesUsed: false
-    } } as IndexedLevelHistoryData, // it isn't exactly the same data type so feel free to remove
+    levelHistory: {
+      1: {
+        bestRemainingMoves: 0,
+        attemptTally: 0,
+        successTally: 0,
+        extraMovesUsed: false
+      }
+    } as IndexedLevelHistoryData, // it isn't exactly the same data type so feel free to remove
     
     // Settings
     settings: {
@@ -125,18 +127,20 @@ export const useGameStore = defineStore('game', {
     },
 
     async saveLevelProgress(levelSuccess: boolean, remainingMoves: number, extraMovesUsed: boolean) {
-      let mostRemainingMoves = Math.max(remainingMoves, this.bestRemainingMoves)
-      if (levelSuccess)
+      this.levelHistory[this.currentLevelId].attemptTally += 1
+      
+      if (levelSuccess) {
+        let mostRemainingMoves = Math.max(remainingMoves, this.bestRemainingMoves)
         this.stats.streak += 1
 
-      this.levelHistory[this.currentLevelId].bestRemainingMoves = mostRemainingMoves
-      this.levelHistory[this.currentLevelId].attemptTally += 1
-      if (levelSuccess)
+        this.levelHistory[this.currentLevelId].bestRemainingMoves = mostRemainingMoves
         this.levelHistory[this.currentLevelId].successTally += 1
-      if (extraMovesUsed && (remainingMoves > this.bestRemainingMoves))
-        this.levelHistory[this.currentLevelId].extraMovesUsed = true
-      else if (remainingMoves > this.bestRemainingMoves)
-        this.levelHistory[this.currentLevelId].extraMovesUsed = true
+
+        if (extraMovesUsed && ((remainingMoves > this.bestRemainingMoves) || !this.replayingLevel)) // only set if the extra moves were used to beat the previous best or if this is the first time the level has being completed
+          this.levelHistory[this.currentLevelId].extraMovesUsed = true
+        else if (remainingMoves > this.bestRemainingMoves)
+          this.levelHistory[this.currentLevelId].extraMovesUsed = false
+      }
 
       await Preferences.set({
         key: 'letterlock-levels',
@@ -183,6 +187,11 @@ export const useGameStore = defineStore('game', {
 
       this.processingLife = false
 
+      if (this.lives.count <= 0) {
+        this.stats.zeroLivesTally += 1
+        this.saveStats()
+      }
+
       Preferences.set({
         key: 'letterlock-lives',
         value: JSON.stringify(this.lives)
@@ -219,12 +228,27 @@ export const useGameStore = defineStore('game', {
     },
 
     async resetProgress() {
-      this.levelHistory = null
+      this.levelHistory = {
+        1: {
+          bestRemainingMoves: 0,
+          attemptTally: 0,
+          successTally: 0,
+          extraMovesUsed: false
+        }  
+      }
+
       this.setCurrentLevel()
 
       await Preferences.remove({
         key: 'letterlock-levels'
       });
+    },
+
+    async saveStats() {
+      await Preferences.set({
+        key: 'letterlock-stats',
+        value: JSON.stringify(this.stats)
+      })
     }
   },
 })

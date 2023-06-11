@@ -54,14 +54,14 @@
 
 
     <SettingsModal :showSettingsModal="showSettingsModal"
-                    :hideSettingsModal="hideSettingsModal"
-                    @close="closeSettingsModal()" />
+                   :hideSettingsModal="hideSettingsModal"
+                   @close="closeSettingsModal" />
 
 
     <LivesModal v-if="showLivesModal || hideLivesModal"
                 :showLivesModal="showLivesModal"
                 :hideLivesModal="hideLivesModal"
-                @close="closeLivesModal()" />
+                @close="closeLivesModal" />
 
 
     <div :class="[ showLivesModal && !hideLivesModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-700 pointer-events-none z-10"></div>

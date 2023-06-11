@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showFailedModal || hideFailedModal || false" :class="{ 'modal-slide-in': showFailedModal,  'modal-slide-out': hideFailedModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
+  <div v-show="showFailedModal || hideFailedModal" :class="{ 'modal-slide-in': showFailedModal,  'modal-slide-out': hideFailedModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
     <div @click="$emit('close', true)" class="absolute top-2 right-3">
       <IconsX class="absolute z-40 -top-0 -right-0  w-8 h-8 text-red-400" />
     </div>
@@ -118,3 +118,35 @@ export default defineComponent({
 })
 </script>
 
+<style scoped>
+/* Word Slides */
+
+@keyframes word-slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-16px);
+  }
+}
+
+.word-slide-left {
+  animation: word-slide-left forwards 1.3s ease-out;
+  animation-delay: 0.3s;
+}
+
+
+@keyframes word-slide-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(16px);
+  }
+}
+
+.word-slide-right {
+  animation: word-slide-right forwards 1.3s ease-out;
+  animation-delay: 0.3s;
+}
+</style>
