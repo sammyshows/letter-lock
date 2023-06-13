@@ -2,7 +2,7 @@
   <div v-show="showLivesModal || hideLivesModal" class="absolute h-full w-full flex justify-center items-center z-20">
     <div class="h-full w-full bg-transparent absolute" @click="$emit('close')"></div>
     
-    <div :class="{ 'utility-modal-slide-in': showLivesModal,  'utility-modal-slide-out': hideLivesModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-6 z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
+    <div :class="[{ 'utility-modal-slide-in': showLivesModal,  'utility-modal-slide-out': hideLivesModal }, rewardAdsLoaded > 0 ? 'h-1/2 justify-between' : 'h-2/5 justify-around' ]" class="absolute flex flex-col items-center w-5/6 py-6 z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
       <div @click="$emit('close')" class="absolute -top-5 -right-5">
         <div class="z-10 absolute  top-2 right-2  w-10 h-10 rounded-full bg-white"></div>
         <IconsX class="absolute z-40 -top-0 -right-0  w-14 h-14 text-red-400" />
@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <div class="w-full h-24 flex items-center text-lg">
+      <div v-if="rewardAdsLoaded > 0" class="w-full h-24 flex items-center text-lg">
         <div class="w-full flex justify-between pl-8 pr-4">
           <div class="relative w-1/4 h-min flex justify-center drop-shadow">
             <IconsHeart class="h-12 w-12 text-pink-500 drop-shadow-xl" />

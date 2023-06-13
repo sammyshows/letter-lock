@@ -11,7 +11,9 @@ export const useAdsStore = defineStore('ads', {
       platform: Capacitor.getPlatform(),
       rewardAdsLoaded: 0,
       adCompleted: false,
-      currentReward: null as (Reward | null)
+      currentReward: null as (Reward | null),
+      rewardAdsLoadFailedTally: 0,
+      rewardAdsLoadFailedTime: 0 // most recent time a reward ad failed to load
     }
   },
 
@@ -32,6 +34,9 @@ export const useAdsStore = defineStore('ads', {
 
       AdMob.addListener(RewardAdPluginEvents.FailedToLoad, (error) => {
         console.log('FAILED TO LOAD AD:', JSON.stringify(error));
+        this.rewardAdsLoadFailedTally += 1
+        this.rewardAdsLoadFailedTime = Date.now()
+        this.prepareRewardAd()
       });      
 
       AdMob.addListener(RewardAdPluginEvents.Dismissed, () => {
@@ -65,13 +70,13 @@ export const useAdsStore = defineStore('ads', {
 
       AdMob.addListener(RewardAdPluginEvents.Showed, () => {
         console.log('SHOWED')
-        this.rewardAdsLoaded -= 1
       })
     },
 
     async prepareRewardAd(): Promise<void> {
+      if (this.rewardAdsLoaded > 2 || (this.rewardAdsLoadFailedTally > 2 && (Date.now() - this.rewardAdsLoadFailedTime) < 1800000)) return // prevents constant requests of ads if something's not working, don't want admob to be mad!
+
       const getRewardAdId = (): string => {
-        console.log(this.platform)
         if (this.platform === 'android')
           return 'ca-app-pub-7719091147897476/8922262077' // testing
           // return 'ca-app-pub-7719091147897476/7336552975' // production
@@ -85,7 +90,6 @@ export const useAdsStore = defineStore('ads', {
       }
 
       await AdMob.prepareRewardVideoAd(options)
-      this.rewardAdsLoaded += 1
     },
 
     async showRewardAd(reward: Reward) {

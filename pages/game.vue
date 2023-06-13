@@ -1,11 +1,13 @@
   <template>
     <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300">
+      <img src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
+
       <div class="w-full flex justify-between px-4 z-10">
         <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 md:w-20 md:h-20 md:ml-3 md:mt-2" />
 
-        <div class="relative h-5 h-5 drop-shadow opacity-50">
-          <IconsHeart class="h-5 w-5 text-red-400 md:h-10 md:w-10" />
-          <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-tiny md:text-3xl font-medium">{{ lives.count }}</span>
+        <div class="relative h-7 w-7 drop-shadow opacity-50">
+          <IconsHeart class="h-7 w-7 text-red-400 md:h-10 md:w-10" />
+          <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs md:text-3xl font-medium">{{ lives.count }}</span>
         </div>
       </div>
       <div class="z-10 grow">
@@ -117,11 +119,11 @@
         wordsFormed: [],
         levelCompleted: false,
         levelFailed: false,
-        showLevelCompleteModal: true,
+        showLevelCompleteModal: false,
         hideLevelCompleteModal: false,
         showLoseLifeModal: false,
         hideLoseLifeModal: false,
-        showFailedModal: false,
+        showFailedModal: true,
         hideFailedModal: false,
         animationClasses: null,
         borderRadiusClasses: null,

@@ -9,15 +9,15 @@
       <p class="drop-not absolute bottom-1.5 -left-8 text-2xl text-purple-400 underline underline-offset-2 opacity-0">NOT</p>
       <p class="word-slide-right ml-4">LOCKED</p>
     </div>
-    <p class="px-6 text-slate-600">Oh no! You are so close to locking all the words!</p>
-    <div v-if="allowExtraMoves" class="flex justify-center items-center mt-3 text-green-500 drop-shadow">
+    <p class="px-6 text-slate-600">{{ text }}</p>
+    <div v-if="offerExtraMoves" class="flex justify-center items-center mt-3 text-green-500 drop-shadow">
         <span class="text-3xl font-medium">+3</span>
         <IconsArrowsLeftRight class="w-12 h-12 ml-2" />
       </div>
     <div class="flex flex-col justify-center gap-y-2 w-full h-16 text-lg">
       <div class="h-3/5 flex justify-center">
-        <ButtonsWatchAd v-if="allowExtraMoves" @watchAd="watchRewardAd" text="Play On!" />
-        <div v-else @click="$emit('close', true)" class="button-pulse flex self-center rounded-full bg-gradient-to-br from-red-300 to-red-500 focus:from-red-400 focus:to-red-600">
+        <ButtonsWatchAd v-if="offerExtraMoves" @watchAd="watchRewardAd" text="Play On!" />
+        <div v-else @click="$emit('close', true)" class="button-pulse flex self-center rounded-full bg-gradient-to-br from-rose-300 to-rose-500 focus:from-red-400 focus:to-red-600">
           <button class="text-sm text-white font-medium shadow-sm drop-shadow">Try Again</button>
         </div>
       </div>
@@ -57,6 +57,16 @@ export default defineComponent({
       processingLife: false,
       showHeart: false
     }
+  },
+
+  computed: {
+    offerExtraMoves() {
+      return this.allowExtraMoves && this.rewardAdsLoaded > 0
+    },
+
+    text() {
+      return this.offerExtraMoves ? 'You are so close to locking all the words!' : "Oh no, you weren't able to lock all of the words!"
+    },
   },
 
   mounted() {

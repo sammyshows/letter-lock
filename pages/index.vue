@@ -9,9 +9,9 @@
     <div class="flex flex-col grow justify-around mt-20 z-10">
       <div></div>
       
-      <div>
-        <div v-if="currentLevelId <= totalLevelCount">
-          <div class="flex justify-center items-center mt-16 text-4xl text-center tracking-wider font-medium md:text-7xl" style="font-family: 'Luckiest Guy';">
+      <div class="mt-16">
+        <div v-if="currentLevelId && currentLevelId <= totalLevelCount">
+          <div v-if="!showUserDemo" class="flex justify-center items-center text-4xl text-center tracking-wider font-medium md:text-7xl" style="font-family: 'Luckiest Guy';">
             <!-- <IconsMap class="h-10 mb-2.5 text-slate-200" /> -->
             <p>LEVEL</p>
   
@@ -47,7 +47,7 @@
           <IconsSettings @click="showSettingsModal = true" class="h-10 drop-shadow md:h-14 md:w-14" />
 
           <NuxtLink :to="{ path: '/levels' }">
-            <IconsMap class="h-10 m-0" />
+            <IconsMap class="h-10" />
           </NuxtLink>
 
           <div class="relative drop-shadow">
@@ -87,9 +87,10 @@ export default {
 
   setup() {
     const gameStore = useGameStore()
-    const { totalLevelCount, currentLevelId, lives, maxLives, stats } = storeToRefs(gameStore)
 
-    return { gameStore, totalLevelCount, currentLevelId, lives, maxLives, stats }
+    const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats } = storeToRefs(gameStore)
+
+    return { gameStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats }
   },
 
   mounted() {
@@ -109,9 +110,13 @@ export default {
       }
     }, 6000);
 
-    console.log(this.currentLevelId, this.totalLevelCount)
-    if (this.currentLevelId > this.totalLevelCount)
+    if (!this.allLevelsCompleteModalShown && this.currentLevelId > this.totalLevelCount) {
       this.showAllLevelsCompleteModal = true
+      this.allLevelsCompleteModalShown = true
+    }
+
+    console.log('STATS', this.gameStore.stats)
+    console.log('LEVEL HISTORY', this.gameStore.levelHistory)
   },
 
   beforeUnmount() {
@@ -133,6 +138,9 @@ export default {
 
   methods: {
     async startGame() {
+      if (this.showUserDemo)
+        return this.$router.push({ name: 'demo' })
+
       if (this.lives.count > 0)
         this.$router.push('/game')
       else {

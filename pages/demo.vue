@@ -1,27 +1,14 @@
 <template>
   <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300">
-    <div class="w-full flex justify-between px-4 z-10">
-      <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 md:w-20 md:h-20 md:ml-3 md:mt-2" />
+    <img src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
-      <div class="relative h-5 h-5 drop-shadow opacity-50">
-        <IconsHeart class="h-5 w-5 text-red-400 md:h-10 md:w-10" />
-        <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-tiny md:text-3xl font-medium">{{ lives.count }}</span>
-      </div>
-    </div>
-    <div class="z-10 grow">
-      <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center md:text-5xl">LEVEL {{ currentLevelId }}</div>
+    <div class="z-10 grow flex flex-col justify-center">
+      <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center md:text-5xl">HOW TO PLAY</div>
 
       <div class="flex justify-center">
         <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
           <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange md:h-32 md:w-32"></IconsLock>
           <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
-          <div class="absolute pb-2 text-3xl font-medium md:text-5xl md:pb-4">{{ remainingMoves }}</div>
-        </div>
-
-        <div v-if="settings.testMode && replayingLevel" :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end ml-2">
-          <IconsLock class="h-12 w-12 mx-auto text-purple-400 duration-700"></IconsLock>
-          <div class="lock-bolt"></div>
-          <div class="absolute pb-0.5 text-lg font-medium">{{ remainingMoves - bestRemainingMoves }}</div>
         </div>
       </div>
 
@@ -39,7 +26,11 @@
               :key="tile.id"
               :data-index="index"
               :class="[
-                  { 'empty-tile': !tile.letter, 'glow': showCollideEffect },
+                  { 
+                    'empty-tile': !tile.letter, 
+                    'glow': showCollideEffect ,
+                    'pointer-events-none': shouldDisableTile(tile.id)
+                  },
                   tile.isPartOfWord ? 'z-20 bg-amber-400' : 'bg-gray-200',
                   levelCompleted ? animationClasses[index] : '',
                   borderRadiusClasses ? borderRadiusClasses[index] : ''
@@ -47,6 +38,12 @@
               class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center md:text-5xl"
             >
               {{ tile.letter }}
+              <IconsArrowsLeftRight
+                :class="{
+                  '-left-6 animate-pulse': index === 5 && (demoStep === 1 || demoStep === 2),
+                  '-bottom-6 animate-pulse-rotated': demoStep === 3 && index === 0
+                }"
+                class="h-10 w-10 absolute opacity-0 text-ll-orange duration-700 z-30" />
             </div>
           </div>
         </div>
@@ -62,38 +59,24 @@
         <p class="word-slide-left">LETTERS</p>
         <p class="word-slide-right">LOCKED</p>
       </div>
-      <p class="px-6 text-xl text-slate-600">Nice job - you crushed it! The next has level has been <span class="text-purple-400 font-medium">UNLOCKED!</span></p>
-      <div class="flex flex-col justify-center gap-y-2 text-lg" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-12' ]">
-        <button v-if="settings.testMode" @click="resetLevel" class="button-pulse self-center rounded-full bg-ll-orange text-white shadow-sm">Retry Level</button>
-        <button @click="nextLevel" class="button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm">Next Level</button>
+      <p class="px-6 text-xl text-slate-600">Nice job - you nailed it! Now try it yourself!</p>
+      <div class="h-12 flex flex-col justify-center gap-y-2 text-lg">
+        <button @click="nextLevel" class="button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm">Play</button>
       </div>
     </div>
+
+    <div :class="[ showCompleteModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-700 pointer-events-none z-10"></div>
 
     <div class="ripple-container">
       <div :class="{ 'ripple': showCollideEffect }"></div>
     </div>
-
-    <!-- LOSE LIFE MODAL -->
-    <LoseLifeModal v-if="showLoseLifeModal || hideLoseLifeModal"
-              :showLoseLifeModal="showLoseLifeModal"
-              :hideLoseLifeModal="hideLoseLifeModal"
-              @close="closeLoseLifeModal" />
-
-    <!-- FAILED MODAL -->
-    <FailedModal v-if="showFailedModal || hideFailedModal"
-              :showFailedModal="showFailedModal"
-              :hideFailedModal="hideFailedModal"
-              :allowExtraMoves="!extraMovesUsed"
-              @close="closeFailedModal" />
-
-    <div v-if="showLoseLifeModal" @click="closeLoseLifeModal(false)" class="h-screen w-full bg-transparent absolute z-10"></div>
-    <div :class="[ showFailedModal || showCompleteModal || showLoseLifeModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur-md duration-500 pointer-events-none z-10"></div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
 import Sortable, { Swap } from "sortablejs";
+import { Preferences } from '@capacitor/preferences'
 import { storeToRefs } from "pinia"
 import { useGameStore } from "@/stores/game";
 
@@ -112,21 +95,93 @@ export default {
 
   data() {
     return {
-      tiles: [], // copy of the tiles used internally for monitoring the state/position of tiles. This is manually kept up to date with tile swaps via our code.
-      sortableTiles: [], // copy used for sortable. Changes are not made to this array by sortable so tiles could be swapped and this array wouldn't reflect it.
+      tiles: [
+        {
+          id: 1,
+          isPartOfWord: false,
+          letter: ""
+        }, {
+          id: 2,
+          isPartOfWord: false,
+          letter: "A"
+        }, {
+          id: 3,
+          isPartOfWord: false,
+          letter: "T"
+        }, {
+          id: 4,
+          isPartOfWord: false,
+          letter: ""
+        }, {
+          id: 5,
+          isPartOfWord: false,
+          letter: "O"
+        }, {
+          id: 6,
+          isPartOfWord: false,
+          letter: "C"
+        }, {
+          id: 7,
+          isPartOfWord: false,
+          letter: ""
+        }, {
+          id: 8,
+          isPartOfWord: false,
+          letter: ""
+        }, {
+          id: 9,
+          isPartOfWord: false,
+          letter: "Y"
+        }
+      ], // copy of the tiles used internally for monitoring the state/position of tiles. This is manually kept up to date with tile swaps via our code.
+      sortableTiles: [
+        {
+          id: 1,
+          isPartOfWord: false,
+          letter: ""
+        }, {
+          id: 2,
+          isPartOfWord: false,
+          letter: "A"
+        }, {
+          id: 3,
+          isPartOfWord: false,
+          letter: "T"
+        }, {
+          id: 4,
+          isPartOfWord: false,
+          letter: ""
+        }, {
+          id: 5,
+          isPartOfWord: false,
+          letter: "O"
+        }, {
+          id: 6,
+          isPartOfWord: false,
+          letter: "C"
+        }, {
+          id: 7,
+          isPartOfWord: false,
+          letter: ""
+        }, {
+          id: 8,
+          isPartOfWord: false,
+          letter: ""
+        }, {
+          id: 9,
+          isPartOfWord: false,
+          letter: "Y"
+        }
+      ], // copy used for sortable. Changes are not made to this array by sortable so tiles could be swapped and this array wouldn't reflect it.
       gridSize: 3,
-      remainingMoves: 0,
+      remainingMoves: 3,
       extraMovesUsed: false,
-      validWords: [],
+      validWords: ['CAT', 'TOY'],
       wordsFormed: [],
       levelCompleted: false,
       levelFailed: false,
       showCompleteModal: false,
       hideCompleteModal: false,
-      showLoseLifeModal: false,
-      hideLoseLifeModal: false,
-      showFailedModal: false,
-      hideFailedModal: false,
       animationClasses: null,
       borderRadiusClasses: null,
       dragging: false,
@@ -135,10 +190,10 @@ export default {
       displayBoard: true,
       gridCSS: 'gap-2',
       lockBoltHeight: this.getResponsiveValue('lockBoltHeight'),
-      lockBoltColor: '#337aff',
+      lockBoltColor: 'rgb(62 128 254)',
       lockDropShadow: 'drop-shadow(0 0 0 rgb(251, 163, 69))',
       lockTransitionDuration: '700ms', // also gets sets back to 700ms at end of failLevel()
-      colors: ["#ff9054", "#22ff32", "#FFF176", "#214aff", "#ffbb2e", "#79f37c"]
+      demoStep: 1
     }
   },
 
@@ -152,58 +207,14 @@ export default {
   },
 
   mounted() {
-    this.getLevelConfig()
     this.createSortable()
     this.checkWords()
     this.setAnimationClasses()
     this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-xl rounded-tr-xl rounded-br-xl rounded-tl-xl')
   },
 
-  watch: {
-    levelCompleted(newValue, oldValue) {
-      // levelCompleted (newValue)
-      this.sortable.option("disabled", newValue)
-    },
-
-    levelFailed(newValue, oldValue) {
-      // levelFailed (newValue)
-      this.sortable.option("disabled", newValue)
-    },
-
-    event: {
-      deep: true,
-      handler: async function (newAdEvent, oldAdEvent) {
-        await this.closeFailedModal(false)
-
-        await this.delay(100)
-        this.addMoves(newAdEvent.quantity) // after modal is closed add the moves, visible to the user
-        this.extraMovesUsed = true
-      }
-    },
-  },
-
   methods: {
-    getLevelConfig() {
-      this.tiles = _.cloneDeep(this.gameStore.currentLevelTiles)
-      this.sortableTiles = _.cloneDeep(this.gameStore.currentLevelTiles)
-      this.gridSize = this.gameStore.gridSize
-      this.remainingMoves = this.gameStore.maxMoves
-      this.validWords = this.gameStore.currentLevelValidWords
-    },
-
-    async failLevel() {
-      if (!this.settings.showAnimations)
-        return this.showFailedModal = true
-
-      this.levelFailed = true
-
-      await this.delay(1000);
-      this.showFailedModal = true
-    },
-
     async completeLevel() {
-      await this.gameStore.saveLevelProgress(true, this.remainingMoves, this.extraMovesUsed)
-
       if (!this.settings.showAnimations)
         return this.showCompleteModal = true
 
@@ -224,7 +235,7 @@ export default {
       this.$vibrateLight()
 
       await this.delay(875);
-      this.lockBoltColor = "#4C9BFF";
+      this.lockBoltColor = "#6ca3de";
 
       await this.delay(1500);
       this.lockBoltHeight = "0";
@@ -309,25 +320,52 @@ export default {
       this.showCompleteModal = false
 
       await this.delay(1000)
-      await this.gameStore.setCurrentLevel(this.currentLevelId + 1)
+      await this.gameStore.setCurrentLevel(1)
+      this.gameStore.$patch({ showUserDemo: false })
+      await Preferences.set({
+          key: 'letterlock-levels',
+          value: JSON.stringify(this.gameStore.levelHistory)
+        })
       this.$router.push({ path: '/', query: { levelUp: true } })
     },
 
-    async resetLevel() {
-      if (this.showFailedModal)
-        this.hideFailedModal = true
-      else if (this.showCompleteModal)
-        this.hideCompleteModal = true
+    shouldDisableTile(tileId) {
+      switch (this.demoStep) {
+        case 1:
+          return ![5, 6].includes(tileId);
+        case 2:
+          return ![4, 6].includes(tileId);
+        case 3:
+          return ![1, 6].includes(tileId);
+        default:
+          return false;
+      }
+    },
 
-      await this.delay(1000)
-      this.gameStore.resetLevel()
-      this.$router.push('/')
+    async handleDemoSteps(oldIndex, newIndex) {
+      if (this.demoStep === 1 && [4, 5].includes(oldIndex) && [4, 5].includes(newIndex)) {
+        this.sortable.option("disabled", true)
+        this.demoStep = null
+        await this.delay(400)
+        this.demoStep = 2
+        this.sortable.option("disabled", false)
+      } else if (this.demoStep === 2 && [3, 4].includes(oldIndex) && [3, 4].includes(newIndex)) {
+        this.sortable.option("disabled", true)
+        this.demoStep = null
+        await this.delay(400)
+        this.demoStep = 3
+        this.sortable.option("disabled", false)
+      } else if (this.demoStep === 3 && [0, 3].includes(oldIndex) && [0, 3].includes(newIndex)) {
+        this.demoStep = null
+      }
     },
 
     async handleOnMove(event) {
       // Save the old and new indices for swapping
       const oldIndex = parseInt(event.dragged.dataset.index, 10);
       const newIndex = parseInt(event.related.dataset.index, 10);
+
+      this.handleDemoSteps(oldIndex, newIndex)
 
       // Calculate row and column for both oldIndex and newIndex
       const oldIndexRow = Math.floor(oldIndex / this.gridSize);
@@ -408,6 +446,7 @@ export default {
     },
 
     async checkWords() {
+      console.log('here')
       await this.delay(25)
       const wordsFormed = []
 
@@ -632,29 +671,44 @@ export default {
       };
 
       return values[variableName];
-    },
-
-    async closeLoseLifeModal(resetLevel) {
-      if (resetLevel)
-        await this.gameStore.saveLevelProgress(false, this.remainingMoves, this.extraMovesUsed)
-      
-      this.hideLoseLifeModal = true
-
-      await this.delay(700)  // delay should match utility-modal-slide-out time
-
-      this.showLoseLifeModal = false
-      this.hideLoseLifeModal = false
-
-      if (resetLevel) {
-        this.gameStore.resetLevel()
-        this.$router.push('/')
-      }
     }
   }
 };
 </script>
 
 <style>
+/* Word Slides */
+
+@keyframes word-slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-16px);
+  }
+}
+
+.word-slide-left {
+  animation: word-slide-left forwards 1.3s ease-out;
+  animation-delay: 0.3s;
+}
+
+
+@keyframes word-slide-right {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(16px);
+  }
+}
+
+.word-slide-right {
+  animation: word-slide-right forwards 1.3s ease-out;
+  animation-delay: 0.3s;
+}
+
+
   .board-size {
   width: 90vw;
   height: 90vw;

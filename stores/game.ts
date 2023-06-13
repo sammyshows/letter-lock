@@ -1,12 +1,15 @@
 import { defineStore } from 'pinia'
-import { Preferences } from '@capacitor/preferences';
+import { Preferences } from '@capacitor/preferences'
 
+import { useAdsStore } from '@/stores/ads'
 import levels from "@/helpers/levels"
 import { Tile, IndexedLevelHistoryData } from "@/types/types"
 
 export const useGameStore = defineStore('game', {
   state: () => ({
+    showUserDemo: false,
     totalLevelCount: Object.keys(levels).length,
+    allLevelsCompleteModalShown: false,
     currentLevelId: 0,
     maxLevelId: 0,
     gridSize: 3,
@@ -74,6 +77,8 @@ export const useGameStore = defineStore('game', {
 
       if (levelHistory.value)
         this.levelHistory = JSON.parse((levelHistory.value))
+      else
+        this.showUserDemo = true
 
       if (settings.value)
         this.settings = JSON.parse((settings.value))
@@ -89,7 +94,7 @@ export const useGameStore = defineStore('game', {
       if (stats.value)
         this.stats = JSON.parse((stats.value))
 
-      this.setCurrentLevel()
+      await this.setCurrentLevel()
     },
 
     async setCurrentLevel(levelId?: number) {
@@ -102,11 +107,11 @@ export const useGameStore = defineStore('game', {
         level = levels[currentLevelId]
         this.currentLevelId = currentLevelId
       } else { // set the first level
-        const levelHistory = await Preferences.get({ key: 'letterlock-levels' })
-        if (!levelHistory.value) { // if no level history, set the first level. Checking a second time to be safe, this will overwrite any existing levelHistory
-          level = levels[levelId || 1]
-          this.currentLevelId = levelId || 1
-        }
+        // const levelHistory = await Preferences.get({ key: 'letterlock-levels' })
+        // if (!levelHistory.value) { // if no level history, set the first level. Checking a second time to be safe, this will overwrite any existing levelHistory
+        //   level = levels[levelId || 1]
+        //   this.currentLevelId = levelId || 1
+        // }
       }
 
       if (level) {
@@ -176,6 +181,8 @@ export const useGameStore = defineStore('game', {
     },
 
     handleLives(number) { // at this stage only -1 or 1
+      const adsStore = useAdsStore()
+
       if (this.processingLife)
         return
 
@@ -197,6 +204,9 @@ export const useGameStore = defineStore('game', {
       }
 
       this.processingLife = false
+
+      if (this.lives.count < 2 && adsStore.rewardAdsLoaded < 1)
+        adsStore.prepareRewardAd()
 
       if (this.lives.count <= 0) {
         this.stats.zeroLivesTally += 1
@@ -239,20 +249,25 @@ export const useGameStore = defineStore('game', {
     },
 
     async resetProgress() {
-      this.levelHistory = {
-        1: {
-          bestRemainingMoves: 0,
-          attemptTally: 0,
-          successTally: 0,
-          extraMovesUsed: false
-        }  
-      }
-
-      this.setCurrentLevel()
-
       await Preferences.remove({
         key: 'letterlock-levels'
-      });
+      })
+
+      await Preferences.remove({
+        key: 'letterlock-lives'
+      })
+
+      await Preferences.remove({
+        key: 'letterlock-settings'
+      })
+
+      await Preferences.remove({
+        key: 'letterlock-currency'
+      })
+
+      await Preferences.remove({
+        key: 'letterlock-stats'
+      })
     },
 
     async saveStats() {
