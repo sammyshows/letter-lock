@@ -9,7 +9,7 @@
       <p class="drop-not absolute bottom-1.5 -left-8 text-2xl text-purple-400 underline underline-offset-2 opacity-0">NOT</p>
       <p class="word-slide-right ml-4">LOCKED</p>
     </div>
-    <p class="px-6 text-slate-600">{{ text }}</p>
+    <p v-html="HTMLText" :class="{ 'text-xl': !offerExtraMoves }" class="px-6 text-slate-600"></p>
     <div v-if="offerExtraMoves" class="flex justify-center items-center mt-3 text-green-500 drop-shadow">
         <span class="text-3xl font-medium">+3</span>
         <IconsArrowsLeftRight class="w-12 h-12 ml-2" />
@@ -27,9 +27,10 @@
 
 <script lang="ts">
 import { storeToRefs } from "pinia";
+import { Preferences } from "@capacitor/preferences";
 import { useGameStore } from "@/stores/game";
 import { useAdsStore } from "@/stores/ads";
-import { Preferences } from "@capacitor/preferences";
+import { levelFailedText, levelFailedWatchAdText } from "@/helpers/text";
 
 export default defineComponent({
   name: 'Lives Modal',
@@ -64,8 +65,8 @@ export default defineComponent({
       return this.allowExtraMoves && this.rewardAdsLoaded > 0
     },
 
-    text() {
-      return this.offerExtraMoves ? 'You are so close to locking all the words!' : "Oh no, you weren't able to lock all of the words!"
+    HTMLText() {
+      return this.offerExtraMoves ? levelFailedWatchAdText[Math.floor(Math.random() * levelFailedWatchAdText.length)] : levelFailedText[Math.floor(Math.random() * levelFailedText.length)]
     },
   },
 

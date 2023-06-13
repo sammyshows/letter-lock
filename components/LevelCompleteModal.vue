@@ -4,7 +4,7 @@
       <p class="word-slide-left">LETTERS</p>
       <p class="word-slide-right">LOCKED</p>
     </div>
-    <p class="px-6 text-xl text-slate-600">Nice job - you crushed it! The next has level has been <span class="text-purple-400 font-medium">UNLOCKED!</span></p>
+    <p v-html="HTMLText" class="px-6 text-xl text-slate-600"></p>
     <div class="flex flex-col justify-center gap-y-2 text-lg" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-12' ]">
       <button v-if="settings.testMode" @click="$emit('resetLevel')" class="button-pulse self-center rounded-full bg-ll-orange text-white shadow-sm">Retry Level</button>
       <button @click="$emit('nextLevel')" class="button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm">Next Level</button>
@@ -13,8 +13,9 @@
 </template>
 
 <script lang="ts">
-import { storeToRefs } from "pinia";
-import { useGameStore } from "@/stores/game";
+import { storeToRefs } from "pinia"
+import { useGameStore } from "@/stores/game"
+import { levelCompleteText } from "@/helpers/text"
 
 export default defineComponent({
   name: 'Lives Modal',
@@ -30,7 +31,13 @@ export default defineComponent({
   props: [
     'showLevelCompleteModal',
     'hideLevelCompleteModal'
-  ]
+  ],
+
+  data() {
+    return {
+      HTMLText: levelCompleteText[Math.floor(Math.random() * levelCompleteText.length)]
+    }
+  }
 })
 </script>
 

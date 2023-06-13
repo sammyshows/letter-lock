@@ -123,7 +123,7 @@
         hideLevelCompleteModal: false,
         showLoseLifeModal: false,
         hideLoseLifeModal: false,
-        showFailedModal: true,
+        showFailedModal: false,
         hideFailedModal: false,
         animationClasses: null,
         borderRadiusClasses: null,
