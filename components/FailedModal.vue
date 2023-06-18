@@ -1,24 +1,28 @@
 <template>
-  <div v-show="showFailedModal || hideFailedModal" :class="{ 'modal-slide-in': showFailedModal,  'modal-slide-out': hideFailedModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
-    <div @click="$emit('close', true)" class="absolute top-2 right-3">
-      <IconsX class="absolute z-40 -top-0 -right-0  w-8 h-8 text-red-400" />
+  <div v-show="showFailedModal || hideFailedModal" :class="{ 'modal-slide-in': showFailedModal,  'modal-slide-out': hideFailedModal }"
+    class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:w-2/3 sm:h-3/5 sm:rounded-5xl">
+    <div @click="$emit('close', true)" class="absolute top-2 right-3 sm:top-3 sm:right-4 lg:top-4 lg:right-5">
+      <IconsX class="absolute z-40 -top-0 -right-0 w-8 h-8 text-red-400 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />
     </div>
 
-    <div class="relative text-ll-orange text-4xl font-bold">
+    <div class="relative text-ll-orange text-4xl font-bold sm:text-6xl lg:text-7.5xl">
       <p class="word-slide-left mr-4">LETTERS</p>
-      <p class="drop-not absolute bottom-1.5 -left-8 text-2xl text-purple-400 underline underline-offset-2 opacity-0">NOT</p>
+      <p class="drop-not absolute bottom-1.5 -left-8 text-2xl text-purple-400 underline underline-offset-2 opacity-0 sm:text-4xl sm:-left-12 lg:text-5xl lg:-left-20 lg:bottom-4">NOT</p>
       <p class="word-slide-right ml-4">LOCKED</p>
     </div>
-    <p v-html="HTMLText" :class="{ 'text-xl': !offerExtraMoves }" class="px-6 text-slate-600"></p>
+
+    <p v-html="HTMLText" :class="[ fontSizeClass(offerExtraMoves ? 1 : 2) ]" class="px-6 text-slate-600"></p>
+
     <div v-if="offerExtraMoves" class="flex justify-center items-center mt-3 text-green-500 drop-shadow">
-        <span class="text-3xl font-medium">+3</span>
-        <IconsArrowsLeftRight class="w-12 h-12 ml-2" />
-      </div>
-    <div class="flex flex-col justify-center gap-y-2 w-full h-16 text-lg">
-      <div class="h-3/5 flex justify-center">
+      <span class="text-3xl font-medium sm:text-5xl lg:text-7xl">+3</span>
+      <IconsArrowsLeftRight class="w-12 h-12 ml-2 sm:w-14 sm:h-14 lg:w-20 lg:h-20" />
+    </div>
+    
+    <div class="flex flex-col justify-center gap-y-2 w-full h-16 text-lg sm:h-24 lg:h-36">
+      <div class="h-3/5 flex justify-center text-sm sm:text-3xl lg:text-4.5xl">
         <ButtonsWatchAd v-if="offerExtraMoves" @watchAd="watchRewardAd" text="Play On!" />
         <div v-else @click="$emit('close', true)" class="button-pulse flex self-center rounded-full bg-gradient-to-br from-rose-300 to-rose-500 focus:from-red-400 focus:to-red-600">
-          <button class="text-sm text-white font-medium shadow-sm drop-shadow">Try Again</button>
+          <button class="text-white font-medium shadow-sm drop-shadow">Try Again</button>
         </div>
       </div>
     </div>
@@ -62,7 +66,7 @@ export default defineComponent({
 
   computed: {
     offerExtraMoves() {
-      return this.allowExtraMoves && this.rewardAdsLoaded > 0
+      return !(this.allowExtraMoves && this.rewardAdsLoaded > 0)
     },
 
     HTMLText() {
@@ -124,12 +128,84 @@ export default defineComponent({
       const twoDigitSeconds = String(seconds).padStart(2, '0');
 
       this.lifeRemainingTime = `${twoDigitMinutes}:${twoDigitSeconds}`
+    },
+
+    fontSizeClass(classNumber) {
+      const sizeClasses = {
+        1: {
+          '': 'text-base',
+          'sm': 'text-xl',
+          'md': 'text-3xl',
+          'lg': 'text-4xl',
+          'xl': 'text-4xl'
+        },
+
+        2: {
+          '' : 'text-lg',
+          'sm': 'text-xl',
+          'md': 'text-3xl',
+          'lg': 'text-4.5xl',
+          'xl': 'text-5xl'
+        }
+      }
+
+      const currentScreenWidth = window.innerWidth;
+      let screen = '';
+
+      if (currentScreenWidth >= 1280) screen = 'xl';
+      else if (currentScreenWidth >= 1024) screen = 'lg';
+      else if (currentScreenWidth >= 768) screen = 'md';
+      else if (currentScreenWidth >= 640) screen = 'sm';
+
+      return sizeClasses[classNumber][screen];
     }
   }
 })
 </script>
 
 <style scoped>
+.button-pulse {
+  animation: button-pulse 1.5s infinite alternate;
+}
+
+@keyframes button-pulse {
+  0%, 100% {
+    padding: 10px 32px;
+  }
+
+  50% {
+    padding: 11px 38px;
+  }
+}
+
+@media (min-width: 640px) {
+  @keyframes button-pulse {
+    0%, 100% {
+      padding: 13px 40px;
+    }
+
+    50% {
+      padding: 14px 48px;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  @keyframes button-pulse {
+    0%, 100% {
+      padding: 18px 48px;
+    }
+
+    50% {
+      padding: 22px 60px;
+    }
+  }
+}
+
+
+
+
+
 /* Word Slides */
 
 @keyframes word-slide-left {
@@ -137,7 +213,7 @@ export default defineComponent({
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-16px);
+    transform: translateX(-1rem);
   }
 }
 
@@ -146,13 +222,12 @@ export default defineComponent({
   animation-delay: 0.3s;
 }
 
-
 @keyframes word-slide-right {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(16px);
+    transform: translateX(1rem);
   }
 }
 
@@ -160,4 +235,35 @@ export default defineComponent({
   animation: word-slide-right forwards 1.3s ease-out;
   animation-delay: 0.3s;
 }
+
+@media (min-width: 640px) {
+  @keyframes word-slide-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-2rem);
+    }
+  }
+
+  .word-slide-left {
+    animation: word-slide-left forwards 1.3s ease-out;
+    animation-delay: 0.3s;
+  }
+
+  @keyframes word-slide-right {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(2rem);
+    }
+  }
+
+  .word-slide-right {
+    animation: word-slide-right forwards 1.3s ease-out;
+    animation-delay: 0.3s;
+  }
+}
+
 </style>

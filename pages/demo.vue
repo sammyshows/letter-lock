@@ -1,13 +1,13 @@
 <template>
-  <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300">
+  <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
     <img src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
     <div class="z-10 grow flex flex-col justify-center">
-      <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center md:text-5xl">HOW TO PLAY</div>
+      <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center sm:text-5xl">HOW TO PLAY</div>
 
       <div class="flex justify-center">
         <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
-          <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange md:h-32 md:w-32"></IconsLock>
+          <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange sm:h-32 sm:w-32"></IconsLock>
           <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
         </div>
       </div>
@@ -35,7 +35,7 @@
                   levelCompleted ? animationClasses[index] : '',
                   borderRadiusClasses ? borderRadiusClasses[index] : ''
               ]"
-              class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center md:text-5xl"
+              class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl"
             >
               {{ tile.letter }}
               <IconsArrowsLeftRight
@@ -49,7 +49,7 @@
         </div>
 
         <div class="mt-6 duration-1000" :class="{ 'opacity-0': !displayBoard }">
-          <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 md:text-4xl">{{ word }}</p>
+          <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl">{{ word }}</p>
         </div>
       </div>
     </div>
@@ -75,12 +75,10 @@
 
 <script>
 import _ from 'lodash'
-import Sortable, { Swap } from "sortablejs";
+import Sortable from "sortablejs";
 import { Preferences } from '@capacitor/preferences'
 import { storeToRefs } from "pinia"
 import { useGameStore } from "@/stores/game";
-
-Sortable.mount(new Swap());
 
 export default {
   name: "game",
@@ -190,7 +188,7 @@ export default {
       displayBoard: true,
       gridCSS: 'gap-2',
       lockBoltHeight: this.getResponsiveValue('lockBoltHeight'),
-      lockBoltColor: 'rgb(62 128 254)',
+      lockBoltColor: 'rgb(44, 101, 230)',
       lockDropShadow: 'drop-shadow(0 0 0 rgb(251, 163, 69))',
       lockTransitionDuration: '700ms', // also gets sets back to 700ms at end of failLevel()
       demoStep: 1
@@ -235,7 +233,7 @@ export default {
       this.$vibrateLight()
 
       await this.delay(875);
-      this.lockBoltColor = "#6ca3de";
+      this.lockBoltColor = "rgb(92 131 215)";
 
       await this.delay(1500);
       this.lockBoltHeight = "0";

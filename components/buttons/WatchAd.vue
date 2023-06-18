@@ -1,7 +1,7 @@
 <template>
-  <div @click="$emit('watchAd')" class="button-pulse flex self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500">
-    <IconsClapperboard class="w-6 h-6 mr-3 -rotate-6 text-white" />
-    <button class="text-sm text-white font-medium shadow-sm drop-shadow">{{ text }}</button>
+  <div @click="$emit('watchAd')" class="ad-button-pulse flex self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500">
+    <IconsClapperboard class="w-6 h-6 mr-3 -rotate-6 text-white sm:mr-4 sm:w-8 sm:h-8 lg:mr-6 lg:w-10 lg:h-10" />
+    <button class="text-white font-medium shadow-sm drop-shadow text-sm sm:text-3xl lg:text-4.5xl">{{ text }}</button>
   </div>
 </template>
 
@@ -14,17 +14,41 @@
 </script>
 
 <style>
-.button-pulse {
-  animation: button-pulse 1.5s infinite alternate;
+.ad-button-pulse {
+  animation: ad-button-pulse 1.5s infinite alternate;
 }
 
-@keyframes button-pulse {
+@keyframes ad-button-pulse {
   0%, 100% {
     padding: 10px 32px;
   }
 
   50% {
     padding: 11px 38px;
+  }
+}
+
+@media (min-width: 640px) {
+  @keyframes ad-button-pulse {
+    0%, 100% {
+      padding: 16px 40px;
+    }
+
+    50% {
+      padding: 19px 48px;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  @keyframes ad-button-pulse {
+    0%, 100% {
+      padding: 18px 48px;
+    }
+
+    50% {
+      padding: 22px 60px;
+    }
   }
 }
 </style>

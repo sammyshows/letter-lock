@@ -9,6 +9,16 @@ module.exports = {
         '1/10': '10%',
       },
 
+      margin: {
+        '1/10': '10%'
+      },
+
+      borderRadius: {
+        '5xl': '2rem',
+        '12pc': '12%',
+        '16pc': '16%',
+      },
+
       animation: {
         'pulse': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'pulse-rotated': 'pulseRotated 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -37,6 +47,7 @@ module.exports = {
 
       fontSize: {
         '4.5xl': '2.5rem',
+        '7.5xl': '5.5rem',
         'tiny': '0.6rem',
         'teeny': '0.5rem',
         'atomic': '0.4rem'

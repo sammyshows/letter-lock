@@ -1,7 +1,7 @@
 <template>
   <div class="h-full flex flex-col justify-between pt-20">
     <NuxtLink :to="{ path: '/' }" class="absolute top-4 left-4">
-      <IconsArrowLeft class="h-10 w-10 md:w-20 md:h-20 md:ml-3 md:mt-2" />
+      <IconsArrowLeft class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" />
     </NuxtLink>
     
     <h1 class="mt-8 font-medium text-4xl text-center" style="font-family: 'Luckiest Guy';">Level Selection</h1>

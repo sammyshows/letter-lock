@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --port 3333",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -16,6 +16,7 @@
   "dependencies": {
     "@capacitor-community/admob": "^4.1.0",
     "@capacitor/android": "^4.4.0",
+    "@capacitor/app": "^4.1.1",
     "@capacitor/core": "^4.3.0",
     "@capacitor/device": "^4.1.0",
     "@capacitor/haptics": "^4.1.0",
@@ -24,9 +25,11 @@
     "@headlessui/vue": "^1.7.13",
     "@nuxtjs/tailwindcss": "^6.6.5",
     "@pinia/nuxt": "^0.4.8",
+    "axios": "^1.4.0",
     "lodash": "^4.17.21",
     "pinia": "^2.0.34",
     "sortablejs": "^1.15.0",
-    "sortablejs-vue3": "^1.2.9"
+    "sortablejs-vue3": "^1.2.9",
+    "uuidv4": "^6.2.13"
   }
 }

@@ -1,23 +1,23 @@
   <template>
-    <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300">
+    <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
       <img src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
       <div class="w-full flex justify-between px-4 z-10">
-        <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 md:w-20 md:h-20 md:ml-3 md:mt-2" />
+        <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" />
 
-        <div class="relative h-7 w-7 drop-shadow opacity-50">
-          <IconsHeart class="h-7 w-7 text-red-400 md:h-10 md:w-10" />
-          <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs md:text-3xl font-medium">{{ lives.count }}</span>
+        <div class="relative h-7 w-7 drop-shadow opacity-50 sm:h-14 sm:w-14">
+          <IconsHeart class="h-7 w-7 text-red-400 sm:h-14 sm:w-14" />
+          <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs sm:text-3xl font-medium">{{ lives.count }}</span>
         </div>
       </div>
-      <div class="z-10 grow">
-        <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center md:text-5xl">LEVEL {{ currentLevelId }}</div>
+      <div class="flex flex-col grow z-10">
+        <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center sm:text-5xl lg:text-7xl">LEVEL {{ currentLevelId }}</div>
 
         <div class="flex justify-center">
           <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
-            <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange md:h-32 md:w-32"></IconsLock>
+            <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange sm:h-32 sm:w-32 lg:h-44 lg:w-44"></IconsLock>
             <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
-            <div class="absolute pb-2 text-3xl font-medium md:text-5xl md:pb-4">{{ remainingMoves }}</div>
+            <div class="absolute pb-2 text-3xl font-medium sm:text-5xl sm:pb-4 lg:text-7xl lg:pb-5">{{ remainingMoves }}</div>
           </div>
 
           <div v-if="settings.testMode && replayingLevel" :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end ml-2">
@@ -27,36 +27,43 @@
           </div>
         </div>
 
-        <div class="p-4">
-          <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute p-3 bg-gray-100 rounded-xl"></div>
-          <div :class="{ 'slide-right': !displayBoard }" class="board-size p-3">
-            <div
-              ref="gameBoard"
-              :class="[ gridCSS ]"
-              class="grid mx-auto w-full h-full"
-              :style="gridCols"
-            >
+        <div class="flex flex-col justify-center grow p-4">
+          <div class="relative">
+            <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute p-3 bg-gray-100 rounded-xl sm:p-4 sm:rounded-2xl lg:p-5 lg:rounded-3xl"></div>
+            <div :class="{ 'slide-right': !displayBoard }" class="board-size p-3 sm:p-4 lg:p-5">
               <div
-                v-for="(tile, index) in sortableTiles"
-                :key="tile.id"
-                :data-index="index"
-                :class="[
-                    { 'empty-tile': !tile.letter, 'glow': showCollideEffect },
-                    tile.isPartOfWord ? 'z-20 bg-amber-400' : 'bg-gray-200',
-                    levelCompleted ? animationClasses[index] : '',
-                    borderRadiusClasses ? borderRadiusClasses[index] : ''
-                ]"
-                class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center md:text-5xl"
+                ref="gameBoard"
+                :class="[ gridCSS ]"
+                class="grid mx-auto w-full h-full"
+                :style="gridCols"
               >
-                {{ tile.letter }}
+                <div
+                  class="left-shadow"
+                  v-for="(tile, index) in sortableTiles"
+                  :key="tile.id"
+                  :data-index="index"
+                >
+                  <div
+                    :class="[
+                        { 'empty-tile': !tile.letter, 'glow': showCollideEffect },
+                        tile.isPartOfWord ? 'z-20 bg-amber-400' : 'bg-gray-200',
+                        levelCompleted ? animationClasses[index] : '',
+                        borderRadiusClasses ? borderRadiusClasses[index] : ''
+                    ]"
+                    class="tile w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl"
+                  >
+                    {{ tile.letter }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="mt-6 duration-1000" :class="{ 'opacity-0': !displayBoard }">
-            <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 md:text-4xl">{{ word }}</p>
+            <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl">{{ word }}</p>
           </div>
         </div>
+        <div class="grow"></div>
       </div>
       
       <div class="ripple-container">
@@ -91,11 +98,9 @@
 
   <script>
   import _ from 'lodash'
-  import Sortable, { Swap } from "sortablejs";
+  import Sortable from "sortablejs";
   import { storeToRefs } from "pinia"
   import { useGameStore } from "@/stores/game";
-
-  Sortable.mount(new Swap());
 
   export default {
     name: "game",
@@ -123,7 +128,7 @@
         hideLevelCompleteModal: false,
         showLoseLifeModal: false,
         hideLoseLifeModal: false,
-        showFailedModal: false,
+        showFailedModal: true,
         hideFailedModal: false,
         animationClasses: null,
         borderRadiusClasses: null,
@@ -131,9 +136,9 @@
         initialTilePosition: null,
         showCollideEffect: false,
         displayBoard: true,
-        gridCSS: 'gap-2',
+        gridCSS: this.getResponsiveValue('gridGap1'),
         lockBoltHeight: this.getResponsiveValue('lockBoltHeight'),
-        lockBoltColor: '#337aff',
+        lockBoltColor: this.getResponsiveValue('lockBoltColor1'),
         lockDropShadow: 'drop-shadow(0 0 0 rgb(251, 163, 69))',
         lockTransitionDuration: '700ms', // also gets sets back to 700ms at end of failLevel()
         colors: ["#ff9054", "#22ff32", "#FFF176", "#214aff", "#ffbb2e", "#79f37c"]
@@ -154,7 +159,7 @@
       this.createSortable()
       this.checkWords()
       this.setAnimationClasses()
-      this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-xl rounded-tr-xl rounded-br-xl rounded-tl-xl')
+      this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-12pc rounded-tr-12pc rounded-br-12pc rounded-tl-12pc')
     },
 
     watch: {
@@ -209,10 +214,11 @@
         this.displayBoard = false;
 
         await this.delay(2300);
-        this.gridCSS = "gap-5 duration-700 ease-in-out";
+        // looks complicated, but it's just a simple calculation to get the correct grid gap for different grid sizes. OPtherwise, 5x5 spreads the letters out too far on animation.
+        this.gridCSS = 'gap-' + (this.getResponsiveValue('gridGap2') + 3 - this.gridSize) + ' duration-700 ease-in-out'
 
         await this.delay(800);
-        this.gridCSS = "gap-1 duration-100 ease-in";
+        this.gridCSS = this.getResponsiveValue('gridGap3') + ' duration-100 ease-in'
         this.setBorderRadiusClasses();
 
         await this.delay(75);
@@ -222,7 +228,7 @@
         this.$vibrateLight()
 
         await this.delay(875);
-        this.lockBoltColor = "#4C9BFF";
+        this.lockBoltColor = this.getResponsiveValue('lockBoltColor2')
 
         await this.delay(1500);
         this.lockBoltHeight = "0";
@@ -270,9 +276,9 @@
             const distanceY = Math.abs(event.originalEvent.clientY - this.initialTilePosition.top);
 
             // Log the distances
-            console.log("Distance X:", distanceX);
-            console.log("Distance Y:", distanceY);
-            console.log("Threshold:", distanceThreshold);
+            // console.log("Distance X:", distanceX);
+            // console.log("Distance Y:", distanceY);
+            // console.log("Threshold:", distanceThreshold);
 
             // If the distance is too large, cancel the drag
             if (distanceX > distanceThreshold || distanceY > distanceThreshold)
@@ -293,7 +299,7 @@
               (Math.abs(newIndexRow - oldIndexRow) === 1 && newIndexCol === oldIndexCol) || // vertically adjacent
               (Math.abs(newIndexCol - oldIndexCol) === 1 && newIndexRow === oldIndexRow); // horizontally adjacent
 
-            console.log('IS ADJACENT', isAdjacent)
+            // console.log('IS ADJACENT', isAdjacent)
             if (!isAdjacent)
               return false
 
@@ -554,31 +560,31 @@
           // Therefore we MUST get the index of the tile in the sortableTiles array and update the classes at that index.
           const sortableTileIndex = this.sortableTiles.findIndex((sortableTile) => sortableTile.id === tile.id)
 
-          let borderClasses = 'tile-shadow duration-100 rounded-bl-2xl rounded-tr-2xl rounded-br-2xl rounded-tl-2xl ' + this.tiles[index].letter;
+          let borderClasses = 'tile-shadow duration-100 rounded-bl-16pc rounded-tr-16pc rounded-br-16pc rounded-tl-16pc ' + this.tiles[index].letter;
 
           const row = Math.floor(index / this.gridSize);
           const col = index % this.gridSize;
 
           // Check for a tile on the left
           if (col > 0 && this.tiles[index - 1]?.letter) {
-            borderClasses = borderClasses.replace('rounded-bl-2xl', '').replace('rounded-tl-2xl', '');
+            borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-tl-16pc', '');
           }
 
           // Check for a tile on the right
           if (col < this.gridSize - 1 && this.tiles[index + 1]?.letter) {
-            console.log(index, this.tiles[index].letter)
-            borderClasses = borderClasses.replace('rounded-br-2xl', '').replace('rounded-tr-2xl', '');
+            // console.log(index, this.tiles[index].letter)
+            borderClasses = borderClasses.replace('rounded-br-16pc', '').replace('rounded-tr-16pc', '');
           }
 
           // Check for a tile on the top
           if (row > 0 && this.tiles[index - this.gridSize]?.letter) {
             // console.log(index, this.tiles[index].letter)
-            borderClasses = borderClasses.replace('rounded-tl-2xl', '').replace('rounded-tr-2xl', '');
+            borderClasses = borderClasses.replace('rounded-tl-16pc', '').replace('rounded-tr-16pc', '');
           }
 
           // Check for a tile on the bottom
           if (row < this.gridSize - 1 && this.tiles[index + this.gridSize]?.letter) {
-            borderClasses = borderClasses.replace('rounded-bl-2xl', '').replace('rounded-br-2xl', '');
+            borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-br-16pc', '');
           }
 
           this.borderRadiusClasses[sortableTileIndex] = borderClasses
@@ -625,11 +631,54 @@
 
       getResponsiveValue(variableName) {
         const values = {
-          lockBoltHeight: window.innerWidth >= 768 ? '0.96rem' : '0.60rem',
-          // Add other variables and their values here
+          lockBoltHeight: {
+            '': '0.60rem',
+            'sm': '0.60rem',
+            'md': '0.96rem',
+            'lg': '1.536rem'
+          },
+          lockBoltColor1: {
+            '': 'rgb(31,99,227)',
+            'sm': 'rgb(31,99,227)',
+            'md': 'rgb(31,99,227)',
+            'lg': 'rgb(39, 97, 227)'
+          },
+          lockBoltColor2: {
+            '': 'rgb(50, 120, 239)',
+            'sm': 'rgb(50, 120, 239)',
+            'md': 'rgb(50, 120, 239)',
+            'lg': 'rgb(52, 120, 240)'
+          },
+          gridGap1: {
+            '': 'gap-2',
+            'sm': 'gap-2',
+            'md': 'gap-3',
+            'lg': 'gap-4'
+          },
+          gridGap2: { // just the number because it's dynamically changed when set based on gridSize
+            '': 5,
+            'sm': 6,
+            'md': 7,
+            'lg': 8
+          },
+          gridGap3: {
+            '': 'gap-1',
+            'sm': 'gap-2',
+            'md': 'gap-2',
+            'lg': 'gap-2'
+          }
         };
 
-        return values[variableName];
+        const currentScreenWidth = window.innerWidth;
+        let screen = '';
+
+        if (currentScreenWidth >= 1536) screen = '2xl';
+        else if (currentScreenWidth >= 1280) screen = 'xl';
+        else if (currentScreenWidth >= 1024) screen = 'lg';
+        else if (currentScreenWidth >= 768) screen = 'md';
+        else if (currentScreenWidth >= 640) screen = 'sm';
+
+        return values[variableName][screen];
       },
 
       async closeLoseLifeModal(resetLevel) {
@@ -650,18 +699,60 @@
       }
     }
   };
-  </script>
+</script>
 
-  <style>
-    .board-size {
+<style>
+  /* .tile {
+    position: relative;
+  }
+
+  .left-shadow {
+    position: relative;
+  }
+
+  .tile:before {
+    content: "";
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    height: 2px;
+    background: white;
+    filter: blur(4px);
+  }
+
+  .tile:after {
+    content: "";
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    width: 2px;
+    height: 90%;
+    background: rgba(106, 106, 106, 0.2);
+    filter: blur(4px);
+  }
+
+  .left-shadow::after {
+    content: "";
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    width: 2px;
+    height: 90%;
+    background: rgba(106, 106, 106, 0.2);
+    filter: blur(4px);
+  } */
+
+  /* Using these classes instead of tailwind because board height is a factor of the screen width */
+  .board-size {
     width: 90vw;
     height: 90vw;
   }
 
   @media (min-width: 768px) { /* The value 768px is commonly used to target tablets and above */
     .board-size {
-      width: 60vw;
-      height: 60vw;
+      width: 65vw;
+      height: 65vw;
     }
   }
 
@@ -691,13 +782,24 @@
     transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
   }
 
-  @media (min-width: 768px) { /* The value 768px is commonly used to target tablets and above */
+  @media (min-width: 640px) {
     .lock-bolt {
       position: absolute;
       width: 0.56rem;
       height: 1.28rem;
       bottom: 4.75rem;
       left: 2.23rem;
+      transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .lock-bolt {
+      position: absolute;
+      width: 0.76rem;
+      height: 1.9rem;
+      bottom: 6.53rem;
+      left: 3.04rem;
       transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
     }
   }

@@ -1,41 +1,41 @@
 <template>
-  <div class="min-h-screen mb-10 flex relative overflow-hidden duration-300 bg-gradient-to-b from-blue-600 via-blue-400 to-blue-300">
+  <div class="min-h-screen mb-10 flex relative overflow-hidden duration-300 bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
-      <div v-for="(letter, index) in letters" :key="index" class="snowflake border border-slate-300 w-6 h-6 rounded m-auto flex justify-center items-center capitalize text-slate-300 md:w-12 md:h-12 md:text-3xl">{{ letter }}</div>
+      <div v-for="(letter, index) in letters" :key="index" class="snowflake border border-slate-300 w-6 h-6 rounded m-auto flex justify-center items-center capitalize text-slate-300 sm:w-12 sm:h-12 sm:text-3xl">{{ letter }}</div>
     </div>
 
-    <img class="absolute w-80 -top-20 left-1/2 -translate-x-1/2 drop-shadow-xl" src="@/assets/images/letter-lock-logo-3.svg" alt="Letter Lock Logo">
+    <img class="absolute w-4/5 top-14 left-1/2 -translate-x-1/2 sm:w-2/3 sm:top-24" src="@/assets/images/letterlock-final.png" alt="Letter Lock Logo">
 
     <div class="flex flex-col grow justify-around mt-20 z-10">
-      <div></div>
+      <div class="sm:h-40"></div>
       
       <div class="mt-16">
         <div v-if="currentLevelId && currentLevelId <= totalLevelCount">
-          <div v-if="!showUserDemo" class="flex justify-center items-center text-4xl text-center tracking-wider font-medium md:text-7xl" style="font-family: 'Luckiest Guy';">
+          <div v-if="!showUserDemo" class="flex justify-center items-center text-4xl text-center tracking-wider font-medium sm:text-7xl lg:text-8xl" style="font-family: 'Luckiest Guy';">
             <!-- <IconsMap class="h-10 mb-2.5 text-slate-200" /> -->
-            <p>LEVEL</p>
+            <p class="mr-1 sm:mr-3 lg:mr-5">LEVEL</p>
   
-            <div v-if="(currentLevelId - 1).toString().length !== currentLevelId.toString().length" class="relative flex items-end ml-3 text-6xl pt-4 px-4 rounded-full" style="background-image: linear-gradient(-180deg, rgb(37, 77, 257) 0%, rgb(37, 67, 237) 100%);">
+            <div v-if="(currentLevelId - 1).toString().length !== currentLevelId.toString().length" class="relative flex items-end text-6xl pt-1 px-4 rounded-full sm:text-8xl lg:text-9xl">
               <span>{{ currentLevelId }}</span>
             </div>
   
-            <div v-else class="relative flex justify-center items-end ml-3 mb-3 text-6xl pt-4 px-4 rounded-full" style="background-image: linear-gradient(-180deg, rgb(37, 77, 257) 0%, rgb(37, 67, 237) 100%);">
+            <div v-else class="relative flex justify-center items-end text-6xl pt-1 px-4 rounded-full sm:text-8xl lg:text-9xl">
               <span :class="{ 'old-level-animation': levelUp }">{{ levelUp ? (currentLevelId - 1) : currentLevelId }}</span>
               <span :class="{ 'new-level-animation': levelUp }" class="absolute opacity-0">{{ currentLevelId }}</span>
             </div>
           </div>
   
-          <div class="relative h-16 mt-4 w-full flex items-center justify-center md:h-24">
-            <div @click="startGame" class="play-button">Play</div>
+          <div class="relative h-16 w-full flex items-center justify-center sm:h-24 lg:h-32">
+            <div @click="startGame" class="play-button text-3xl sm:text-5xl lg:text-7xl" style="font-family: 'Luckiest Guy';">Play</div>
           </div>
 
           <div v-if="stats.streak >= 2" class="flex justify-center items-center mt-5">
-            <IconsFire class="h-12 w-12 md:h-8 md:w-8" />
-            <p class="mt-3 ml-1 text-3xl md:text-2xl" style="font-family: 'Luckiest Guy';">{{ stats.streak }}</p>
+            <IconsFire class="h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg-w-20" />
+            <p class="mt-3 ml-1 text-3xl sm:text-5xl lg:text-6xl lg:mt-5" style="font-family: 'Luckiest Guy';">{{ stats.streak }}</p>
           </div>
         </div>
 
-        <div v-else class="flex flex-col justify-center items-center mt-16 text-4xl text-center tracking-wider font-medium md:text-7xl" style="font-family: 'Luckiest Guy';">
+        <div v-else class="flex flex-col justify-center items-center mt-16 text-4xl text-center tracking-wider font-medium sm:text-7xl" style="font-family: 'Luckiest Guy';">
           <p>ALL</p>
           <p>LEVELS</p>
           <p>COMPLETE</p>
@@ -43,16 +43,16 @@
       </div>
 
       <div>
-        <div class="flex justify-around items-center mt-12">
-          <IconsSettings @click="showSettingsModal = true" class="h-10 drop-shadow md:h-14 md:w-14" />
+        <div class="flex justify-around items-center mt-12 sm:px-16">
+          <IconsSettings @click="showSettingsModal = true" class="h-10 drop-shadow sm:h-16 lg:h-24" />
 
           <NuxtLink :to="{ path: '/levels' }">
-            <IconsMap class="h-10" />
+            <IconsMap class="h-10 sm:h-16 lg:h-24" />
           </NuxtLink>
 
           <div class="relative drop-shadow">
-            <IconsHeart class="h-12 w-12 text-red-500 md:h-10 md:w-10" />
-            <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xl md:text-3xl font-medium">{{ lives.count }}</span>
+            <IconsHeart class="h-12 w-12 text-red-500 sm:h-16 sm:w-16 lg:h-24 lg:w-24" />
+            <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xl font-medium sm:text-3xl lg:text-5xl">{{ lives.count }}</span>
           </div>
         </div>
       </div>
@@ -114,9 +114,6 @@ export default {
       this.showAllLevelsCompleteModal = true
       this.allLevelsCompleteModalShown = true
     }
-
-    console.log('STATS', this.gameStore.stats)
-    console.log('LEVEL HISTORY', this.gameStore.levelHistory)
   },
 
   beforeUnmount() {
@@ -138,6 +135,8 @@ export default {
 
   methods: {
     async startGame() {
+      console.log('this.showUserDemo', this.showUserDemo)
+
       if (this.showUserDemo)
         return this.$router.push({ name: 'demo' })
 
@@ -201,19 +200,28 @@ a {
 .play-button {
   position: relative;
   border: 0;
-  border-radius: 50px;
+  border-radius: 100px;
   display: flex;
-  font-size: 2rem;
   font-weight: 500;
-  color: white;
+  color: rgb(0, 85, 255);
+  letter-spacing: 0.1rem;
   cursor: pointer;
   outline: 0;
-  background-image: linear-gradient(-180deg, rgb(37, 77, 257) 0%, rgb(37, 67, 237) 100%);
-  box-shadow: 0 0.3rem 1.25rem 0 rgba(37, 72, 247, 0.50), 0 -0.25rem 1.5rem 
-              rgba(37, 57, 227, 1) inset, 0 0.75rem 0.5rem 
-              rgba(255,255,255, 0.15) inset, 0 0.25rem 0.5rem 0 
-              rgba(37, 67, 242, 1) inset;
+  background: white;
+  box-shadow: 0 0.3rem 1.25rem 0 rgba(128, 128, 128, 0.2);
   animation: size-change 1.5s infinite alternate;
+}
+
+@media (min-width: 640px) {
+  .play-button {
+    animation: size-change-sm 1.5s infinite alternate;
+  }
+}
+
+@media (min-width: 1024px) {
+  .play-button {
+    animation: size-change-lg 1.5s infinite alternate;
+  }
 }
 
 .play-button:active {
@@ -222,11 +230,31 @@ a {
 
 @keyframes size-change {
   0%, 100% {
-    padding: 4px 40px;
+    padding: 8px 40px 0px 40px;
   }
 
   50% {
-    padding: 6px 44px;
+    padding: 10px 44px 2px 44px;
+  }
+}
+
+@keyframes size-change-sm {
+  0%, 100% {
+    padding: 16px 56px 4px 56px;
+  }
+
+  50% {
+    padding: 20px 64px 8px 64px;
+  }
+}
+
+@keyframes size-change-lg {
+  0%, 100% {
+    padding: 28px 72px 10px 72px;
+  }
+
+  50% {
+    padding: 32px 84px 14px 84px;
   }
 }
 

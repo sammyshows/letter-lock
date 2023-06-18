@@ -2,68 +2,68 @@
   <div v-show="showSettingsModal || hideSettingsModal" class="absolute h-full w-full flex justify-center items-center z-20">
     <div class="h-full w-full bg-transparent absolute" @click="$emit('close')"></div>
 
-    <div :class="{ 'utility-modal-slide-in': showSettingsModal,  'utility-modal-slide-out': hideSettingsModal }" class="absolute flex flex-col items-center justify-between h-2/3 w-5/6 py-8 overflow-scroll z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
+    <div :class="{ 'utility-modal-slide-in': showSettingsModal,  'utility-modal-slide-out': hideSettingsModal }" class="absolute flex flex-col items-center justify-between h-2/3 w-5/6 py-8 overflow-scroll z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:w-2/3 sm:h-2/5 sm:rounded-5xl lg:w-2/3 lg:h-1/3">
       <div class="text-center">
-        <h3 class="text-2xl leading-6 font-medium text-ll-orange">Settings</h3>
+        <h3 class="text-2xl leading-6 font-medium text-ll-orange sm:text-4xl lg:text-5xl">Settings</h3>
       </div>
-      <div class="w-full flex flex-col grow items-center mt-4 px-8">
+      <div class="w-full flex flex-col grow items-center mt-4 px-8 text-sm sm:px-12 sm:text-2xl lg:px-16">
         <div class="w-full flex justify-between mt-4">
-          <span class="text-sm font-medium text-slate-600">Notifications</span>
+          <span class="font-medium text-slate-600">Notifications</span>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="settings.notifications" type="checkbox" class="sr-only peer">
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
           </label>
         </div>
         
         <div class="w-full flex justify-between mt-4">
-          <span class="text-sm font-medium text-slate-600">Sound</span>
+          <span class="font-medium text-slate-600">Sound</span>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="settings.sound" type="checkbox" class="sr-only peer">
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
           </label>
         </div>
 
         <div class="w-full flex justify-between mt-4">
-          <span class="text-sm font-medium text-slate-600">Vibrations</span>
+          <span class="font-medium text-slate-600">Vibrations</span>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="settings.vibrations" type="checkbox" class="sr-only peer">
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
           </label>
         </div>
 
         <div class="w-full flex justify-between mt-4">
-          <span class="text-sm font-medium text-slate-600">Test Mode</span>
+          <span class="font-medium text-slate-600">Test Mode</span>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="settings.testMode" type="checkbox" class="sr-only peer">
-            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
           </label>
         </div>
 
         <div v-if="settings.testMode" class="w-full flex flex-col items-center">
           <div class="w-full flex justify-between mt-4">
-            <span class="text-sm font-medium text-slate-600">Animations</span>
+            <span class="font-medium text-slate-600">Animations</span>
             <label class="relative inline-flex items-center cursor-pointer">
               <input v-model="settings.showAnimations" type="checkbox" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
             </label>
           </div>
 
           <div class="w-full flex justify-between mt-4">
-            <span class="text-sm font-medium text-slate-600">Real Lives</span>
+            <span class="font-medium text-slate-600">Real Lives</span>
             <label class="relative inline-flex items-center cursor-pointer">
               <input v-model="settings.realLives" type="checkbox" class="sr-only peer">
-              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
             </label>
           </div>
 
-          <span class="mt-4 text-sm font-medium text-slate-600">Level</span>
+          <span class="mt-4 font-medium text-slate-600">Level</span>
           <div class="flex items-center mt-2">
             <button type="button" style="touch-action: manipulation" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" @click="changeLevel(-1)">Prev</button>
             <input type="number" :value="currentLevelId" @keyup="setLevel" class="w-20 text-2xl text-center text-green-500 bg-transparent focus:outline-none" />
             <button type="button" style="touch-action: manipulation" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" @click="changeLevel(1)">Next</button>
           </div>
 
-          <span class="mt-4 text-sm font-medium text-slate-600">Lives</span>
+          <span class="mt-4 font-medium text-slate-600">Lives</span>
           <div class="flex items-center mt-2">
             <button type="button" style="touch-action: manipulation" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" @click="changeLives(-1)">Prev</button>
             <input type="number" :value="lives.count" @keyup="setLives" class="w-20 text-2xl text-center text-green-500 bg-transparent focus:outline-none" />

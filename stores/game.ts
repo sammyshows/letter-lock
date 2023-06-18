@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { defineStore } from 'pinia'
 import { Preferences } from '@capacitor/preferences'
 
@@ -41,6 +42,7 @@ export const useGameStore = defineStore('game', {
     
     // Settings
     settings: {
+      id: uuid(),
       notifications: true,
       sound: true,
       vibrations: true,
@@ -63,6 +65,7 @@ export const useGameStore = defineStore('game', {
     stats: {
       streak: 0,
       adsWatchedForLives: 0,
+      adsWatchedForMoves: 0,
       zeroLivesTally: 0
     }
   }),
@@ -82,6 +85,12 @@ export const useGameStore = defineStore('game', {
 
       if (settings.value)
         this.settings = JSON.parse((settings.value))
+      else { // initialise settings so we have a unique id from the start
+        await Preferences.set({
+          key: 'letterlock-settings',
+          value: JSON.stringify(this.settings)
+        })
+      }
 
       if (lives.value) {
         this.lives = JSON.parse((lives.value))
@@ -122,8 +131,9 @@ export const useGameStore = defineStore('game', {
         this.currentLevelValidWords = level.validWords
       }
 
-      if (this.levelHistory && this.levelHistory[this.currentLevelId]) {
+      if (this.levelHistory && this.levelHistory[this.currentLevelId] && this.levelHistory[this.currentLevelId].successTally > 0) {
         this.bestRemainingMoves = this.levelHistory[this.currentLevelId].bestRemainingMoves
+        // console.log('REPLAYING LEVEL', this.replayingLevel)
         this.replayingLevel = true
       } else if (this.levelHistory && !this.levelHistory[this.currentLevelId]) {
         this.levelHistory[this.currentLevelId] = {
@@ -144,10 +154,14 @@ export const useGameStore = defineStore('game', {
 
     async saveLevelProgress(levelSuccess: boolean, remainingMoves: number, extraMovesUsed: boolean) {
       this.levelHistory[this.currentLevelId].attemptTally += 1
+
+      if (extraMovesUsed)
+        this.stats.adsWatchedForMoves += 1
       
       if (levelSuccess) {
         let mostRemainingMoves = Math.max(remainingMoves, this.bestRemainingMoves)
-        this.stats.streak += 1
+        if (!this.replayingLevel)
+          this.stats.streak ++
 
         this.levelHistory[this.currentLevelId].bestRemainingMoves = mostRemainingMoves
         this.levelHistory[this.currentLevelId].successTally += 1
@@ -170,7 +184,9 @@ export const useGameStore = defineStore('game', {
     },
 
     async resetLevel() {
-      this.stats.streak = 0
+      if (!this.replayingLevel)
+        this.stats.streak = 0
+        
       this.setCurrentLevel(this.currentLevelId)
       this.handleLives(-1)
 
