@@ -13,7 +13,8 @@ export const useAdsStore = defineStore('ads', {
       adCompleted: false,
       currentReward: null as (Reward | null),
       rewardAdsLoadFailedTally: 0,
-      rewardAdsLoadFailedTime: 0 // most recent time a reward ad failed to load
+      rewardAdsLoadFailedTime: 0, // most recent time a reward ad failed to load
+      adsWatched: [] as Array<object> // reset every time data is posted to the server
     }
   },
 
@@ -44,13 +45,25 @@ export const useAdsStore = defineStore('ads', {
         this.rewardAdsLoaded -= 1
         
         if (this.adCompleted && this.currentReward) {
-          if (this.currentReward.type === 'lives') {
+          if (gameStore.currentLevelId && gameStore.levelHistory[gameStore.currentLevelId]) {
+            this.adsWatched.push({
+              adType: this.currentReward.type,
+              levelId: gameStore.currentLevelId,
+              levelAttemptTally: gameStore.levelHistory[gameStore.currentLevelId].attemptTally,
+              levelSuccessTally: gameStore.levelHistory[gameStore.currentLevelId].successTally,
+              levelStreak: gameStore.stats.streak
+            })
+          }
+
+          if (this.currentReward.type === 'additionalLife') {
             gameStore.handleLives(this.currentReward.quantity)
             gameStore.stats.adsWatchedForLives += 1
             gameStore.saveStats()
           }
-          else if (this.currentReward.type === 'additionalMoves')
+          else if (this.currentReward.type === 'additionalMoves') {
             gameStore.event = { type: 'userReceivedExtraMoves', quantity: this.currentReward.quantity}
+            gameStore.stats.adsWatchedForMoves += 1
+          }
         }
 
         this.adCompleted = false

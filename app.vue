@@ -38,12 +38,17 @@ export default {
         stockwiseVersion: appInfo.version || null,
         levelHistory: gameStore.levelHistory,
         stats: gameStore.stats,
-        settings: gameStore.settings
+        settings: gameStore.settings,
+        adsWatched: adsStore.adsWatched
       })
 
 
       const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
+      // const url = 'http://localhost:8888/api/letterlock-stats-upsert'
       axios.post(url, body)
+        .then(() => {
+          adsStore.$patch({ adsWatched: [] })
+        })
         .catch(error => {
           console.error(error)
         })
@@ -83,7 +88,8 @@ export default {
       stockwiseVersion: appInfo.version || null,
       levelHistory: this.gameStore.levelHistory,
       stats: this.gameStore.stats,
-      settings: this.gameStore.settings
+      settings: this.gameStore.settings,
+      adsWatched: this.adsStore.adsWatched
     })
       
     console.log('BODY', body)

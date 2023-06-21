@@ -106,11 +106,21 @@ export const useGameStore = defineStore('game', {
       await this.setCurrentLevel()
     },
 
+    async startLevel() {
+      setTimeout(() => this.handleLives(-1), 2000) // delay so there's no UI lag, game page heart lives count can be set before this changes it
+      this.$router.push({ path: `/game` })
+
+      await Preferences.set({
+        key: 'letterlock-lives',
+        value: JSON.stringify(this.lives)
+      })
+    },
+
     async setCurrentLevel(levelId?: number) {
       let level
       if (this.levelHistory) { // retrieve the user's current level
         const keys = Object.keys(this.levelHistory)
-        this.maxLevelId = parseInt(keys[keys.length - 1])
+        this.maxLevelId = Math.max(levelId || 0, parseInt(keys[keys.length - 1]))
 
         const currentLevelId = levelId || this.maxLevelId
         level = levels[currentLevelId]
@@ -155,10 +165,8 @@ export const useGameStore = defineStore('game', {
     async saveLevelProgress(levelSuccess: boolean, remainingMoves: number, extraMovesUsed: boolean) {
       this.levelHistory[this.currentLevelId].attemptTally += 1
 
-      if (extraMovesUsed)
-        this.stats.adsWatchedForMoves += 1
-      
       if (levelSuccess) {
+        this.handleLives(1)
         let mostRemainingMoves = Math.max(remainingMoves, this.bestRemainingMoves)
         if (!this.replayingLevel)
           this.stats.streak ++
@@ -181,6 +189,11 @@ export const useGameStore = defineStore('game', {
         key: 'letterlock-stats',
         value: JSON.stringify(this.stats)
       })
+
+      await Preferences.set({
+        key: 'letterlock-lives',
+        value: JSON.stringify(this.lives)
+      })
     },
 
     async resetLevel() {
@@ -188,7 +201,6 @@ export const useGameStore = defineStore('game', {
         this.stats.streak = 0
         
       this.setCurrentLevel(this.currentLevelId)
-      this.handleLives(-1)
 
       await Preferences.set({
         key: 'letterlock-stats',
@@ -242,6 +254,9 @@ export const useGameStore = defineStore('game', {
       if (this.lives.nextLifeTime) {
         const timeToNextLife = this.lives.nextLifeTime - now; // time until the next life should be regained
     
+        if (this.lives.count < 0) // if lives are negative, set to 0
+          this.lives.count = 0
+
         // check if enough time has passed to regain a life
         if (this.lives.count < this.maxLives && timeToNextLife <= 0) {
           const livesGained = Math.max(Math.floor(-timeToNextLife / this.timeToRegainLife), 1) // calculate how many lives should be regained, at least one
@@ -249,6 +264,9 @@ export const useGameStore = defineStore('game', {
     
           if (this.lives.count >= this.maxLives) { // if maximum lives is reached, reset nextLifeTime
             this.lives.nextLifeTime = null;
+
+            if (this.lives.count > this.maxLives) // if lives are over the max, set to max
+              this.lives.count = this.maxLives
           } else { // otherwise, calculate the new nextLifeTime
             this.lives.nextLifeTime = now + this.timeToRegainLife;
           }

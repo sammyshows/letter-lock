@@ -3,18 +3,18 @@
     <img src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
     <div class="z-10 grow flex flex-col justify-center">
-      <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center sm:text-5xl">HOW TO PLAY</div>
+      <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center sm:text-5xl lg:text-7xl">HOW TO PLAY</div>
 
       <div class="flex justify-center">
         <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
-          <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange sm:h-32 sm:w-32"></IconsLock>
+          <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange sm:h-32 sm:w-32 lg:h-44 lg:w-44"></IconsLock>
           <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
         </div>
       </div>
 
-      <div class="p-4">
-        <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute p-3 bg-gray-100 rounded-xl"></div>
-        <div :class="{ 'slide-right': !displayBoard }" class="board-size p-3">
+      <div class="p-4 sm:p-6 lg:p-8">
+        <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute p-3 bg-gray-100 rounded-xl sm:p-4 sm:rounded-2xl lg:p-5 lg:rounded-3xl"></div>
+        <div :class="{ 'slide-right': !displayBoard }" class="board-size p-3 sm:p-4 lg:p-5">
           <div
             ref="gameBoard"
             :class="[ gridCSS ]"
@@ -35,33 +35,33 @@
                   levelCompleted ? animationClasses[index] : '',
                   borderRadiusClasses ? borderRadiusClasses[index] : ''
               ]"
-              class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl"
+              class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl"
             >
               {{ tile.letter }}
               <IconsArrowsLeftRight
                 :class="{
-                  '-left-6 animate-pulse': index === 5 && (demoStep === 1 || demoStep === 2),
-                  '-bottom-6 animate-pulse-rotated': demoStep === 3 && index === 0
+                  'animate-pulse -left-6 sm:-left-9 lg:-left-11': index === 5 && (demoStep === 1 || demoStep === 2),
+                  'animate-pulse-rotated -bottom-6 sm:-bottom-9 lg:-bottom-11': demoStep === 3 && index === 0
                 }"
-                class="h-10 w-10 absolute opacity-0 text-ll-orange duration-700 z-30" />
+                class="h-10 w-10 absolute opacity-0 text-ll-orange duration-700 z-30 sm:h-16 sm:w-16 lg:h-20 lg:w-20" />
             </div>
           </div>
         </div>
 
         <div class="mt-6 duration-1000" :class="{ 'opacity-0': !displayBoard }">
-          <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl">{{ word }}</p>
+          <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl">{{ word }}</p>
         </div>
       </div>
     </div>
 
-    <div v-show="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
-      <div class="text-ll-orange text-4xl font-bold">
+    <div v-show="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-16 sm:w-2/3 sm:h-3/5 sm:rounded-5xl">
+      <div class="text-ll-orange text-4.5xl leading-11 font-bold tracking-widest sm:text-6xl lg:text-7.5xl" style="font-family: 'Luckiest Guy';">
         <p class="word-slide-left">LETTERS</p>
         <p class="word-slide-right">LOCKED</p>
       </div>
-      <p class="px-6 text-xl text-slate-600">Nice job - you nailed it! Now try it yourself!</p>
-      <div class="h-12 flex flex-col justify-center gap-y-2 text-lg">
-        <button @click="nextLevel" class="button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm">Play</button>
+      <p class="px-6 text-xl font-medium text-slate-500 sm:text-4xl lg:text-5xl">Nice job - you nailed it! Now try it yourself!</p>
+      <div class="flex flex-col justify-center gap-y-2 text-lg sm:text-3xl lg:text-4.5xl" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-16' ]">
+        <button @click="nextLevel" class="next-button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm sm:text-3xl lg:text-5xl">Next Level</button>
       </div>
     </div>
 
@@ -186,7 +186,7 @@ export default {
       initialTilePosition: null,
       showCollideEffect: false,
       displayBoard: true,
-      gridCSS: 'gap-2',
+      gridCSS: this.getResponsiveValue('gridGap1'),
       lockBoltHeight: this.getResponsiveValue('lockBoltHeight'),
       lockBoltColor: 'rgb(44, 101, 230)',
       lockDropShadow: 'drop-shadow(0 0 0 rgb(251, 163, 69))',
@@ -208,7 +208,7 @@ export default {
     this.createSortable()
     this.checkWords()
     this.setAnimationClasses()
-    this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-xl rounded-tr-xl rounded-br-xl rounded-tl-xl')
+    this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-12pc rounded-tr-12pc rounded-br-12pc rounded-tl-12pc')
   },
 
   methods: {
@@ -220,10 +220,10 @@ export default {
       this.displayBoard = false;
 
       await this.delay(2300);
-      this.gridCSS = "gap-5 duration-700 ease-in-out";
+      this.gridCSS = this.getResponsiveValue('gridGap2') + ' duration-700 ease-in-out'
 
       await this.delay(800);
-      this.gridCSS = "gap-1 duration-100 ease-in";
+      this.gridCSS = this.getResponsiveValue('gridGap3') + ' duration-100 ease-in'
       this.setBorderRadiusClasses();
 
       await this.delay(75);
@@ -233,7 +233,7 @@ export default {
       this.$vibrateLight()
 
       await this.delay(875);
-      this.lockBoltColor = "rgb(92 131 215)";
+      this.lockBoltColor = this.getResponsiveValue('lockBoltColor2')
 
       await this.delay(1500);
       this.lockBoltHeight = "0";
@@ -317,14 +317,9 @@ export default {
       this.hideCompleteModal = true // 25/03/23 - the complete modal only shows if one of these two are true. That might cause issues if there's a split second where they're both false.
       this.showCompleteModal = false
 
-      await this.delay(1000)
-      await this.gameStore.setCurrentLevel(1)
+      await this.delay(700)
       this.gameStore.$patch({ showUserDemo: false })
-      await Preferences.set({
-          key: 'letterlock-levels',
-          value: JSON.stringify(this.gameStore.levelHistory)
-        })
-      this.$router.push({ path: '/', query: { levelUp: true } })
+      this.$router.push({ path: '/' })
     },
 
     shouldDisableTile(tileId) {
@@ -593,31 +588,31 @@ export default {
         // Therefore we MUST get the index of the tile in the sortableTiles array and update the classes at that index.
         const sortableTileIndex = this.sortableTiles.findIndex((sortableTile) => sortableTile.id === tile.id)
 
-        let borderClasses = 'tile-shadow duration-100 rounded-bl-2xl rounded-tr-2xl rounded-br-2xl rounded-tl-2xl ' + this.tiles[index].letter;
+        let borderClasses = 'tile-shadow duration-100 rounded-bl-16pc rounded-tr-16pc rounded-br-16pc rounded-tl-16pc ' + this.tiles[index].letter;
 
         const row = Math.floor(index / this.gridSize);
         const col = index % this.gridSize;
 
         // Check for a tile on the left
         if (col > 0 && this.tiles[index - 1]?.letter) {
-          borderClasses = borderClasses.replace('rounded-bl-2xl', '').replace('rounded-tl-2xl', '');
+          borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-tl-16pc', '');
         }
 
         // Check for a tile on the right
         if (col < this.gridSize - 1 && this.tiles[index + 1]?.letter) {
           console.log(index, this.tiles[index].letter)
-          borderClasses = borderClasses.replace('rounded-br-2xl', '').replace('rounded-tr-2xl', '');
+          borderClasses = borderClasses.replace('rounded-br-16pc', '').replace('rounded-tr-16pc', '');
         }
 
         // Check for a tile on the top
         if (row > 0 && this.tiles[index - this.gridSize]?.letter) {
           // console.log(index, this.tiles[index].letter)
-          borderClasses = borderClasses.replace('rounded-tl-2xl', '').replace('rounded-tr-2xl', '');
+          borderClasses = borderClasses.replace('rounded-tl-16pc', '').replace('rounded-tr-16pc', '');
         }
 
         // Check for a tile on the bottom
         if (row < this.gridSize - 1 && this.tiles[index + this.gridSize]?.letter) {
-          borderClasses = borderClasses.replace('rounded-bl-2xl', '').replace('rounded-br-2xl', '');
+          borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-br-16pc', '');
         }
 
         this.borderRadiusClasses[sortableTileIndex] = borderClasses
@@ -664,12 +659,55 @@ export default {
 
     getResponsiveValue(variableName) {
       const values = {
-        lockBoltHeight: window.innerWidth >= 768 ? '0.96rem' : '0.60rem',
-        // Add other variables and their values here
+        lockBoltHeight: {
+          '': '0.60rem',
+          'sm': '0.60rem',
+          'md': '0.96rem',
+          'lg': '1.536rem'
+        },
+        lockBoltColor1: {
+          '': 'rgb(31,99,227)',
+          'sm': 'rgb(41,99,228)',
+          'md': 'rgb(41,99,228)',
+          'lg': 'rgb(41, 99, 228)'
+        },
+        lockBoltColor2: {
+          '': 'rgb(50, 120, 239)',
+          'sm': 'rgb(50, 120, 239)',
+          'md': 'rgb(50, 120, 239)',
+          'lg': 'rgb(52, 120, 240)'
+        },
+        gridGap1: {
+          '': 'gap-2',
+          'sm': 'gap-2',
+          'md': 'gap-3',
+          'lg': 'gap-4'
+        },
+        gridGap2: { // just the number because it's dynamically changed when set based on gridSize
+          '': 'gap-5',
+          'sm': 'gap-6',
+          'md': 'gap-7',
+          'lg': 'gap-8'
+        },
+        gridGap3: {
+          '': 'gap-1',
+          'sm': 'gap-2',
+          'md': 'gap-2',
+          'lg': 'gap-2'
+        }
       };
 
-      return values[variableName];
-    }
+      const currentScreenWidth = window.innerWidth;
+      let screen = '';
+
+      if (currentScreenWidth >= 1536) screen = '2xl';
+      else if (currentScreenWidth >= 1280) screen = 'xl';
+      else if (currentScreenWidth >= 1024) screen = 'lg';
+      else if (currentScreenWidth >= 768) screen = 'md';
+      else if (currentScreenWidth >= 640) screen = 'sm';
+
+      return values[variableName][screen];
+    },
   }
 };
 </script>
@@ -682,7 +720,7 @@ export default {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-16px);
+    transform: translateX(-1rem);
   }
 }
 
@@ -691,13 +729,12 @@ export default {
   animation-delay: 0.3s;
 }
 
-
 @keyframes word-slide-right {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(16px);
+    transform: translateX(1rem);
   }
 }
 
@@ -706,16 +743,51 @@ export default {
   animation-delay: 0.3s;
 }
 
+@media (min-width: 640px) {
+  @keyframes word-slide-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-2rem);
+    }
+  }
 
-  .board-size {
+  .word-slide-left {
+    animation: word-slide-left forwards 1.3s ease-out;
+    animation-delay: 0.3s;
+  }
+
+  @keyframes word-slide-right {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(2rem);
+    }
+  }
+
+  .word-slide-right {
+    animation: word-slide-right forwards 1.3s ease-out;
+    animation-delay: 0.3s;
+  }
+}
+
+
+
+
+
+
+
+.board-size {
   width: 90vw;
   height: 90vw;
 }
 
 @media (min-width: 768px) { /* The value 768px is commonly used to target tablets and above */
   .board-size {
-    width: 60vw;
-    height: 60vw;
+    width: 65vw;
+    height: 65vw;
   }
 }
 
@@ -745,13 +817,24 @@ export default {
   transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
 }
 
-@media (min-width: 768px) { /* The value 768px is commonly used to target tablets and above */
+@media (min-width: 640px) {
   .lock-bolt {
     position: absolute;
     width: 0.56rem;
     height: 1.28rem;
     bottom: 4.75rem;
     left: 2.23rem;
+    transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lock-bolt {
+    position: absolute;
+    width: 0.76rem;
+    height: 1.9rem;
+    bottom: 6.53rem;
+    left: 3.04rem;
     transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
   }
 }
@@ -820,17 +903,41 @@ export default {
 
 /* 'Next' button size changer */
 
-.button-pulse {
-  animation: button-pulse 1.5s infinite alternate;
+.next-button-pulse {
+  animation: next-button-pulse 1.5s infinite alternate;
 }
 
-@keyframes button-pulse {
+@keyframes next-button-pulse {
   0%, 100% {
     padding: 10px 32px;
   }
 
   50% {
     padding: 11px 38px;
+  }
+}
+
+@media (min-width: 640px) {
+  @keyframes next-button-pulse {
+    0%, 100% {
+      padding: 16px 40px;
+    }
+
+    50% {
+      padding: 19px 48px;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  @keyframes next-button-pulse {
+    0%, 100% {
+      padding: 18px 48px;
+    }
+
+    50% {
+      padding: 22px 60px;
+    }
   }
 }
 

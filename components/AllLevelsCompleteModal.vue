@@ -2,18 +2,18 @@
   <div v-show="showAllLevelsCompleteModal || hideAllLevelsCompleteModal" class="absolute h-full w-full flex justify-center items-center z-20">
     <div class="h-full w-full bg-transparent absolute" @click="$emit('close')"></div>
     
-    <div :class="{ 'utility-modal-slide-in': showAllLevelsCompleteModal,  'utility-modal-slide-out': hideAllLevelsCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-6 z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl">
-      <div @click="$emit('close')" class="absolute -top-5 -right-5">
-        <div class="z-10 absolute  top-2 right-2  w-10 h-10 rounded-full bg-white"></div>
-        <IconsX class="absolute z-40 -top-0 -right-0  w-14 h-14 text-red-400" />
+    <div :class="{ 'utility-modal-slide-in': showAllLevelsCompleteModal,  'utility-modal-slide-out': hideAllLevelsCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-6 z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-8 sm:w-2/3 sm:rounded-5xl lg:py-12">
+      <div @click="$emit('close')" class="absolute -top-5 -right-5 md:-top-8 md:-right-8 lg:-top-12 lg:-right-12">
+        <div class="z-10 absolute  top-2 right-2  w-10 h-10 rounded-full bg-white md:w-16 md:h-16 lg:w-20 lg:h-20 lg:top-6 lg:right-6"></div>
+        <IconsX class="absolute z-40 -top-0 -right-0  w-14 h-14 text-red-400 md:w-20 md:h-20 lg:w-28 lg:h-28" />
       </div>
 
-      <div>
-        <p class="word-slide-left ml-8 text-ll-orange text-3xl font-bold drop-shadow-sm">ALL LEVELS</p>
-        <p class="word-slide-right mr-8 text-ll-orange text-3xl font-bold drop-shadow-sm">COMPLETE</p>
+      <div class="text-ll-orange text-3xl font-bold tracking-widest drop-shadow-sm sm:text-6xl lg:text-7xl" style="font-family: 'Luckiest Guy';">
+        <p class="word-slide-left ml-8 sm:ml-16">ALL LEVELS</p>
+        <p class="word-slide-right mr-8 sm:mr-16">COMPLETE</p>
       </div>
 
-      <div class="px-6 text-slate-500">
+      <div class="px-6 text-slate-500 sm:text-2xl lg:text-4xl">
         <p class="text-center">Congratulations! You are one of very <strong class="font-medium">FEW</strong> people to complete <strong class="font-medium">EVERY</strong> level!</p>
         <br>
         <p class="text-center">If you have enjoyed <strong class="font-medium">Letter Lock</strong> so far, please let us know by leaving a review and we will bring more levels to you soon!</p>

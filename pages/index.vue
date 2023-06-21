@@ -135,18 +135,16 @@ export default {
 
   methods: {
     async startGame() {
-      console.log('this.showUserDemo', this.showUserDemo)
-
       if (this.showUserDemo)
         return this.$router.push({ name: 'demo' })
 
       if (this.lives.count > 0)
-        this.$router.push('/game')
+        this.gameStore.startLevel()
       else {
         await this.gameStore.checkLives()
 
         if (this.lives.count > 0) {
-          this.$router.push('/game')
+          this.gameStore.startLevel()
         } else {
           this.showLivesModal = true
         }
@@ -304,6 +302,8 @@ a {
 
 
 
+
+
 /* Word Slides */
 
 @keyframes word-slide-left {
@@ -311,7 +311,7 @@ a {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-16px);
+    transform: translateX(-1rem);
   }
 }
 
@@ -320,19 +320,48 @@ a {
   animation-delay: 0.3s;
 }
 
-
 @keyframes word-slide-right {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(16px);
+    transform: translateX(1rem);
   }
 }
 
 .word-slide-right {
   animation: word-slide-right forwards 1.3s ease-out;
   animation-delay: 0.3s;
+}
+
+@media (min-width: 640px) {
+  @keyframes word-slide-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-2rem);
+    }
+  }
+
+  .word-slide-left {
+    animation: word-slide-left forwards 1.3s ease-out;
+    animation-delay: 0.3s;
+  }
+
+  @keyframes word-slide-right {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(2rem);
+    }
+  }
+
+  .word-slide-right {
+    animation: word-slide-right forwards 1.3s ease-out;
+    animation-delay: 0.3s;
+  }
 }
 
 

@@ -1,13 +1,14 @@
   <template>
     <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
-      <img src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
+      <img v-if="isMobile" src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
+      <img v-else src="@/assets/images/background-large.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
       <div class="w-full flex justify-between px-4 z-10">
         <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" />
 
         <div class="relative h-7 w-7 drop-shadow opacity-50 sm:h-14 sm:w-14">
           <IconsHeart class="h-7 w-7 text-red-400 sm:h-14 sm:w-14" />
-          <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs sm:text-3xl font-medium">{{ lives.count }}</span>
+          <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs sm:text-3xl font-medium">{{ lives }}</span>
         </div>
       </div>
       <div class="flex flex-col grow z-10">
@@ -75,8 +76,7 @@
                 :showLevelCompleteModal="showLevelCompleteModal"
                 :hideLevelCompleteModal="hideLevelCompleteModal"
                 @nextLevel="nextLevel"
-                @resetLevel="resetLevel"
-                @close="closeLoseLifeModal" />
+                @resetLevel="resetLevel" />
 
       <!-- LOSE LIFE MODAL -->
       <LoseLifeModal v-if="showLoseLifeModal || hideLoseLifeModal"
@@ -108,7 +108,9 @@
     setup() {
       const gameStore = useGameStore()
 
-      const { event, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
+      let { event, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
+      lives = JSON.parse(JSON.stringify(lives.value.count))
+      currentLevelId = JSON.parse(JSON.stringify(currentLevelId.value))
 
       return { event, gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives }
     },
@@ -128,7 +130,7 @@
         hideLevelCompleteModal: false,
         showLoseLifeModal: false,
         hideLoseLifeModal: false,
-        showFailedModal: true,
+        showFailedModal: false,
         hideFailedModal: false,
         animationClasses: null,
         borderRadiusClasses: null,
@@ -152,6 +154,10 @@
           gridTemplateRows: `repeat(${this.gridSize}, minmax(0, 1fr))`,
         }
       },
+
+      isMobile() {
+        return window.innerWidth <= 640;
+      }
     },
 
     mounted() {
@@ -865,22 +871,6 @@
     animation-delay: 1.7s;
   }
 
-
-  /* 'Next' button size changer */
-
-  .button-pulse {
-    animation: button-pulse 1.5s infinite alternate;
-  }
-
-  @keyframes button-pulse {
-    0%, 100% {
-      padding: 10px 32px;
-    }
-
-    50% {
-      padding: 11px 38px;
-    }
-  }
 
 
 
