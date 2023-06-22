@@ -3,7 +3,7 @@
     <img src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
     <div class="z-10 grow flex flex-col justify-center">
-      <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center sm:text-5xl lg:text-7xl">HOW TO PLAY</div>
+      <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold tracking-wider text-center sm:text-5xl lg:text-7xl" style="font-family: 'Luckiest Guy';">HOW TO PLAY</div>
 
       <div class="flex justify-center">
         <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
@@ -48,19 +48,19 @@
           </div>
         </div>
 
-        <div class="mt-6 duration-1000" :class="{ 'opacity-0': !displayBoard }">
+        <div class="mt-6 font-medium tracking-wide duration-1000" :class="{ 'opacity-0': !displayBoard }">
           <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl">{{ word }}</p>
         </div>
       </div>
     </div>
 
     <div v-show="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-16 sm:w-2/3 sm:h-3/5 sm:rounded-5xl">
-      <div class="text-ll-orange text-4.5xl leading-11 font-bold tracking-widest sm:text-6xl lg:text-7.5xl" style="font-family: 'Luckiest Guy';">
+      <div class="text-ll-orange text-4-5xl leading-11 font-bold tracking-widest sm:text-6xl lg:text-7-5xl" style="font-family: 'Luckiest Guy';">
         <p class="word-slide-left">LETTERS</p>
         <p class="word-slide-right">LOCKED</p>
       </div>
       <p class="px-6 text-xl font-medium text-slate-500 sm:text-4xl lg:text-5xl">Nice job - you nailed it! Now try it yourself!</p>
-      <div class="flex flex-col justify-center gap-y-2 text-lg sm:text-3xl lg:text-4.5xl" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-16' ]">
+      <div class="flex flex-col justify-center gap-y-2 text-lg sm:text-3xl lg:text-4-5xl" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-16' ]">
         <button @click="nextLevel" class="next-button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm sm:text-3xl lg:text-5xl">Next Level</button>
       </div>
     </div>
@@ -810,9 +810,9 @@ export default {
 
 .lock-bolt {
   position: absolute;
-  width: 0.35rem;
+  width: 0.38rem;
   height: 0.8rem;
-  bottom: 2.98rem;
+  bottom: 2.97rem;
   left: 1.39rem;
   transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
 }
@@ -920,11 +920,11 @@ export default {
 @media (min-width: 640px) {
   @keyframes next-button-pulse {
     0%, 100% {
-      padding: 16px 40px;
+      padding: 15px 46px;
     }
 
     50% {
-      padding: 19px 48px;
+      padding: 16px 56px;
     }
   }
 }
@@ -932,11 +932,11 @@ export default {
 @media (min-width: 1024px) {
   @keyframes next-button-pulse {
     0%, 100% {
-      padding: 18px 48px;
+      padding: 22px 56px;
     }
 
     50% {
-      padding: 22px 60px;
+      padding: 26px 70px;
     }
   }
 }

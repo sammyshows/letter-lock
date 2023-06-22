@@ -23,39 +23,16 @@ export default {
     const gameStore = useGameStore()
     const adsStore = useAdsStore()
 
-    watch(() => gameStore.stats, async () => {
-      let deviceInfo = {};
-      let appInfo = {};
-
-      if (Capacitor.getPlatform() !== 'web') {
-        deviceInfo = await Device.getInfo();
-        appInfo = await App.getInfo();
-      }
-
-      const body = JSON.stringify({
-        deviceOS: deviceInfo.osVersion || null,
-        deviceModel: deviceInfo.model || null,
-        stockwiseVersion: appInfo.version || null,
-        levelHistory: gameStore.levelHistory,
-        stats: gameStore.stats,
-        settings: gameStore.settings,
-        adsWatched: adsStore.adsWatched
-      })
-
-
-      const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
-      // const url = 'http://localhost:8888/api/letterlock-stats-upsert'
-      axios.post(url, body)
-        .then(() => {
-          adsStore.$patch({ adsWatched: [] })
-        })
-        .catch(error => {
-          console.error(error)
-        })
-    },
-    { deep: true })
-
     return { gameStore, adsStore }
+  },
+
+  watch: {
+    'gameStore.stats': {
+      handler() {
+        this.sendStats()
+      },
+      deep: true
+    }
   },
 
   data() {
@@ -69,36 +46,112 @@ export default {
     this.adsStore.initialiseRewardAd()
     this.adsStore.prepareRewardAd()
     this.gameStateLoaded = true
+    this.sendStats()
+  },
 
+  methods: {
+    async sendStats() {
+      let deviceInfo = {};
+      let appInfo = {};
 
+      if (Capacitor.getPlatform() !== 'web') {
+        deviceInfo = await Device.getInfo();
+        appInfo = await App.getInfo();
+      }
 
+      const body = JSON.stringify({
+        deviceOS: deviceInfo.osVersion || null,
+        deviceModel: deviceInfo.model || null,
+        stockwiseVersion: appInfo.version || null,
+        levelHistory: this.gameStore.levelHistory,
+        stats: this.gameStore.stats,
+        settings: this.gameStore.settings,
+        adsWatched: this.adsStore.adsWatched
+      })
 
+      // const url = 'http://localhost:8888/api/letterlock-stats-upsert'
+      const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
 
-    let deviceInfo = {};
-    let appInfo = {};
-
-    if (Capacitor.getPlatform() !== 'web') {
-      deviceInfo = await Device.getInfo();
-      appInfo = await App.getInfo();
-    }
-
-    const body = JSON.stringify({
-      deviceOS: deviceInfo.osVersion || null,
-      deviceModel: deviceInfo.model || null,
-      stockwiseVersion: appInfo.version || null,
-      levelHistory: this.gameStore.levelHistory,
-      stats: this.gameStore.stats,
-      settings: this.gameStore.settings,
-      adsWatched: this.adsStore.adsWatched
-    })
-      
-    console.log('BODY', body)
-    
-    const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
       axios.post(url, body)
         .catch(error => {
           console.error(error)
         })
+    }
   }
 }
 </script>
+
+<style>
+/* Overrides tailwind classes for thin screens */
+@media (max-width: 300px) or ((max-height: 650px) and (min-width: 280px)) {
+  .text-xs {
+    font-size: 0.65rem; /* Slightly smaller size */
+    line-height: 0.875rem;
+  }
+  .text-sm {
+    font-size: 0.775rem;
+    line-height: 1.125rem;
+  }
+  .text-base {
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+  }
+  .text-lg {
+    font-size: 1rem;
+    line-height: 1.325rem;
+  }
+  .text-xl {
+    font-size: 1.125rem;
+    line-height: 1.625rem;
+  }
+  .text-2xl {
+    font-size: 1.375rem;
+    line-height: 1.875rem;
+  }
+  .text-3xl {
+    font-size: 1.525rem;
+    line-height: 2.125rem;
+  }
+  .text-4xl {
+    font-size: 2.075rem;
+    line-height: 2.375rem;
+  }
+  .text-5xl {
+    font-size: 2.75rem;
+    line-height: 1;
+  }
+  .text-6xl {
+    font-size: 3.45rem;
+    line-height: 1;
+  }
+  .text-7xl {
+    font-size: 4.15rem;
+    line-height: 1;
+  }
+  .text-8xl {
+    font-size: 5.5rem;
+    line-height: 1;
+  }
+  .text-9xl {
+    font-size: 7.5rem;
+    line-height: 1;
+  }
+  /* Custom text sizes */
+  .text-4-5xl {
+    font-size: 2rem;
+    line-height: 2.3rem;
+  }
+  .text-5-5xl {
+    font-size: 3.25rem;
+    line-height: 3.7rem;
+  }
+  .text-6-5xl {
+    font-size: 4.15rem;
+    line-height: 4.7rem;
+  }
+  .text-7-5xl {
+    font-size: 5.05rem;
+    line-height: 5.8rem;
+  }
+}
+</style>

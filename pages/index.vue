@@ -7,7 +7,7 @@
     <img class="absolute w-4/5 top-14 left-1/2 -translate-x-1/2 sm:w-2/3 sm:top-24" src="@/assets/images/letterlock-final.png" alt="Letter Lock Logo">
 
     <div class="flex flex-col grow justify-around mt-20 z-10">
-      <div class="sm:h-40"></div>
+      <div class="h-12 sm:h-40"></div>
       
       <div class="mt-16">
         <div v-if="currentLevelId && currentLevelId <= totalLevelCount">
@@ -29,9 +29,9 @@
             <div @click="startGame" class="play-button text-3xl sm:text-5xl lg:text-7xl" style="font-family: 'Luckiest Guy';">Play</div>
           </div>
 
-          <div v-if="stats.streak >= 2" class="flex justify-center items-center mt-5">
-            <IconsFire class="h-12 w-12 sm:h-16 sm:w-16 lg:h-20 lg-w-20" />
-            <p class="mt-3 ml-1 text-3xl sm:text-5xl lg:text-6xl lg:mt-5" style="font-family: 'Luckiest Guy';">{{ stats.streak }}</p>
+          <div v-if="stats.streak >= 2" class="flex justify-center items-center mt-5 lg:mt-8">
+            <IconsFire class="h-12 w-12 sm:h-16 sm:w-16 lg:h-24 lg:w-24" />
+            <p class="mt-3 ml-1 text-3xl sm:text-6xl sm:mt-4 lg:text-7-5xl lg:mt-7 lg:ml-3" style="font-family: 'Luckiest Guy';">{{ stats.streak }}</p>
           </div>
         </div>
 

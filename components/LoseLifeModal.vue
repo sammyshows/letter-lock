@@ -6,7 +6,7 @@
       <IconsX class="absolute z-40 -top-0 -right-0 w-8 h-8 text-red-400 sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
     </div>
 
-    <div class="relative text-ll-orange text-4.5xl font-bold tracking-widest leading-11 sm:text-6xl lg:text-7.5xl" style="font-family: 'Luckiest Guy';">
+    <div class="relative text-ll-orange text-4-5xl font-bold tracking-widest leading-11 sm:text-6xl lg:text-7-5xl" style="font-family: 'Luckiest Guy';">
       <p class="word-slide-left mr-4">LETTERS</p>
       <p class="drop-not absolute bottom-3 -left-7 text-2xl tracking-wide text-purple-400 underline underline-offset-2 opacity-0 sm:text-4xl sm:-left-11 sm:bottom-4 lg:text-5xl lg:-left-16 lg:bottom-7" style="font-family: 'Poppins';">NOT</p>
       <p class="word-slide-right ml-4">LOCKED</p>

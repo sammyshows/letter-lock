@@ -1,5 +1,6 @@
 import { IndexedLevelData } from "@/types/types";
 
+// NOTE: 206 was added back into the reall levels as 201.
 const newLevels: IndexedLevelData = {
   201: {
     gridSize: 5,
@@ -535,113 +536,6 @@ const newLevels: IndexedLevelData = {
       letter: "N"
     }],
     validWords: ["FANCY", "TURF", "GRAIN"]
-  },
-  206: {
-    gridSize: 5,
-    maxMoves: 21,
-    par: 30,
-    tiles: [{
-      id: 1,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 2,
-      isPartOfWord: false,
-      letter: "S"
-    }, {
-      id: 3,
-      isPartOfWord: false,
-      letter: "P"
-    }, {
-      id: 4,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 5,
-      isPartOfWord: false,
-      letter: "E"
-    }, {
-      id: 6,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 7,
-      isPartOfWord: false,
-      letter: "C"
-    }, {
-      id: 8,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 9,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 10,
-      isPartOfWord: false,
-      letter: "P"
-    }, {
-      id: 11,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 12,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 13,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 14,
-      isPartOfWord: false,
-      letter: "L"
-    }, {
-      id: 15,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 16,
-      isPartOfWord: false,
-      letter: "O"
-    }, {
-      id: 17,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 18,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 19,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 20,
-      isPartOfWord: false,
-      letter: "I"
-    }, {
-      id: 21,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 22,
-      isPartOfWord: false,
-      letter: ""
-    }, {
-      id: 23,
-      isPartOfWord: false,
-      letter: "M"
-    }, {
-      id: 24,
-      isPartOfWord: false,
-      letter: "A"
-    }, {
-      id: 25,
-      isPartOfWord: false,
-      letter: ""
-    }],
-    validWords: ["EPIC", "SCALP", "MOP"]
   },
   207: {
     gridSize: 5,

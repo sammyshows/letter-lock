@@ -528,9 +528,9 @@ export default {
 
 .lock-bolt {
   position: absolute;
-  width: 0.35rem;
+  width: 0.38rem;
   height: 0.8rem;
-  bottom: 2.98rem;
+  bottom: 2.97rem;
   left: 1.39rem;
   transition: background-color 1.3s ease-in-out, max-height 0.2s ease-in;
 }

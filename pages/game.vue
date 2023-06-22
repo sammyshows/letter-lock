@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="flex flex-col grow z-10">
-        <div :class="{ 'slide-down': levelCompleted }" class="text-3xl mb-4 font-bold text-center sm:text-5xl lg:text-7xl">LEVEL {{ currentLevelId }}</div>
+        <div :class="{ 'slide-down': levelCompleted }" class="flex justify-center items-center text-3xl mt-1 mb-3 font-bold tracking-widest text-center sm:text-5xl lg:text-7xl" style="font-family: 'Luckiest Guy';">LEVEL <span class="ml-3 text-4xl sm:text-6xl lg:ml-7 lg:text-8xl">{{ currentLevelId }}</span></div>
 
         <div class="flex justify-center">
           <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
@@ -60,8 +60,20 @@
             </div>
           </div>
 
-          <div class="mt-6 duration-1000" :class="{ 'opacity-0': !displayBoard }">
+          <div v-if="validWords <= 3" class="mt-6 duration-1000" :class="{ 'opacity-0': !displayBoard }">
             <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl">{{ word }}</p>
+          </div>
+
+          <div v-else class="grow flex flex-col justify-center gap-y-2 mt-2 font-medium tracking-wide duration-1000 sm:gap-y-4 lg:mt-2 lg:gap-y-6" :class="{ 'opacity-0': !displayBoard }">
+            <div class="flex justify-center gap-x-8">
+              <p v-for="word in validWords.slice(0,1).concat(validWords.slice(2,3))" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
+            </div>
+            <div class="flex justify-center gap-x-8">
+              <p v-for="word in validWords.slice(1,2).concat(validWords.slice(3,4))" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
+            </div>
+            <div class="flex justify-center gap-x-8">
+              <p v-for="word in validWords.slice(4)" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
+            </div>
           </div>
         </div>
         <div class="grow"></div>
@@ -755,10 +767,24 @@
     height: 90vw;
   }
 
+  @media (min-width: 450px) { /* The value 768px is commonly used to target tablets and above */
+    .board-size {
+      width: 65vw;
+      height: 65vw;
+    }
+  }
+
   @media (min-width: 768px) { /* The value 768px is commonly used to target tablets and above */
     .board-size {
       width: 65vw;
       height: 65vw;
+    }
+  }
+
+  @media (max-height: 650px) and (min-width: 260px) {
+    .board-size {
+      width: 70vw;
+      height: 70vw;
     }
   }
 
@@ -781,9 +807,9 @@
 
   .lock-bolt {
     position: absolute;
-    width: 0.35rem;
+    width: 0.38rem;
     height: 0.8rem;
-    bottom: 2.98rem;
+    bottom: 2.97rem;
     left: 1.39rem;
     transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
   }

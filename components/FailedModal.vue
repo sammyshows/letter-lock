@@ -5,21 +5,21 @@
       <IconsX class="absolute z-40 -top-0 -right-0 w-8 h-8 text-red-400 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />
     </div>
 
-    <div class="relative text-ll-orange text-4xl font-bold tracking-widest sm:text-6.5xl sm:leading-18 lg:text-7.5xl lg:leading-22" style="font-family: 'Luckiest Guy';">
+    <div class="relative text-ll-orange text-4xl font-bold tracking-widest sm:text-6-5xl sm:leading-18 lg:text-7-5xl lg:leading-22" style="font-family: 'Luckiest Guy';">
       <p class="word-slide-left mr-4">LETTERS</p>
-      <p class="drop-not absolute bottom-1.5 -left-7 text-2xl text-purple-400 tracking-wide underline underline-offset-2 opacity-0 sm:text-4.5xl sm:-left-14 sm:bottom-8 lg:text-5xl lg:-left-16 lg:bottom-10" style="font-family: 'Poppins';">NOT</p>
+      <p class="drop-not absolute bottom-1.5 -left-7 text-2xl text-purple-400 tracking-wide underline underline-offset-2 opacity-0 sm:text-4-5xl sm:-left-14 sm:bottom-8 lg:text-5xl lg:-left-16 lg:bottom-10" style="font-family: 'Poppins';">NOT</p>
       <p class="word-slide-right ml-4">LOCKED</p>
     </div>
 
     <p v-html="HTMLText" :class="[ fontSizeClass(offerExtraMoves ? 1 : 2) ]" class="px-6 font-medium text-slate-500"></p>
 
     <div v-if="offerExtraMoves" class="flex justify-center items-center mt-3 text-green-500 drop-shadow">
-      <span class="pt-3 text-4xl font-medium tracking-widest sm:pt-5 sm:text-6xl lg:text-7.5xl" style="font-family: 'Luckiest Guy';">+3</span>
+      <span class="pt-3 text-4xl font-medium tracking-widest sm:pt-5 sm:text-6xl lg:text-7-5xl" style="font-family: 'Luckiest Guy';">+3</span>
       <IconsArrowsLeftRight class="w-12 h-12 ml-2 sm:w-16 sm:h-16 lg:w-24 lg:h-24" />
     </div>
     
     <div class="flex flex-col justify-center gap-y-2 w-full h-16 text-lg sm:h-24 lg:h-36">
-      <div class="h-3/5 flex justify-center text-sm sm:text-3xl lg:text-4.5xl">
+      <div class="h-3/5 flex justify-center text-sm sm:text-3xl lg:text-4-5xl">
         <ButtonsWatchAd v-if="offerExtraMoves" @watchAd="watchRewardAd" text="Play On!" />
         <div v-else @click="$emit('close', true)" class="button-pulse flex self-center rounded-full bg-gradient-to-br from-rose-300 to-rose-500 focus:from-red-400 focus:to-red-600">
           <button class="text-white font-medium shadow-sm drop-shadow">Try Again</button>
@@ -140,7 +140,7 @@ export default defineComponent({
           '': 'text-base',
           'sm': 'text-xl',
           'md': 'text-3xl',
-          'lg': 'text-4.5xl',
+          'lg': 'text-4-5xl',
           'xl': 'text-5xl'
         },
 
@@ -185,11 +185,11 @@ export default defineComponent({
 @media (min-width: 640px) {
   @keyframes button-pulse {
     0%, 100% {
-      padding: 13px 40px;
+      padding: 15px 46px;
     }
 
     50% {
-      padding: 14px 48px;
+      padding: 16px 56px;
     }
   }
 }
@@ -197,11 +197,11 @@ export default defineComponent({
 @media (min-width: 1024px) {
   @keyframes button-pulse {
     0%, 100% {
-      padding: 18px 48px;
+      padding: 22px 56px;
     }
 
     50% {
-      padding: 22px 60px;
+      padding: 26px 70px;
     }
   }
 }

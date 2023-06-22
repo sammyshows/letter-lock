@@ -20,6 +20,7 @@ export interface LevelHistoryData {
   bestRemainingMoves: number,
   attemptTally: number,
   successTally: number,
+  replayTally: number,
   extraMovesUsed: boolean
 }
 

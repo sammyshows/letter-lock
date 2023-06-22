@@ -36,6 +36,7 @@ export const useGameStore = defineStore('game', {
         bestRemainingMoves: 0,
         attemptTally: 0,
         successTally: 0,
+        replayTally: 0,
         extraMovesUsed: false
       }
     } as IndexedLevelHistoryData, // it isn't exactly the same data type so feel free to remove
@@ -138,7 +139,7 @@ export const useGameStore = defineStore('game', {
         this.maxMoves = level.maxMoves
         this.par = level.par
         this.currentLevelTiles = level.tiles
-        this.currentLevelValidWords = level.validWords
+        this.currentLevelValidWords = level.validWords.sort((a, b) => b.length - a.length)
       }
 
       if (this.levelHistory && this.levelHistory[this.currentLevelId] && this.levelHistory[this.currentLevelId].successTally > 0) {
@@ -150,6 +151,7 @@ export const useGameStore = defineStore('game', {
           bestRemainingMoves: 0,
           attemptTally: 0,
           successTally: 0,
+          replayTally: 0,
           extraMovesUsed: false
         }
 
@@ -164,6 +166,8 @@ export const useGameStore = defineStore('game', {
 
     async saveLevelProgress(levelSuccess: boolean, remainingMoves: number, extraMovesUsed: boolean) {
       this.levelHistory[this.currentLevelId].attemptTally += 1
+      if (this.replayingLevel)
+        this.levelHistory[this.currentLevelId].replayTally += 1
 
       if (levelSuccess) {
         this.handleLives(1)

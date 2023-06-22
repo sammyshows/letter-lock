@@ -8,7 +8,7 @@
         <IconsX class="absolute z-40 -top-0 -right-0 w-14 h-14 text-red-400 md:w-20 md:h-20 lg:w-28 lg:h-28" />
       </div>
 
-      <div class="text-ll-orange text-4xl font-bold tracking-widest drop-shadow-sm sm:text-5.5xl sm:leading-14 lg:text-7xl" style="font-family: 'Luckiest Guy';">
+      <div class="text-ll-orange text-4xl font-bold tracking-widest drop-shadow-sm sm:text-5-5xl sm:leading-14 lg:text-7xl" style="font-family: 'Luckiest Guy';">
         <p class="word-slide-left ml-6 sm:ml-14">NO MORE</p>
         <p class="word-slide-right mr-6 sm:mr-14">LIVES</p>
       </div>
@@ -22,7 +22,7 @@
         <div class="w-3/5">
           <div class="w-full flex flex-col justify-center items-center ml-auto">
             <span class="text-xl text-slate-600 sm:text-4xl lg:text-5xl">Next life in:</span>
-            <span class="px-6 rounded-full text-xl text-slate-500 font-bold bg-orange-200 sm:mt-2 sm:text-4xl sm:px-10 sm:py-1 lg:mt-4 lg:text-5.5xl lg:py-4 lg:px-14">{{ lifeRemainingTime }}</span>
+            <span class="px-6 rounded-full text-xl text-slate-500 font-bold bg-orange-200 sm:mt-2 sm:text-4xl sm:px-10 sm:py-1 lg:mt-4 lg:text-5-5xl lg:py-4 lg:px-14">{{ lifeRemainingTime }}</span>
           </div>
         </div>
       </div>
@@ -31,7 +31,7 @@
         <div class="w-full flex justify-between pl-8 pr-4">
           <div class="relative w-1/4 h-min flex justify-center drop-shadow">
             <IconsHeart class="h-12 w-12 text-pink-500 drop-shadow-xl sm:h-20 sm:w-20 lg:h-28 lg:w-28" />
-            <div class="absolute w-full h-full top-0 flex justify-center items-center text-base font-medium sm:text-3xl lg:text-4.5xl">+1</div>
+            <div class="absolute w-full h-full top-0 flex justify-center items-center text-base font-medium sm:text-3xl lg:text-4-5xl">+1</div>
           </div>
           <div class="w-3/4 flex justify-center">
             <ButtonsWatchAd @watchAd="watchRewardAd()" text="Watch Ad!" />

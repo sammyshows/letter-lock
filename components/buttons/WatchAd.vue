@@ -31,11 +31,11 @@
 @media (min-width: 640px) {
   @keyframes ad-button-pulse {
     0%, 100% {
-      padding: 16px 40px;
+      padding: 15px 36px;
     }
 
     50% {
-      padding: 19px 48px;
+      padding: 16px 40px;
     }
   }
 }
@@ -43,11 +43,11 @@
 @media (min-width: 1024px) {
   @keyframes ad-button-pulse {
     0%, 100% {
-      padding: 18px 48px;
+      padding: 22px 56px;
     }
 
     50% {
-      padding: 22px 60px;
+      padding: 26px 70px;
     }
   }
 }

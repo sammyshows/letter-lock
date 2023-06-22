@@ -46,10 +46,10 @@ module.exports = {
       },
 
       fontSize: {
-        '4.5xl': '2.5rem',
-        '5.5xl': '3.5rem',
-        '6.5xl': '4.5rem',
-        '7.5xl': '5.5rem',
+        '4-5xl': '2.5rem',
+        '5-5xl': '3.5rem',
+        '6-5xl': '4.5rem',
+        '7-5xl': '5.5rem',
         'tiny': '0.6rem',
         'teeny': '0.5rem',
         'atomic': '0.4rem'
