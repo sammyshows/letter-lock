@@ -1,6 +1,6 @@
 <template>
-  <div class="h-full flex flex-col justify-between">
-    <NuxtLink :to="{ path: '/' }" class="absolute top-4 left-4">
+  <div :class="[ platform === 'ios' ? 'pt-10' : 'pt-4' ]" class="h-full flex flex-col justify-between">
+    <NuxtLink :to="{ path: '/' }" :class="[ platform === 'ios' ? 'top-10' : 'top-4' ]" class="absolute left-4" style="touch-action: manipulation;">
       <IconsArrowLeft class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2 lg:w-24 lg:h-24 lg:ml-5 lg:mt-3" />
     </NuxtLink>
     
@@ -46,6 +46,7 @@
 
 <script>
 import { storeToRefs } from "pinia"
+import { Capacitor } from "@capacitor/core"
 import { useGameStore } from "@/stores/game";
 
 export default {
@@ -65,6 +66,7 @@ export default {
 
   data() {
     return {
+      platform: Capacitor.getPlatform(),
       currentPage: 1,
       showLivesModal: false,
       hideLivesModal: false

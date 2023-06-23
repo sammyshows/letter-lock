@@ -10,7 +10,7 @@
         <div class="w-full flex justify-between mt-4">
           <span class="flex items-center font-medium text-slate-500">Notifications</span>
           <label class="relative inline-flex items-center cursor-pointer">
-            <input v-model="settings.notifications" type="checkbox" class="sr-only peer">
+            <input v-model="settings.notifications" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
           </label>
         </div>
@@ -18,7 +18,7 @@
         <div class="w-full flex justify-between mt-4">
           <span class="flex items-center font-medium text-slate-500">Sound</span>
           <label class="relative inline-flex items-center cursor-pointer">
-            <input v-model="settings.sound" type="checkbox" class="sr-only peer">
+            <input v-model="settings.sound" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
           </label>
         </div>
@@ -26,24 +26,25 @@
         <div class="w-full flex justify-between mt-4">
           <span class="flex items-center font-medium text-slate-500">Vibrations</span>
           <label class="relative inline-flex items-center cursor-pointer">
-            <input v-model="settings.vibrations" type="checkbox" class="sr-only peer">
+            <input v-model="settings.vibrations" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
           </label>
         </div>
 
-        <div class="w-full flex justify-between mt-4">
+        <!-- TEST MODE BUTTON -->
+        <!-- <div class="w-full flex justify-between mt-4">
           <span class="flex items-center font-medium text-slate-500">Test Mode</span>
           <label class="relative inline-flex items-center cursor-pointer">
-            <input v-model="settings.testMode" type="checkbox" class="sr-only peer">
+            <input v-model="settings.testMode" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
           </label>
-        </div>
+        </div> -->
 
         <div v-if="settings.testMode" class="w-full flex flex-col items-center">
           <div class="w-full flex justify-between mt-4">
             <span class="flex items-center font-medium text-slate-500">Animations</span>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input v-model="settings.showAnimations" type="checkbox" class="sr-only peer">
+              <input v-model="settings.showAnimations" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
             </label>
           </div>
@@ -51,7 +52,7 @@
           <div class="w-full flex justify-between mt-4">
             <span class="flex items-center font-medium text-slate-500">Real Lives</span>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input v-model="settings.realLives" type="checkbox" class="sr-only peer">
+              <input v-model="settings.realLives" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
             </label>
           </div>

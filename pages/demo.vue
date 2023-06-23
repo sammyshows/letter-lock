@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
+  <div :class="[ platform === 'ios' ? 'pt-12' : 'pt-4' ]" class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
     <img src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
     <div class="z-10 grow flex flex-col justify-center">
@@ -61,7 +61,7 @@
       </div>
       <p class="px-6 text-xl font-medium text-slate-500 sm:text-4xl lg:text-5xl">Nice job - you nailed it! Now try it yourself!</p>
       <div class="flex flex-col justify-center gap-y-2 text-lg sm:text-3xl lg:text-4-5xl" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-16' ]">
-        <button @click="nextLevel" class="next-button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm sm:text-3xl lg:text-5xl">Next Level</button>
+        <button @click="nextLevel" class="next-button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm sm:text-3xl lg:text-5xl" style="touch-action: manipulation;">Next Level</button>
       </div>
     </div>
 
@@ -76,7 +76,7 @@
 <script>
 import _ from 'lodash'
 import Sortable from "sortablejs";
-import { Preferences } from '@capacitor/preferences'
+import { Capacitor } from "@capacitor/core"
 import { storeToRefs } from "pinia"
 import { useGameStore } from "@/stores/game";
 
@@ -93,6 +93,7 @@ export default {
 
   data() {
     return {
+      platform: Capacitor.getPlatform(),
       tiles: [
         {
           id: 1,

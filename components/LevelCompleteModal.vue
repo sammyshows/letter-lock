@@ -6,8 +6,8 @@
     </div>
     <p v-html="HTMLText" class="px-6 text-xl font-medium text-slate-500 sm:text-4xl lg:leading-snug lg:text-5xl"></p>
     <div class="flex flex-col justify-center gap-y-2 text-lg sm:text-3xl lg:text-4-5xl" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-16' ]">
-      <button v-if="settings.testMode" @click="$emit('resetLevel')" class="button-pulse self-center rounded-full bg-ll-orange text-white shadow-sm">Retry Level</button>
-      <button @click="$emit('nextLevel')" class="button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm">Next Level</button>
+      <button v-if="settings.testMode" @click="$emit('resetLevel')" class="button-pulse self-center rounded-full bg-ll-orange text-white shadow-sm" style="touch-action: manipulation;">Retry Level</button>
+      <button @click="$emit('nextLevel')" class="button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm" style="touch-action: manipulation;">Next Level</button>
     </div>
   </div>
 </template>

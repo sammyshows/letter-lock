@@ -1,10 +1,10 @@
   <template>
-    <div class="min-h-screen pt-4 flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
+    <div :class="[ platform === 'ios' ? 'pt-12' : 'pt-8' ]" class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
       <img v-if="isMobile" src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
       <img v-else src="@/assets/images/background-large.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
       <div class="w-full flex justify-between px-4 z-10">
-        <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" />
+        <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" style="touch-action: manipulation;" />
 
         <div class="relative h-7 w-7 drop-shadow opacity-50 sm:h-14 sm:w-14">
           <IconsHeart class="h-7 w-7 text-red-400 sm:h-14 sm:w-14" />
@@ -111,6 +111,8 @@
   <script>
   import _ from 'lodash'
   import Sortable from "sortablejs";
+  import { App } from '@capacitor/app';
+  import { Capacitor } from "@capacitor/core"
   import { storeToRefs } from "pinia"
   import { useGameStore } from "@/stores/game";
 
@@ -129,6 +131,7 @@
 
     data() {
       return {
+        platform: Capacitor.getPlatform(),
         tiles: [], // copy of the tiles used internally for monitoring the state/position of tiles. This is manually kept up to date with tile swaps via our code.
         sortableTiles: [], // copy used for sortable. Changes are not made to this array by sortable so tiles could be swapped and this array wouldn't reflect it.
         gridSize: 3,
@@ -172,6 +175,13 @@
       }
     },
 
+    created() {
+      App.addListener('backButton', this.onBackButton)
+    },
+    beforeDestroy() {
+      App.removeAllListeners()
+    },
+
     mounted() {
       this.getLevelConfig()
       this.createSortable()
@@ -210,6 +220,13 @@
         this.gridSize = this.gameStore.gridSize
         this.remainingMoves = this.gameStore.maxMoves
         this.validWords = this.gameStore.currentLevelValidWords
+      },
+
+      onBackButton() {
+        if (this.showLoseLifeModal)
+          this.closeLoseLifeModal(false)
+        else if (!this.showLevelCompleteModal && !this.hideLevelCompleteModal && !this.showFailedModal && !this.hideFailedModal && !this.levelCompleted && !this.levelFailed)
+          this.showLoseLifeModal = true
       },
 
       async failLevel() {
@@ -851,7 +868,7 @@
     left: 50%;
     width: 200px;
     height: 200px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
     border-radius: 50%;
     opacity: 0;
     transform: translate(-50%, -50%) scale(1);

@@ -2774,7 +2774,7 @@ const levels: IndexedLevelData = {
     }],
     validWords: ["FIB", "BEAR", "URN"]
   },
-  138: {
+  22: {
     gridSize: 3,
     maxMoves: 4,
     par: 19,
@@ -3729,7 +3729,7 @@ const levels: IndexedLevelData = {
     }],
     validWords: ["ACE", "FIRST", "POUND"]
   },
-  15: {
+  167: {
     gridSize: 5,
     maxMoves: 42,
     par: 30,
@@ -5218,7 +5218,7 @@ const levels: IndexedLevelData = {
     }],
     validWords: ["YOLK", "KNEW", "AS"]
   },
-  167: {
+  15: {
     gridSize: 3,
     maxMoves: 9,
     par: 7,
@@ -6324,7 +6324,7 @@ const levels: IndexedLevelData = {
     }],
     validWords: ["CUBE", "BIG", "TAGS"]
   },
-  183: {
+  25: {
     gridSize: 3,
     maxMoves: 7,
     par: 19,
@@ -7895,7 +7895,7 @@ const levels: IndexedLevelData = {
     }],
     validWords: ["NERD", "AGED"]
   },
-  22: {
+  138: {
     gridSize: 5,
     maxMoves: 29,
     par: 30,
@@ -8144,7 +8144,7 @@ const levels: IndexedLevelData = {
     }],
     validWords: ["SLOT", "LOVE"]
   },
-  25: {
+  183: {
     gridSize: 5,
     maxMoves: 36,
     par: 30,

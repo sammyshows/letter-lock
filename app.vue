@@ -5,12 +5,11 @@
 </template>
 
 <script>
-import { watch } from 'vue';
 import axios from 'axios'
 import Sortable, { Swap } from "sortablejs";
+import { App } from "@capacitor/app";
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
-import { App } from "@capacitor/app";
 import { useGameStore } from "@/stores/game";
 import { useAdsStore } from "@/stores/ads";
 
@@ -37,7 +36,9 @@ export default {
 
   data() {
     return {
-      gameStateLoaded: false
+      gameStateLoaded: false,
+      sendingStats: false,
+      platform: Capacitor.getPlatform()
     }
   },
 
@@ -46,11 +47,15 @@ export default {
     this.adsStore.initialiseRewardAd()
     this.adsStore.prepareRewardAd()
     this.gameStateLoaded = true
-    this.sendStats()
+
+    window.screen.orientation.lock('portrait')
   },
 
   methods: {
     async sendStats() {
+      if (this.sendingStats) return
+
+      this.sendingStats = true
       let deviceInfo = {};
       let appInfo = {};
 
@@ -71,11 +76,16 @@ export default {
 
       // const url = 'http://localhost:8888/api/letterlock-stats-upsert'
       const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
-
-      axios.post(url, body)
+      
+      await axios.post(url, body)
+        .then(() => {
+          this.adsStore.$patch({ adsWatched: [] })
+        })
         .catch(error => {
           console.error(error)
         })
+
+      this.sendingStats = false
     }
   }
 }

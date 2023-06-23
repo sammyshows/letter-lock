@@ -110,7 +110,7 @@ export default defineComponent({
 
   computed: {
     offerLife() {
-      return this.rewardAdsLoaded > 0 && this.livesProvided <= 3 && this.lives.count < this.maxLives
+      return this.rewardAdsLoaded > 0 && this.livesProvided <= 2 && this.lives.count < this.maxLives
     }
   },
 

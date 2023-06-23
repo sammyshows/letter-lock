@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen mb-10 flex relative overflow-hidden duration-300 bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
+  <div :class="[ platform === 'ios' ? 'pt-12' : 'pt-2' ]" class="min-h-screen mb-10 flex relative overflow-hidden duration-300 bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
       <div v-for="(letter, index) in letters" :key="index" class="snowflake border border-slate-300 w-6 h-6 rounded m-auto flex justify-center items-center capitalize text-slate-300 sm:w-12 sm:h-12 sm:text-3xl">{{ letter }}</div>
     </div>
 
-    <img class="absolute w-4/5 top-14 left-1/2 -translate-x-1/2 sm:w-2/3 sm:top-24" src="@/assets/images/letterlock-final.png" alt="Letter Lock Logo">
+    <img :class="[ platform === 'ios' ? 'top-24' : 'top-14' ]" class="absolute w-4/5 left-1/2 -translate-x-1/2 sm:w-2/3 sm:top-24" src="@/assets/images/letterlock-final.png" alt="Letter Lock Logo">
 
     <div class="flex flex-col grow justify-around mt-20 z-10">
       <div class="h-12 sm:h-40"></div>
@@ -19,14 +19,14 @@
               <span>{{ currentLevelId }}</span>
             </div>
   
-            <div v-else class="relative flex justify-center items-end text-6xl pt-1 px-4 rounded-full sm:text-8xl lg:text-9xl">
+            <div v-else class="relative flex justify-center items-end text-6xl pt-1 pl-4 rounded-full sm:text-8xl lg:text-9xl">
               <span :class="{ 'old-level-animation': levelUp }">{{ levelUp ? (currentLevelId - 1) : currentLevelId }}</span>
               <span :class="{ 'new-level-animation': levelUp }" class="absolute opacity-0">{{ currentLevelId }}</span>
             </div>
           </div>
   
           <div class="relative h-16 w-full flex items-center justify-center sm:h-24 lg:h-32">
-            <div @click="startGame" class="play-button text-3xl sm:text-5xl lg:text-7xl" style="font-family: 'Luckiest Guy';">Play</div>
+            <div @click="startGame" class="play-button text-3xl sm:text-5xl lg:text-7xl" style="font-family: 'Luckiest Guy'; touch-action: manipulation;">Play</div>
           </div>
 
           <div v-if="stats.streak >= 2" class="flex justify-center items-center mt-5 lg:mt-8">
@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <div v-else class="flex flex-col justify-center items-center mt-16 text-4xl text-center tracking-wider font-medium sm:text-7xl" style="font-family: 'Luckiest Guy';">
+        <div v-else class="flex flex-col justify-center items-center mt-8 text-4xl text-center tracking-wider font-medium sm:text-7xl" style="font-family: 'Luckiest Guy';">
           <p>ALL</p>
           <p>LEVELS</p>
           <p>COMPLETE</p>
@@ -44,9 +44,9 @@
 
       <div>
         <div class="flex justify-around items-center mt-12 sm:px-16">
-          <IconsSettings @click="showSettingsModal = true" class="h-10 drop-shadow sm:h-16 lg:h-24" />
+          <IconsSettings @click="showSettingsModal = true" class="h-10 drop-shadow sm:h-16 lg:h-24" style="touch-action: manipulation;" />
 
-          <NuxtLink :to="{ path: '/levels' }">
+          <NuxtLink :to="{ path: '/levels' }" style="touch-action: manipulation;">
             <IconsMap class="h-10 sm:h-16 lg:h-24" />
           </NuxtLink>
 
@@ -79,6 +79,8 @@
 
 <script>
 import { storeToRefs } from "pinia";
+import { App } from '@capacitor/app';
+import { Capacitor } from "@capacitor/core"
 import { useGameStore } from "@/stores/game";
 import SettingsModal from "../components/SettingsModal";
 
@@ -91,6 +93,13 @@ export default {
     const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats } = storeToRefs(gameStore)
 
     return { gameStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats }
+  },
+
+  created() {
+    App.addListener('backButton', () => App.exitApp())
+  },
+  beforeDestroy() {
+    App.removeAllListeners()
   },
 
   mounted() {
@@ -122,6 +131,7 @@ export default {
 
   data() {
     return {
+      platform: Capacitor.getPlatform(),
       showSettingsModal: false,
       hideSettingsModal: false,
       showLivesModal: false,

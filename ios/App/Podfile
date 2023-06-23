@@ -16,6 +16,9 @@ def capacitor_pods
   pod 'CapacitorDevice', :path => '../../node_modules/@capacitor/device'
   pod 'CapacitorHaptics', :path => '../../node_modules/@capacitor/haptics'
   pod 'CapacitorPreferences', :path => '../../node_modules/@capacitor/preferences'
+  pod 'CapacitorStatusBar', :path => '../../node_modules/@capacitor/status-bar'
+  pod 'CapacitorTextZoom', :path => '../../node_modules/@capacitor/text-zoom'
+  pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'
 end
 
 target 'App' do
