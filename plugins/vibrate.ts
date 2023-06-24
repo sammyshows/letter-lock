@@ -12,7 +12,7 @@ export default defineNuxtPlugin(() => {
               if (Capacitor.getPlatform() === 'ios') {
                 await Haptics.impact({ style: ImpactStyle.Medium }) // Different setting for iOS
               } else if (Capacitor.getPlatform() === 'android') {
-                await Haptics.vibrate({ duration: 15 }) // Different setting for Android
+                await Haptics.impact({ style: ImpactStyle.Light })
               }
             }
           },

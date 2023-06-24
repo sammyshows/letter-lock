@@ -1,5 +1,5 @@
   <template>
-    <div :class="[ platform === 'ios' ? 'pt-12' : 'pt-8' ]" class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
+    <div :class="[ getResponsiveValue(platform === 'ios' ? 'topPadding2' : 'topPadding1') ]" class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
       <img v-if="isMobile" src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
       <img v-else src="@/assets/images/background-large.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
@@ -16,9 +16,9 @@
 
         <div class="flex justify-center">
           <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
-            <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange sm:h-32 sm:w-32 lg:h-44 lg:w-44"></IconsLock>
+            <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="lock-size mx-auto text-ll-orange sm:h-32 sm:w-32 lg:h-44 lg:w-44"></IconsLock>
             <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
-            <div class="absolute pb-2 text-3xl font-medium sm:text-5xl sm:pb-4 lg:text-7xl lg:pb-5">{{ remainingMoves }}</div>
+            <div :class="[ platform === 'ios' ? 'pb-1' : 'pb-2' ]" class="moves-text absolute font-medium sm:text-5xl sm:pb-4 lg:text-7xl lg:pb-5">{{ remainingMoves }}</div>
           </div>
 
           <div v-if="settings.testMode && replayingLevel" :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end ml-2">
@@ -30,8 +30,8 @@
 
         <div class="flex flex-col justify-center grow p-4">
           <div class="relative">
-            <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute p-3 bg-gray-100 rounded-xl sm:p-4 sm:rounded-2xl lg:p-5 lg:rounded-3xl"></div>
-            <div :class="{ 'slide-right': !displayBoard }" class="board-size p-3 sm:p-4 lg:p-5">
+            <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute bg-gray-100 sm:p-4 sm:rounded-2xl lg:p-5 lg:rounded-3xl"></div>
+            <div :class="{ 'slide-right': !displayBoard }" class="board-size sm:p-4 lg:p-5">
               <div
                 ref="gameBoard"
                 :class="[ gridCSS ]"
@@ -666,6 +666,20 @@
 
       getResponsiveValue(variableName) {
         const values = {
+          topPadding1: {
+            'xs': 'pt-4',
+            '': 'pt-8',
+            'sm': 'pt-8',
+            'md': 'pt-8',
+            'lg': 'pt-8'
+          },
+          topPadding2: {
+            'xs': 'pt-8',
+            '': 'pt-12',
+            'sm': 'pt-12',
+            'md': 'pt-12',
+            'lg': 'pt-12'
+          },
           lockBoltHeight: {
             '': '0.60rem',
             'sm': '0.60rem',
@@ -685,6 +699,7 @@
             'lg': 'rgb(52, 120, 240)'
           },
           gridGap1: {
+            'xs': 'gap-1',
             '': 'gap-2',
             'sm': 'gap-2',
             'md': 'gap-3',
@@ -705,14 +720,17 @@
         };
 
         const currentScreenWidth = window.innerWidth;
+        const currentScreenHeight = window.innerHeight;
         let screen = '';
+        let extraSmallOptions = ['gridGap1', 'topPadding1', 'topPadding2']
 
         if (currentScreenWidth >= 1536) screen = '2xl';
         else if (currentScreenWidth >= 1280) screen = 'xl';
         else if (currentScreenWidth >= 1024) screen = 'lg';
         else if (currentScreenWidth >= 768) screen = 'md';
         else if (currentScreenWidth >= 640) screen = 'sm';
-
+        else if (extraSmallOptions.includes(variableName) && currentScreenWidth >= 260 && currentScreenHeight <= 650) screen = 'xs';
+        
         return values[variableName][screen];
       },
 
@@ -778,10 +796,24 @@
     filter: blur(4px);
   } */
 
+
+  .lock-size {
+    width: 5rem;
+    height: 5rem;
+
+  }
+
+  .moves-text {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
   /* Using these classes instead of tailwind because board height is a factor of the screen width */
   .board-size {
     width: 90vw;
     height: 90vw;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
   }
 
   @media (min-width: 450px) { /* The value 768px is commonly used to target tablets and above */
@@ -802,6 +834,18 @@
     .board-size {
       width: 70vw;
       height: 70vw;
+      padding: 0.3rem;
+      border-radius: 0.5rem;
+    }
+
+    .lock-size {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .moves-text {
+      font-size: 1.275rem;
+      line-height: 1rem;
     }
   }
 

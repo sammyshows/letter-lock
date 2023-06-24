@@ -79,12 +79,13 @@
 
 <script>
 import { storeToRefs } from "pinia";
-import { App } from '@capacitor/app';
 import { Capacitor } from "@capacitor/core"
 import { useGameStore } from "@/stores/game";
 import SettingsModal from "../components/SettingsModal";
 
 export default {
+  name: 'Home',
+  
   components: { SettingsModal },
 
   setup() {
@@ -93,13 +94,6 @@ export default {
     const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats } = storeToRefs(gameStore)
 
     return { gameStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats }
-  },
-
-  created() {
-    App.addListener('backButton', () => App.exitApp())
-  },
-  beforeDestroy() {
-    App.removeAllListeners()
   },
 
   mounted() {

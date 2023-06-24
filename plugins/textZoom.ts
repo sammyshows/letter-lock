@@ -1,16 +1,15 @@
 import { Capacitor } from '@capacitor/core';
 import { TextZoom } from "@capacitor/text-zoom";
-import { StatusBar } from '@capacitor/status-bar';
+import { configureStatusBar } from '~/helpers/statusBar';
 
 export default defineNuxtPlugin( async () => {
     if (Capacitor.getPlatform() === 'ios')
         TextZoom.set({ value: 1.15 })
 
     // Display content under transparent status bar (Android only)
-    if (Capacitor.getPlatform() === 'android')
-        StatusBar.setOverlaysWebView({ overlay: true })
 
+    console.log(Capacitor.getPlatform())
     if (Capacitor.getPlatform() !== 'web')
-        await StatusBar.hide()
+        configureStatusBar()
 
 })
