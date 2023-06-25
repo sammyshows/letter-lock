@@ -200,12 +200,12 @@ img {
     line-height: 1.2rem !important;
   }
   .text-xl {
-    font-size: 1rem !important;
-    line-height: 1.5rem !important;
+    font-size: 0.95rem !important;
+    line-height: 1.3rem !important;
   }
   .text-2xl {
-    font-size: 1.2rem !important;
-    line-height: 1.75rem !important;
+    font-size: 1.1rem !important;
+    line-height: 1.65rem !important;
   }
   .text-3xl {
     font-size: 1.4rem !important;

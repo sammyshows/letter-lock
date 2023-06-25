@@ -139,7 +139,7 @@ export const useGameStore = defineStore('game', {
         this.maxMoves = level.maxMoves
         this.par = level.par
         this.currentLevelTiles = level.tiles
-        this.currentLevelValidWords = level.validWords.sort((a, b) => b.length - a.length)
+        this.currentLevelValidWords = level.validWords
       }
 
       if (this.levelHistory && this.levelHistory[this.currentLevelId] && this.levelHistory[this.currentLevelId].successTally > 0) {

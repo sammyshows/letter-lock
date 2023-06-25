@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <div v-else class="flex flex-col justify-center items-center mt-8 text-4xl text-center tracking-wider font-medium sm:text-7xl" style="font-family: 'Luckiest Guy';">
+        <div v-else class="flex flex-col justify-center items-center text-4xl text-center tracking-wider font-medium xs:mt-8 sm:text-7xl" style="font-family: 'Luckiest Guy';">
           <p>ALL</p>
           <p>LEVELS</p>
           <p>COMPLETE</p>

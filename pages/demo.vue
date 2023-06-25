@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <div v-show="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="modal-padding absolute flex flex-col items-center justify-between h-1/2 w-5/6 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-16 sm:w-2/3 sm:h-3/5 sm:rounded-5xl">
+    <div v-if="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="modal-padding absolute flex flex-col items-center justify-between h-1/2 w-5/6 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-16 sm:w-2/3 sm:h-3/5 sm:rounded-5xl">
       <div class="text-ll-orange text-4-5xl leading-11 font-bold tracking-widest sm:text-6xl lg:text-7-5xl" style="font-family: 'Luckiest Guy';">
         <p class="word-slide-left">LETTERS</p>
         <p class="word-slide-right">LOCKED</p>

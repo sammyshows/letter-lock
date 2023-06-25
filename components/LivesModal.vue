@@ -3,9 +3,9 @@
     <div class="h-full w-full bg-transparent absolute" @click="$emit('close')"></div>
     
     <div :class="[{ 'utility-modal-slide-in': showLivesModal,  'utility-modal-slide-out': hideLivesModal }, offerLife ? 'h-1/2 justify-between' : 'h-2/5 justify-around' ]" class="modal-padding absolute flex flex-col items-center w-5/6 z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-8 sm:w-2/3 sm:rounded-5xl lg:py-12">
-      <div @click="$emit('close')" class="absolute -top-5 -right-5 md:-top-8 md:-right-8 lg:-top-12 lg:-right-12">
-        <div class="z-10 absolute top-2 right-2 w-10 h-10 rounded-full bg-white md:w-16 md:h-16 lg:w-20 lg:h-20 lg:top-6 lg:right-6"></div>
-        <IconsX class="absolute z-40 -top-0 -right-0 w-14 h-14 text-red-400 md:w-20 md:h-20 lg:w-28 lg:h-28" />
+      <div @click="$emit('close')" class="absolute -top-4 -right-4 xs:-top-5 xs:-right-5 md:-top-8 md:-right-8 lg:-top-12 lg:-right-12">
+        <div class="z-10 absolute top-2 right-2 w-6 h-6 xs:w-10 xs:h-10 rounded-full bg-white md:w-16 md:h-16 lg:w-20 lg:h-20 lg:top-6 lg:right-6"></div>
+        <IconsX class="absolute z-40 -top-0 -right-0 w-10 h-10 xs:w-14 xs:h-14 text-red-400 md:w-20 md:h-20 lg:w-28 lg:h-28" />
       </div>
 
       <div class="text-ll-orange text-4xl font-bold tracking-widest drop-shadow-sm sm:text-5-5xl sm:leading-14 lg:text-7xl" style="font-family: 'Luckiest Guy';">
@@ -15,7 +15,7 @@
 
       <div class="w-3/4 flex justify-between items-center">
         <div :class="{ 'heart-pulse': showHeart }" class="relative w-min h-min flex justify-center -rotate-6">
-          <IconsHeart class="h-20 w-20 text-pink-500 drop-shadow-xl sm:h-28 sm:w-28 lg:h-36 lg:w-36" />
+          <IconsHeart class="h-16 w-16 xs:h-20 xs:w-20 text-pink-500 drop-shadow-xl sm:h-28 sm:w-28 lg:h-36 lg:w-36" />
           <div class="absolute w-full h-full top-0 flex justify-center items-center text-3xl font-medium sm:text-5xl lg:text-6xl">{{ lives.count }}</div>
         </div>
 

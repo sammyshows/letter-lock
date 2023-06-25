@@ -66,13 +66,13 @@
 
           <div v-else class="grow flex flex-col justify-center gap-y-1 mt-2 font-medium tracking-wide duration-1000 xs:gap-y-2 sm:gap-y-4 lg:mt-2 lg:gap-y-6" :class="{ 'opacity-0': !displayBoard }">
             <div class="flex justify-center gap-x-8">
-              <p v-for="word in validWords.slice(0,1).concat(validWords.slice(2,3))" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
+              <p v-for="word in validWords.slice(0,1).concat(validWords.slice(2,3))" :key="word" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
             </div>
             <div class="flex justify-center gap-x-8">
-              <p v-for="word in validWords.slice(1,2).concat(validWords.slice(3,4))" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
+              <p v-for="word in validWords.slice(1,2).concat(validWords.slice(3,4))" :key="word" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
             </div>
             <div class="flex justify-center gap-x-8">
-              <p v-for="word in validWords.slice(4)" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
+              <p v-for="word in validWords.slice(4)" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" :key="word" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
             </div>
           </div>
         </div>
@@ -249,7 +249,8 @@
         this.displayBoard = false;
 
         await this.delay(2300);
-        // looks complicated, but it's just a simple calculation to get the correct grid gap for different grid sizes. OPtherwise, 5x5 spreads the letters out too far on animation.
+        console.log('gridGap', (this.getResponsiveValue('gridGap2') + 3 - this.gridSize))
+        // looks complicated, but it's just a simple calculation to get the correct grid gap for different grid sizes. Otherwise, 5x5 spreads the letters out too far on animation.
         this.gridCSS = 'gap-' + (this.getResponsiveValue('gridGap2') + 3 - this.gridSize) + ' duration-700 ease-in-out'
 
         await this.delay(800);
@@ -707,7 +708,7 @@
             'lg': 'gap-4'
           },
           gridGap2: { // just the number because it's dynamically changed when set based on gridSize
-            'xs': 4,
+            'xs': 3,
             '': 5,
             'sm': 6,
             'md': 7,
