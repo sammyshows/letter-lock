@@ -149,7 +149,6 @@
         hideFailedModal: false,
         animationClasses: null,
         borderRadiusClasses: null,
-        dragging: false,
         initialTilePosition: null,
         showCollideEffect: false,
         displayBoard: true,
@@ -858,7 +857,7 @@
   }
 
   .dragging {
-    display: none;
+    display: none !important;
   }
 
   .grid-cols-3 {

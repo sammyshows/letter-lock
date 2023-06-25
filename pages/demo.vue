@@ -7,14 +7,14 @@
 
       <div class="flex justify-center">
         <div :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end">
-          <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-20 w-20 mx-auto text-ll-orange sm:h-32 sm:w-32 lg:h-44 lg:w-44"></IconsLock>
+          <IconsLock :style="{ filter: lockDropShadow, transitionDuration: lockTransitionDuration }" class="h-14 w-14 xs:h-20 xs:w-20 mx-auto text-ll-orange sm:h-32 sm:w-32 lg:h-44 lg:w-44"></IconsLock>
           <div :style="{ maxHeight: lockBoltHeight, backgroundColor: lockBoltColor }" class="lock-bolt"></div>
         </div>
       </div>
 
       <div class="p-4 sm:p-6 lg:p-8">
-        <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute p-3 bg-gray-100 rounded-xl sm:p-4 sm:rounded-2xl lg:p-5 lg:rounded-3xl"></div>
-        <div :class="{ 'slide-right': !displayBoard }" class="board-size p-3 sm:p-4 lg:p-5">
+        <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute p-1.5 bg-gray-100 rounded-lg xs:p-3 xs:rounded-xl sm:p-4 sm:rounded-2xl lg:p-5 lg:rounded-3xl"></div>
+        <div :class="{ 'slide-right': !displayBoard }" class="board-size p-1.5 xs:p-3 sm:p-4 lg:p-5">
           <div
             ref="gameBoard"
             :class="[ gridCSS ]"
@@ -39,11 +39,14 @@
             >
               {{ tile.letter }}
               <IconsArrowsLeftRight
-                :class="{
-                  'animate-pulse -left-6 sm:-left-9 lg:-left-11': index === 5 && (demoStep === 1 || demoStep === 2),
-                  'animate-pulse-rotated -bottom-6 sm:-bottom-9 lg:-bottom-11': demoStep === 3 && index === 0
-                }"
-                class="h-10 w-10 absolute opacity-0 text-ll-orange duration-700 z-30 sm:h-16 sm:w-16 lg:h-20 lg:w-20" />
+                :class="[
+                  (index === 5 && (demoStep === 1 || demoStep === 2)) || (demoStep === 3 && index === 0) ? 'opacity-100' : 'opacity-0',
+                  {
+                    'animate-pulse -left-6 sm:-left-9 lg:-left-11': index === 5 && (demoStep === 1 || demoStep === 2),
+                    'animate-pulse-rotated -bottom-6 sm:-bottom-9 lg:-bottom-11': demoStep === 3 && index === 0
+                  }
+                ]"
+                class="h-10 w-10 absolute text-ll-orange duration-700 z-30 sm:h-16 sm:w-16 lg:h-20 lg:w-20" />
             </div>
           </div>
         </div>
@@ -183,7 +186,6 @@ export default {
       hideCompleteModal: false,
       animationClasses: null,
       borderRadiusClasses: null,
-      dragging: false,
       initialTilePosition: null,
       showCollideEffect: false,
       displayBoard: true,
@@ -661,6 +663,7 @@ export default {
     getResponsiveValue(variableName) {
       const values = {
         lockBoltHeight: {
+          'xs': '0.48rem',
           '': '0.60rem',
           'sm': '0.60rem',
           'md': '0.96rem',
@@ -679,12 +682,14 @@ export default {
           'lg': 'rgb(52, 120, 240)'
         },
         gridGap1: {
+          'xs': 'gap-1',
           '': 'gap-2',
           'sm': 'gap-2',
           'md': 'gap-3',
           'lg': 'gap-4'
         },
         gridGap2: { // just the number because it's dynamically changed when set based on gridSize
+          'xs': 'gap-4',
           '': 'gap-5',
           'sm': 'gap-6',
           'md': 'gap-7',
@@ -699,13 +704,16 @@ export default {
       };
 
       const currentScreenWidth = window.innerWidth;
+      const currentScreenHeight = window.innerHeight;
       let screen = '';
+      let extraSmallOptions = ['lockBoltHeight', 'gridGap1', 'gridGap2']
 
       if (currentScreenWidth >= 1536) screen = '2xl';
       else if (currentScreenWidth >= 1280) screen = 'xl';
       else if (currentScreenWidth >= 1024) screen = 'lg';
       else if (currentScreenWidth >= 768) screen = 'md';
       else if (currentScreenWidth >= 640) screen = 'sm';
+      else if (extraSmallOptions.includes(variableName) && currentScreenWidth >= 260 && currentScreenHeight <= 650) screen = 'xs';
 
       return values[variableName][screen];
     },
@@ -790,11 +798,16 @@ export default {
 
 
 
-
-
 .board-size {
   width: 90vw;
   height: 90vw;
+}
+
+@media (min-width: 450px) { /* The value 768px is commonly used to target tablets and above */
+  .board-size {
+    width: 65vw;
+    height: 65vw;
+  }
 }
 
 @media (min-width: 768px) { /* The value 768px is commonly used to target tablets and above */
@@ -804,13 +817,22 @@ export default {
   }
 }
 
+@media (max-height: 650px) and (min-width: 260px) {
+  .board-size {
+    width: 70vw;
+    height: 70vw;
+    padding: 0.3rem;
+    border-radius: 0.5rem;
+  }
+}
+
 
 .highlight {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
 .dragging {
-  display: none;
+  display: none !important
 }
 
 .grid-cols-3 {
@@ -848,6 +870,17 @@ export default {
     height: 1.9rem;
     bottom: 6.53rem;
     left: 3.04rem;
+    transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
+  }
+}
+
+@media (max-height: 650px) and (min-width: 260px) {
+  .lock-bolt {
+    position: absolute;
+    width: 0.23rem;
+    height: 0.6rem;
+    bottom: 2.09rem;
+    left: 0.98rem;
     transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
   }
 }
