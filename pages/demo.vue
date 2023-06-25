@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <div v-show="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-16 sm:w-2/3 sm:h-3/5 sm:rounded-5xl">
+    <div v-show="showCompleteModal || hideCompleteModal" :class="{ 'modal-slide-in': showCompleteModal, 'modal-slide-out': hideCompleteModal }" class="modal-padding absolute flex flex-col items-center justify-between h-1/2 w-5/6 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-16 sm:w-2/3 sm:h-3/5 sm:rounded-5xl">
       <div class="text-ll-orange text-4-5xl leading-11 font-bold tracking-widest sm:text-6xl lg:text-7-5xl" style="font-family: 'Luckiest Guy';">
         <p class="word-slide-left">LETTERS</p>
         <p class="word-slide-right">LOCKED</p>
@@ -714,6 +714,18 @@ export default {
 </script>
 
 <style>
+.modal-padding {
+  padding: 2rem 0;
+}
+
+@media (max-height: 650px) and (min-width: 260px) {
+  .modal-padding {
+    padding: 1rem 0;
+  }
+}
+
+
+
 /* Word Slides */
 
 @keyframes word-slide-left {
@@ -878,28 +890,6 @@ export default {
 }
 
 
-
-/* Dropping the word NOT in the modal :) */
-
-@keyframes drop-not {
-  0% {
-    opacity: 1;
-    transform: scale(2.5) rotate(12deg);
-  }
-  20% {
-    opacity: 1;
-    transform: scale(2.2) rotate(12deg);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(12deg);
-  }
-}
-
-.drop-not {
-  animation: drop-not forwards 0.3s ease-out;
-  animation-delay: 1.7s;
-}
 
 
 /* 'Next' button size changer */

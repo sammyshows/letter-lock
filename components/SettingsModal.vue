@@ -1,12 +1,12 @@
 <template>
-  <div v-show="showSettingsModal || hideSettingsModal" class="absolute h-full w-full flex justify-center items-center z-20 tracking-widest" style="font-family: 'Luckiest Guy';">
+  <div v-if="showSettingsModal || hideSettingsModal" class="absolute h-full w-full flex justify-center items-center z-20 tracking-widest" style="font-family: 'Luckiest Guy';">
     <div class="h-full w-full bg-transparent absolute" @click="$emit('close')"></div>
 
-    <div :class="{ 'utility-modal-slide-in': showSettingsModal,  'utility-modal-slide-out': hideSettingsModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 overflow-scroll z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:w-2/3 sm:h-1/2 sm:py-10 sm:rounded-5xl lg:w-2/3 lg:h-2/5">
+    <div :class="{ 'utility-modal-slide-in': showSettingsModal,  'utility-modal-slide-out': hideSettingsModal }" class="modal-padding absolute flex flex-col items-center justify-between h-1/2 w-5/6 overflow-scroll z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:w-2/3 sm:h-1/2 sm:py-10 sm:rounded-5xl lg:w-2/3 lg:h-2/5">
       <div class="text-center">
         <h3 class="text-4xl leading-6 font-medium text-ll-orange sm:text-6xl lg:text-7xl">Settings</h3>
       </div>
-      <div class="w-full flex flex-col grow items-center mt-4 px-8 text-sm sm:px-12 sm:text-2xl lg:px-16 lg:text-3xl">
+      <div class="settings-margin w-full flex flex-col grow items-center px-8 text-sm sm:px-12 sm:text-2xl lg:px-16 lg:text-3xl">
         <div class="w-full flex justify-between mt-4">
           <span class="flex items-center font-medium text-slate-500">Notifications</span>
           <label class="relative inline-flex items-center cursor-pointer">
@@ -162,3 +162,23 @@ export default defineComponent({
   }
 })
 </script>
+
+<style scoped>
+.modal-padding {
+  padding: 2rem 0;
+}
+
+.settings-margin {
+  margin-top: 1rem;
+}
+
+@media (max-height: 650px) and (min-width: 260px) {
+  .modal-padding {
+    padding: 1rem 0;
+  }
+
+  .settings-margin {
+    margin-top: 0rem;
+  }
+}
+</style>

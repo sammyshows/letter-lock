@@ -1,10 +1,10 @@
 <template>
   <div :class="[ platform === 'ios' ? 'pt-12' : 'pt-2' ]" class="min-h-screen mb-10 flex relative overflow-hidden duration-300 bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
-      <div v-for="(letter, index) in letters" :key="index" class="snowflake border border-slate-300 w-6 h-6 rounded m-auto flex justify-center items-center capitalize text-slate-300 sm:w-12 sm:h-12 sm:text-3xl">{{ letter }}</div>
+      <div v-for="(letter, index) in letters" :key="index" class="snowflake border border-slate-300 w-5 h-5 xs:w-6 xs:h-6 rounded m-auto flex justify-center items-center capitalize text-slate-300 text-sm xs: text-base sm:w-12 sm:h-12 sm:text-3xl">{{ letter }}</div>
     </div>
 
-    <img :class="[ platform === 'ios' ? 'top-24' : 'top-14' ]" class="absolute w-4/5 left-1/2 -translate-x-1/2 sm:w-2/3 sm:top-24" src="@/assets/images/letterlock-final.png" alt="Letter Lock Logo">
+    <img :class="[ platform === 'ios' ? 'top-24' : 'logo-top-android' ]" class="absolute w-4/5 left-1/2 -translate-x-1/2 sm:w-2/3 sm:top-24" src="@/assets/images/letterlock-final.png" alt="Letter Lock Logo">
 
     <div class="flex flex-col grow justify-around mt-20 z-10">
       <div class="h-12 sm:h-40"></div>
@@ -15,22 +15,22 @@
             <!-- <IconsMap class="h-10 mb-2.5 text-slate-200" /> -->
             <p class="mr-1 sm:mr-3 lg:mr-5">LEVEL</p>
   
-            <div v-if="(currentLevelId - 1).toString().length !== currentLevelId.toString().length" class="relative flex items-end text-6xl pt-1 px-4 rounded-full sm:text-8xl lg:text-9xl">
+            <div v-if="(currentLevelId - 1).toString().length !== currentLevelId.toString().length" class="relative flex items-end text-6xl pt-1 pl-4 rounded-full sm:text-8xl lg:text-9xl">
               <span>{{ currentLevelId }}</span>
             </div>
   
-            <div v-else class="relative flex justify-center items-end text-6xl pt-1 pl-4 rounded-full sm:text-8xl lg:text-9xl">
+            <div v-else class="relative flex justify-center items-end text-6xl pt-1 pl-2.5 xs:pl-4 rounded-full sm:text-8xl lg:text-9xl">
               <span :class="{ 'old-level-animation': levelUp }">{{ levelUp ? (currentLevelId - 1) : currentLevelId }}</span>
-              <span :class="{ 'new-level-animation': levelUp }" class="absolute opacity-0">{{ currentLevelId }}</span>
+              <span :class="{ 'new-level-animation': levelUp }" class="absolute">{{ currentLevelId }}</span>
             </div>
           </div>
   
-          <div class="relative h-16 w-full flex items-center justify-center sm:h-24 lg:h-32">
+          <div class="relative play-container w-full flex items-center justify-center sm:h-24 lg:h-32">
             <div @click="startGame" class="play-button text-3xl sm:text-5xl lg:text-7xl" style="font-family: 'Luckiest Guy'; touch-action: manipulation;">Play</div>
           </div>
 
           <div v-if="stats.streak >= 2" class="flex justify-center items-center mt-5 lg:mt-8">
-            <IconsFire class="h-12 w-12 sm:h-16 sm:w-16 lg:h-24 lg:w-24" />
+            <IconsFire class="icons-3 sm:h-16 sm:w-16 lg:h-24 lg:w-24" />
             <p class="mt-3 ml-1 text-3xl sm:text-6xl sm:mt-4 lg:text-7-5xl lg:mt-7 lg:ml-3" style="font-family: 'Luckiest Guy';">{{ stats.streak }}</p>
           </div>
         </div>
@@ -43,15 +43,15 @@
       </div>
 
       <div>
-        <div class="flex justify-around items-center mt-12 sm:px-16">
-          <IconsSettings @click="showSettingsModal = true" class="h-10 drop-shadow sm:h-16 lg:h-24" style="touch-action: manipulation;" />
+        <div class="icons-bar flex justify-around items-center mt-12 sm:px-16">
+          <IconsSettings @click="showSettingsModal = true" class="icons-1 drop-shadow sm:h-16 lg:h-24" style="touch-action: manipulation;" />
 
           <NuxtLink :to="{ path: '/levels' }" style="touch-action: manipulation;">
-            <IconsMap class="h-10 sm:h-16 lg:h-24" />
+            <IconsMap class="icons-1 sm:h-16 lg:h-24" />
           </NuxtLink>
 
           <div class="relative drop-shadow">
-            <IconsHeart class="h-12 w-12 text-red-500 sm:h-16 sm:w-16 lg:h-24 lg:w-24" />
+            <IconsHeart class="icons-2 text-red-500 sm:h-16 sm:w-16 lg:h-24 lg:w-24" />
             <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xl font-medium sm:text-3xl lg:text-5xl">{{ lives.count }}</span>
           </div>
         </div>
@@ -197,6 +197,57 @@ a {
     -webkit-tap-highlight-color: transparent;
 }
 
+
+.logo-top-android {
+  top: 3.5rem;
+}
+
+.play-container {
+  height: 4rem;
+}
+
+.icons-3 {
+  height: 3rem;
+  width: 3rem;
+}
+
+.icons-1 {
+  height: 2.5rem;
+}
+
+.icons-2 {
+  height: 3rem;
+}
+
+@media (max-height: 650px) and (min-width: 260px) {
+  .logo-top-android {
+    top: 2.5rem;
+  }
+
+  .play-container {
+    height: 3rem;
+  }
+
+  .icons-bar {
+    margin-bottom: 0.5rem;
+  }
+
+  .icons-1 {
+    height: 1.75rem;
+  }
+
+  .icons-2 {
+    height: 2.1rem;
+  }
+
+  .icons-3 {
+    height: 1.75rem;
+    width: 1.75rem;
+  }
+}
+
+
+
 /* Modal slide in */
 
 .play-button {
@@ -212,6 +263,11 @@ a {
   background: white;
   box-shadow: 0 0.3rem 1.25rem 0 rgba(128, 128, 128, 0.2);
   animation: size-change 1.5s infinite alternate;
+  transition-duration: 100ms;
+}
+
+.play-button:active {
+  transform: scale(0.95);
 }
 
 @media (min-width: 640px) {
@@ -226,9 +282,12 @@ a {
   }
 }
 
-.play-button:active {
-  transform: scale(0.95);
+@media (max-height: 650px) and (min-width: 260px) {
+  .play-button {
+    animation: size-change-xs 1.5s infinite alternate;
+  }
 }
+
 
 @keyframes size-change {
   0%, 100% {
@@ -237,6 +296,16 @@ a {
 
   50% {
     padding: 10px 44px 2px 44px;
+  }
+}
+
+@keyframes size-change-xs {
+  0%, 100% {
+    padding: 8px 32px 0px 32px;
+  }
+
+  50% {
+    padding: 10px 36px 2px 36px;
   }
 }
 
@@ -379,6 +448,10 @@ a {
     opacity: 0;
     transform: translateY(-80%);
   }
+  43% {
+    opacity: 0;
+    transform: translateY(-80%);
+  }
   100% {
     transform: translateY(0);
     opacity: 1;
@@ -386,8 +459,7 @@ a {
 }
 
 .new-level-animation {
-  animation: new-level-animation 0.4s ease-in-out forwards;
-  animation-delay: 0.3s;
+  animation: new-level-animation 0.7s ease-in-out forwards;
 }
 
 

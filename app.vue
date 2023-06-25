@@ -212,8 +212,8 @@ img {
     line-height: 2rem !important;
   }
   .text-4xl {
-    font-size: 1.8rem !important;
-    line-height: 2.25rem !important;
+    font-size: 1.7rem !important;
+    line-height: 2.15rem !important;
   }
   .text-5xl {
     font-size: 2.5rem !important;

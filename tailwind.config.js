@@ -6,6 +6,10 @@ module.exports = {
   darkMode: false,
   theme: {
     extend: {
+      screens: {
+        'xs': { 'raw': '(min-height: 650px) or (max-width: 260px)' },
+      },
+
       width: {
         '1/10': '10%',
       },

@@ -6,8 +6,8 @@
       <div class="w-full flex justify-between px-4 z-10">
         <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" style="touch-action: manipulation;" />
 
-        <div class="relative h-7 w-7 drop-shadow opacity-50 sm:h-14 sm:w-14">
-          <IconsHeart class="h-7 w-7 text-red-400 sm:h-14 sm:w-14" />
+        <div class="relative h-6 w-6 xs:h-7 xs:w-7 drop-shadow opacity-50 sm:h-14 sm:w-14">
+          <IconsHeart class="h-6 h-6 xs:h-7 xs:w-7 text-red-400 sm:h-14 sm:w-14" />
           <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xs sm:text-3xl font-medium">{{ lives }}</span>
         </div>
       </div>
@@ -64,7 +64,7 @@
             <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl">{{ word }}</p>
           </div>
 
-          <div v-else class="grow flex flex-col justify-center gap-y-2 mt-2 font-medium tracking-wide duration-1000 sm:gap-y-4 lg:mt-2 lg:gap-y-6" :class="{ 'opacity-0': !displayBoard }">
+          <div v-else class="grow flex flex-col justify-center gap-y-1 mt-2 font-medium tracking-wide duration-1000 xs:gap-y-2 sm:gap-y-4 lg:mt-2 lg:gap-y-6" :class="{ 'opacity-0': !displayBoard }">
             <div class="flex justify-center gap-x-8">
               <p v-for="word in validWords.slice(0,1).concat(validWords.slice(2,3))" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl" style="min-width: 25%;">{{ word }}</p>
             </div>
@@ -681,6 +681,7 @@
             'lg': 'pt-12'
           },
           lockBoltHeight: {
+            'xs': '0.48rem',
             '': '0.60rem',
             'sm': '0.60rem',
             'md': '0.96rem',
@@ -706,6 +707,7 @@
             'lg': 'gap-4'
           },
           gridGap2: { // just the number because it's dynamically changed when set based on gridSize
+            'xs': 4,
             '': 5,
             'sm': 6,
             'md': 7,
@@ -722,7 +724,7 @@
         const currentScreenWidth = window.innerWidth;
         const currentScreenHeight = window.innerHeight;
         let screen = '';
-        let extraSmallOptions = ['gridGap1', 'topPadding1', 'topPadding2']
+        let extraSmallOptions = ['lockBoltHeight', 'gridGap1', 'gridGap2', 'topPadding1', 'topPadding2']
 
         if (currentScreenWidth >= 1536) screen = '2xl';
         else if (currentScreenWidth >= 1280) screen = 'xl';
@@ -839,13 +841,13 @@
     }
 
     .lock-size {
-      width: 3rem;
-      height: 3rem;
+      width: 3.5rem;
+      height: 3.5rem;
     }
 
     .moves-text {
-      font-size: 1.275rem;
-      line-height: 1rem;
+      font-size: 1.475rem;
+      line-height: 1.2rem;
     }
   }
 
@@ -897,6 +899,17 @@
     }
   }
 
+  @media (max-height: 650px) and (min-width: 260px) {
+    .lock-bolt {
+      position: absolute;
+      width: 0.23rem;
+      height: 0.6rem;
+      bottom: 2.08rem;
+      left: 0.98rem;
+      transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
+    }
+  }
+
   .ripple-container {
     position: fixed;
     top: 0;
@@ -933,31 +946,6 @@
       transform: translate(-50%, -50%) scale(2.5);
     }
   }
-
-
-
-  /* Dropping the word NOT in the modal :) */
-
-  @keyframes drop-not {
-    0% {
-      opacity: 1;
-      transform: scale(2.5) rotate(12deg);
-    }
-    20% {
-      opacity: 1;
-      transform: scale(2.2) rotate(12deg);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1) rotate(12deg);
-    }
-  }
-
-  .drop-not {
-    animation: drop-not forwards 0.3s ease-out;
-    animation-delay: 1.7s;
-  }
-
 
 
 

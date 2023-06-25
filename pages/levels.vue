@@ -4,7 +4,7 @@
       <IconsArrowLeft class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2 lg:w-24 lg:h-24 lg:ml-5 lg:mt-3" />
     </NuxtLink>
     
-    <h1 class="mt-28 font-medium text-4xl text-center sm:mt-36 sm:text-7xl lg:mt-44 lg:text-8xl" style="font-family: 'Luckiest Guy';">Level Selection</h1>
+    <h1 class="mt-16 xs:mt-28 font-medium text-4xl text-center sm:mt-36 sm:text-7xl lg:mt-44 lg:text-8xl" style="font-family: 'Luckiest Guy';">Level Selection</h1>
 
     <div class="flex justify-between items-center">
       <IconsChevron
@@ -17,7 +17,7 @@
           v-for="n in 20"
           @click="goToLevel(n)"
           style="font-family: Luckiest Guy;"
-          class="h-14 w-14 bg-gray-200 flex items-center justify-center rounded-full text-2xl pt-2 sm:h-28 sm:w-28 sm:text-5xl lg:h-36 lg:w-36 lg:text-7xl lg:pt-4"
+          class="h-9 w-9 xs:h-14 xs:w-14 bg-gray-200 flex items-center justify-center rounded-full text-2xl pt-2 sm:h-28 sm:w-28 sm:text-5xl lg:h-36 lg:w-36 lg:text-7xl lg:pt-4"
           :class="[
             (n + (currentPage - 1) * 20) <= maxLevelId ? 'bg-ll-orange' : 'bg-slate-300'
           ]"

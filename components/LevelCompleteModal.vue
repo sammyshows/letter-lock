@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showLevelCompleteModal || hideLevelCompleteModal" :class="{ 'modal-slide-in': showLevelCompleteModal, 'modal-slide-out': hideLevelCompleteModal }" class="absolute flex flex-col items-center justify-between h-1/2 w-5/6 py-8 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-12 sm:w-2/3 sm:h-1/2 sm:rounded-5xl">
+  <div v-show="showLevelCompleteModal || hideLevelCompleteModal" :class="{ 'modal-slide-in': showLevelCompleteModal, 'modal-slide-out': hideLevelCompleteModal }" class="modal-padding absolute flex flex-col items-center justify-between h-1/2 w-5/6 z-20 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-12 sm:w-2/3 sm:h-1/2 sm:rounded-5xl">
     <div class="text-ll-orange text-4-5xl leading-11 font-bold tracking-widest sm:text-6xl lg:text-7-5xl" style="font-family: 'Luckiest Guy';">
       <p class="word-slide-left">LETTERS</p>
       <p class="word-slide-right">LOCKED</p>
@@ -42,6 +42,18 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.modal-padding {
+  padding: 2rem 0;
+}
+
+@media (max-height: 650px) and (min-width: 260px) {
+  .modal-padding {
+    padding: 1rem 0;
+  }
+}
+
+
+
 .button-pulse {
   animation: button-pulse 1.5s infinite alternate;
 }
