@@ -9,12 +9,12 @@
       </div>
 
       <div class="text-ll-orange text-4xl font-bold tracking-widest drop-shadow-sm sm:text-5-5xl sm:leading-14 lg:text-7xl" style="font-family: 'Luckiest Guy';">
-        <p class="word-slide-left ml-6 sm:ml-14">NO MORE</p>
+        <p class="word-slide-left ml-6 sm:ml-14">GET MORE</p>
         <p class="word-slide-right mr-6 sm:mr-14">LIVES</p>
       </div>
 
       <div class="w-3/4 flex justify-between items-center">
-        <div :class="{ 'heart-pulse': showHeart }" class="relative w-min h-min flex justify-center -rotate-6">
+        <div :class="[ showHeart ? 'heart-pulse' : '-rotate-6' ]" class="relative w-min h-min flex justify-center">
           <IconsHeart class="h-16 w-16 xs:h-20 xs:w-20 text-pink-500 drop-shadow-xl sm:h-28 sm:w-28 lg:h-36 lg:w-36" />
           <div class="absolute w-full h-full top-0 flex justify-center items-center text-3xl font-medium sm:text-5xl lg:text-6xl">{{ lives.count }}</div>
         </div>
@@ -104,7 +104,7 @@ export default defineComponent({
 
     showLiveseModal(newValue) {
       if (!newValue)
-      this.showHeart = false
+        this.showHeart = false
     }
   },
 
