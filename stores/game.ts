@@ -49,7 +49,8 @@ export const useGameStore = defineStore('game', {
       vibrations: true,
       testMode: false,
       showAnimations: true,
-      realLives: true
+      realLives: true,
+      showLetterSwapReminder: true,
     },
 
     // Lives
@@ -312,6 +313,15 @@ export const useGameStore = defineStore('game', {
       await Preferences.set({
         key: 'letterlock-stats',
         value: JSON.stringify(this.stats)
+      })
+    },
+
+    setLetterSwapReminder() {
+      this.settings.showLetterSwapReminder = false
+
+      Preferences.set({
+        key: 'letterlock-settings',
+        value: JSON.stringify(this.settings)
       })
     }
   },

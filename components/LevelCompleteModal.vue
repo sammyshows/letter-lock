@@ -46,7 +46,7 @@ export default defineComponent({
   padding: 2rem 0;
 }
 
-@media (max-height: 650px) and (min-width: 260px) {
+@media (max-width: 320px) {
   .modal-padding {
     padding: 1rem 0;
   }

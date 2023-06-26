@@ -106,7 +106,7 @@ img {
 }
 
 /* Overrides tailwind classes for thin screens */
-@media (max-width: 300px) or ((max-height: 650px) and (min-width: 280px)) {
+@media (max-width: 300px) or (max-width: 320px) {
   .text-xs {
     font-size: 0.65rem !important; /* Slightly smaller size */
     line-height: 0.875rem !important;

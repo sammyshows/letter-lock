@@ -4,7 +4,7 @@
       <div v-for="(letter, index) in letters" :key="index" class="snowflake border border-slate-300 w-5 h-5 xs:w-6 xs:h-6 rounded m-auto flex justify-center items-center capitalize text-slate-300 text-sm xs: text-base sm:w-12 sm:h-12 sm:text-3xl">{{ letter }}</div>
     </div>
 
-    <img :class="[ platform === 'ios' ? 'top-24' : 'logo-top-android' ]" class="absolute w-4/5 left-1/2 -translate-x-1/2 sm:w-2/3 sm:top-24" src="@/assets/images/letterlock-final.png" alt="Letter Lock Logo">
+    <img :class="[ platform === 'ios' ? 'top-24 xs:top-14' : 'logo-top-android' ]" class="absolute w-4/5 left-1/2 -translate-x-1/2 sm:w-2/3 sm:top-24" src="@/assets/images/letterlock-final.png" alt="Letter Lock Logo">
 
     <div class="flex flex-col grow justify-around mt-20 z-10">
       <div class="h-12 sm:h-40"></div>
@@ -73,7 +73,12 @@
                 :hideAllLevelsCompleteModal="hideAllLevelsCompleteModal"
                 @close="closeAllLevelsCompleteModal" />
 
-    <div :class="[ showSettingsModal || showLivesModal || showAllLevelsCompleteModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-500 pointer-events-none z-10"></div>
+    <LetterSwapReminderModal v-if="showLetterSwapReminderModal || hideLetterSwapReminderModal"
+                :showLetterSwapReminderModal="showLetterSwapReminderModal"
+                :hideLetterSwapReminderModal="hideLetterSwapReminderModal"
+                @close="closeLetterSwapReminderModal" />
+
+    <div :class="[ showSettingsModal || showLivesModal || showAllLevelsCompleteModal || showLetterSwapReminderModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-500 pointer-events-none z-10"></div>
   </div>
 </template>
 
@@ -91,9 +96,9 @@ export default {
   setup() {
     const gameStore = useGameStore()
 
-    const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats } = storeToRefs(gameStore)
+    const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings } = storeToRefs(gameStore)
 
-    return { gameStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats }
+    return { gameStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings }
   },
 
   mounted() {
@@ -113,9 +118,17 @@ export default {
       }
     }, 6000);
 
+
+    // one-off modals
     if (!this.allLevelsCompleteModalShown && this.currentLevelId > this.totalLevelCount) {
       this.showAllLevelsCompleteModal = true
       this.allLevelsCompleteModalShown = true
+    }
+
+    if (this.currentLevelId === 2 && this.settings.showLetterSwapReminder) {
+      this.showLetterSwapReminderModal = true
+
+      this.gameStore.setLetterSwapReminder()
     }
   },
 
@@ -132,6 +145,8 @@ export default {
       hideLivesModal: false,
       showAllLevelsCompleteModal: false,
       hideAllLevelsCompleteModal: false,
+      showLetterSwapReminderModal: false,
+      hideLetterSwapReminderModal: false,
       levelUp: false,
       letters: ['f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g', 'q', 'f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g']
     }
@@ -183,6 +198,16 @@ export default {
         this.showAllLevelsCompleteModal = false
         this.hideAllLevelsCompleteModal = false
       }, 700) // delay should match utility-modal-slide-out time
+    },
+
+    closeLetterSwapReminderModal() {
+      this.hideLetterSwapReminderModal = true
+
+      // Not the prettiest, but this resets the modal animations 
+      setTimeout(() => {
+        this.showLetterSwapReminderModal = false
+        this.hideLetterSwapReminderModal = false
+      }, 700) // delay should match utility-modal-slide-out time
     }
   },
 };
@@ -219,7 +244,7 @@ a {
   height: 3rem;
 }
 
-@media (max-height: 650px) and (min-width: 260px) {
+@media (max-width: 320px) {
   .logo-top-android {
     top: 2.5rem;
   }
@@ -282,7 +307,7 @@ a {
   }
 }
 
-@media (max-height: 650px) and (min-width: 260px) {
+@media (max-width: 320px) {
   .play-button {
     animation: size-change-xs 1.5s infinite alternate;
   }

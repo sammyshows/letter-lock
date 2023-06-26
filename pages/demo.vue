@@ -51,8 +51,9 @@
           </div>
         </div>
 
-        <div class="mt-6 font-medium tracking-wide duration-1000" :class="{ 'opacity-0': !displayBoard }">
-          <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl">{{ word }}</p>
+        <div class="mt-6 font-medium tracking-wide duration-1000 sm:mt-10 lg:mt-14" :class="{ 'opacity-0': !displayBoard }">
+          <p class="text-center text-xl tracking-wider text-ll-orange xs:text-2xl sm:text-4xl lg:text-5-5xl" style="font-family: 'Luckiest Guy';">WORDS TO FIND:</p>
+          <p v-for="word in validWords" :class="{ 'line-through opacity-40': wordsFormed.includes(word) }" class="text-2xl text-center decoration-slate-200 duration-500 sm:text-4xl lg:text-5xl sm:mt-2">{{ word }}</p>
         </div>
       </div>
     </div>
@@ -713,7 +714,7 @@ export default {
       else if (currentScreenWidth >= 1024) screen = 'lg';
       else if (currentScreenWidth >= 768) screen = 'md';
       else if (currentScreenWidth >= 640) screen = 'sm';
-      else if (extraSmallOptions.includes(variableName) && currentScreenWidth >= 260 && currentScreenHeight <= 650) screen = 'xs';
+      else if (extraSmallOptions.includes(variableName) && currentScreenWidth < 320) screen = 'xs';
 
       return values[variableName][screen];
     },
@@ -726,7 +727,7 @@ export default {
   padding: 2rem 0;
 }
 
-@media (max-height: 650px) and (min-width: 260px) {
+@media (max-width: 320px) {
   .modal-padding {
     padding: 1rem 0;
   }
@@ -817,7 +818,7 @@ export default {
   }
 }
 
-@media (max-height: 650px) and (min-width: 260px) {
+@media (max-width: 320px) {
   .board-size {
     width: 70vw;
     height: 70vw;
@@ -874,12 +875,12 @@ export default {
   }
 }
 
-@media (max-height: 650px) and (min-width: 260px) {
+@media ((max-width: 320px)) {
   .lock-bolt {
     position: absolute;
     width: 0.23rem;
     height: 0.6rem;
-    bottom: 2.09rem;
+    bottom: 2.08rem;
     left: 0.98rem;
     transition: background-color 1.3s ease-in-out, max-height 0.125s ease-in;
   }

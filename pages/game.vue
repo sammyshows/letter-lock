@@ -674,7 +674,7 @@
             'lg': 'pt-8'
           },
           topPadding2: {
-            'xs': 'pt-8',
+            'xs': 'pt-4',
             '': 'pt-12',
             'sm': 'pt-12',
             'md': 'pt-12',
@@ -731,7 +731,7 @@
         else if (currentScreenWidth >= 1024) screen = 'lg';
         else if (currentScreenWidth >= 768) screen = 'md';
         else if (currentScreenWidth >= 640) screen = 'sm';
-        else if (extraSmallOptions.includes(variableName) && currentScreenWidth >= 260 && currentScreenHeight <= 650) screen = 'xs';
+        else if (extraSmallOptions.includes(variableName) && currentScreenWidth < 320) screen = 'xs';
         
         return values[variableName][screen];
       },
@@ -802,7 +802,6 @@
   .lock-size {
     width: 5rem;
     height: 5rem;
-
   }
 
   .moves-text {
@@ -832,7 +831,7 @@
     }
   }
 
-  @media (max-height: 650px) and (min-width: 260px) {
+  @media (max-width: 320px) {
     .board-size {
       width: 70vw;
       height: 70vw;
@@ -899,7 +898,7 @@
     }
   }
 
-  @media (max-height: 650px) and (min-width: 260px) {
+  @media (max-width: 320px) {
     .lock-bolt {
       position: absolute;
       width: 0.23rem;
