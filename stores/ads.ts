@@ -71,8 +71,8 @@ export const useAdsStore = defineStore('ads', {
           // return 'ca-app-pub-7719091147897476/8922262077' // testing
           return 'ca-app-pub-7719091147897476/8922262077' // production (real)
         else if (this.platform === 'ios')
-          return 'ca-app-pub-3940256099942544/5224354917' // testing
-          // return 'ca-app-pub-7719091147897476/9999762763' // production (real)
+          // return 'ca-app-pub-3940256099942544/5224354917' // testing
+          return 'ca-app-pub-7719091147897476/9999762763' // production (real)
         else
           return ''
       }

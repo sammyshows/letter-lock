@@ -109,6 +109,9 @@ export default {
         path: this.$route.path,
         query: {}
       })
+
+      if (this.currentLevelId === 2)
+        this.showLetterSwapReminderModal = true
     }
 
     // Check life count
@@ -126,9 +129,7 @@ export default {
     }
 
     if (this.currentLevelId === 2 && this.settings.showLetterSwapReminder) {
-      this.showLetterSwapReminderModal = true
 
-      this.gameStore.setLetterSwapReminder()
     }
   },
 

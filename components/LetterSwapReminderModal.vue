@@ -2,7 +2,7 @@
   <div v-show="showLetterSwapReminderModal || hideLetterSwapReminderModal" class="absolute h-full w-full flex justify-center items-center z-20">
     <div class="h-full w-full bg-transparent absolute" @click="$emit('close')"></div>
     
-    <div :class="{ 'utility-modal-slide-in': showLetterSwapReminderModal,  'utility-modal-slide-out': hideLetterSwapReminderModal }" class="modal-padding absolute flex flex-col items-center justify-between h-2/5 w-5/6 z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-8 sm:w-2/3 sm:rounded-5xl lg:py-12">
+    <div :class="{ 'utility-modal-slide-in': showLetterSwapReminderModal,  'utility-modal-slide-out': hideLetterSwapReminderModal }" class="modal-padding absolute flex flex-col items-center justify-between h-5/12 w-5/6 z-30 bg-gradient-to-br from-white to-slate-50 rounded-3xl text-center shadow-xl sm:py-8 sm:w-2/3 sm:rounded-5xl lg:py-12">
       <div @click="$emit('close')" class="absolute -top-4 -right-4 xs:-top-5 xs:-right-5 md:-top-8 md:-right-8 lg:-top-12 lg:-right-12">
         <div class="z-10 absolute top-2 right-2 w-6 h-6 xs:w-10 xs:h-10 rounded-full bg-white md:w-16 md:h-16 lg:w-20 lg:h-20 lg:top-6 lg:right-6"></div>
         <IconsX class="absolute z-40 -top-0 -right-0 w-10 h-10 xs:w-14 xs:h-14 text-red-400 md:w-20 md:h-20 lg:w-28 lg:h-28" />
