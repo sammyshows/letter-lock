@@ -67,6 +67,9 @@ export default defineComponent({
   ],
 
   mounted() {
+    if (this.rewardAdsLoaded <= 0)
+      this.adStore.prepareRewardAd()
+
     setTimeout(() => this.showHeart = true, 2000)
 
     this.updateLifeRemainingTime();
@@ -105,6 +108,11 @@ export default defineComponent({
     showLiveseModal(newValue) {
       if (!newValue)
         this.showHeart = false
+    },
+
+    rewardAdsLoaded(newValue) {
+      if (newValue <= 0)
+        this.adStore.prepareRewardAd()
     }
   },
 
