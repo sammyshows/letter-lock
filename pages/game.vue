@@ -234,7 +234,7 @@
 
         this.levelFailed = true
 
-        await this.delay(1000);
+        await this.delay(800);
         this.showFailedModal = true
       },
 
@@ -248,7 +248,6 @@
         this.displayBoard = false;
 
         await this.delay(2300);
-        console.log('gridGap', (this.getResponsiveValue('gridGap2') + 3 - this.gridSize))
         // looks complicated, but it's just a simple calculation to get the correct grid gap for different grid sizes. Otherwise, 5x5 spreads the letters out too far on animation.
         this.gridCSS = 'gap-' + (this.getResponsiveValue('gridGap2') + 3 - this.gridSize) + ' duration-700 ease-in-out'
 
@@ -667,27 +666,27 @@
       getResponsiveValue(variableName) {
         const values = {
           topPadding1: {
-            'xs': 'pt-4',
+            'xs': 'pt-3',
             '': 'pt-8',
             'sm': 'pt-8',
             'md': 'pt-8',
             'lg': 'pt-8'
           },
           topPadding2: {
-            'xs': 'pt-4',
+            'xs': 'pt-3',
             '': 'pt-12',
             'sm': 'pt-12',
             'md': 'pt-12',
             'lg': 'pt-12'
           },
           lockBoltHeight: {
-            'xs': '0.48rem',
             '': '0.60rem',
             'sm': '0.60rem',
             'md': '0.96rem',
             'lg': '1.536rem'
           },
           lockBoltColor1: {
+            'xs': 'rgb(42,101,229)',
             '': 'rgb(31,99,227)',
             'sm': 'rgb(31,99,227)',
             'md': 'rgb(31,99,227)',
@@ -700,14 +699,14 @@
             'lg': 'rgb(52, 120, 240)'
           },
           gridGap1: {
-            'xs': 'gap-1',
+            'xs': 'gap-1.5',
             '': 'gap-2',
             'sm': 'gap-2',
             'md': 'gap-3',
             'lg': 'gap-4'
           },
           gridGap2: { // just the number because it's dynamically changed when set based on gridSize
-            'xs': 3,
+            'xs': 4,
             '': 5,
             'sm': 6,
             'md': 7,
@@ -723,8 +722,9 @@
 
         const currentScreenWidth = window.innerWidth;
         const currentScreenHeight = window.innerHeight;
+        const pixelRatio = window.devicePixelRatio;
         let screen = '';
-        let extraSmallOptions = ['lockBoltHeight', 'gridGap1', 'gridGap2', 'topPadding1', 'topPadding2']
+        let extraSmallOptions = ['gridGap1', 'gridGap2', 'topPadding1', 'topPadding2']
 
         if (currentScreenWidth >= 1536) screen = '2xl';
         else if (currentScreenWidth >= 1280) screen = 'xl';
@@ -732,7 +732,8 @@
         else if (currentScreenWidth >= 768) screen = 'md';
         else if (currentScreenWidth >= 640) screen = 'sm';
         else if (extraSmallOptions.includes(variableName) && currentScreenWidth < 320) screen = 'xs';
-        
+        if (extraSmallOptions.includes(variableName) && pixelRatio === 2 && currentScreenWidth < 380 && currentScreenHeight < 700) screen = 'xs'; // special case for iPhone SE, iPhone 8, iPhone 7, iPhone 6s, iPhone 6 etc.
+
         return values[variableName][screen];
       },
 
@@ -850,6 +851,15 @@
     }
   }
 
+  @media (-webkit-max-device-pixel-ratio: 2) and (-webkit-min-device-pixel-ratio: 2) and (max-width: 380px) and (max-height: 700px) {
+    .board-size {
+      width: 80vw;
+      height: 80vw;
+      padding: 0.6rem;
+      border-radius: 0.6rem;
+    }
+  }
+
 
   .highlight {
     background-color: rgba(0, 0, 0, 0.1);
@@ -922,8 +932,8 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 200px;
-    height: 200px;
+    width: 60vw;
+    height: 60vw;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
     border-radius: 50%;
     opacity: 0;

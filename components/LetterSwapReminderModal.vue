@@ -26,7 +26,7 @@
                 <p class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl">B</p>
               </div>
 
-              <IconsArrowsLeftRight class="absolute translate-x-1/2 translate-y-1/2 right-1/2 bottom-1/2 animate-pulse h-8 w-8 absolute text-ll-orange duration-700 z-30 sm:h-16 sm:w-16 lg:h-20 lg:w-20" />
+              <IconsArrowsLeftRight class="animate-pulse-centered origin-bottom-right absolute right-1/2 bottom-1/2 h-8 w-8 text-ll-orange duration-700 z-30 sm:h-16 sm:w-16 lg:h-20 lg:w-20" />
 
               <div class="tile-animate-reverse tile flex justify-center items-center bg-white rounded-lg shadow-lg rounded-12pc">
                 <p class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl">C</p>

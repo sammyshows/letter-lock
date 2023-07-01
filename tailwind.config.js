@@ -27,6 +27,7 @@ module.exports = {
       animation: {
         'pulse': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'pulse-rotated': 'pulseRotated 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'pulse-centered': 'pulseCentered 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
 
       keyframes: {
@@ -34,10 +35,15 @@ module.exports = {
           '0%, 100%': { transform: 'scale(1)', opacity: 0.9 },
           '50%': { transform: 'scale(1.25)', opacity: 1 },
         },
-
+        
         pulseRotated: {
           '0%, 100%': { transform: 'scale(1) rotate(90deg)', opacity: 0.9 },
           '50%': { transform: 'scale(1.25) rotate(90deg)', opacity: 1 },
+        },
+
+        pulseCentered: {
+          '0%, 100%': { transform: 'scale(1) translateX(50%) translateY(50%)', opacity: 0.9 },
+          '50%': { transform: 'scale(1.25) translateX(50%) translateY(50%)', opacity: 1 },
         },
       },
 

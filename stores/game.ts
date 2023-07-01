@@ -54,7 +54,7 @@ export const useGameStore = defineStore('game', {
 
     // Lives
     lives: {
-      count: 1,
+      count: 5,
       nextLifeTime: null as (number | null) // unix 
     },
 
@@ -219,36 +219,40 @@ export const useGameStore = defineStore('game', {
         return
 
       this.processingLife = true // prevents double ups
-      let timeToNextLife = 0
-      if (this.lives.nextLifeTime)
-        timeToNextLife = Math.floor((this.lives.nextLifeTime || 0) / 1000 - (Date.now() / 1000))
+      try {
+        let timeToNextLife = 0
+        if (this.lives.nextLifeTime)
+          timeToNextLife = Math.floor((this.lives.nextLifeTime || 0) - (Date.now()))
 
-      if (this.settings.realLives) {
-        this.lives.count += number;
+        if (this.settings.realLives) {
+          this.lives.count += number;
 
-        if (this.lives.count < 5 && !this.lives.nextLifeTime) { // life lost
-          this.lives.nextLifeTime = Date.now() + this.timeToRegainLife
-        } else if (number > 0 && this.lives.count < 5 && timeToNextLife <= 0) { // life added
-          this.lives.nextLifeTime = Date.now() + this.timeToRegainLife
-        } else if (this.lives.count >= 5 || timeToNextLife > 2400000) { // second check is a safety guard - If timeToNextLife > 40 min, then something went wrong
-          this.lives.nextLifeTime = null
+          const lifeLost = this.lives.count < 5 && !this.lives.nextLifeTime // if lives are less than 5 and there is no nextLifeTime, then set the nextLifeTime
+          const lifeGained = number > 0 && this.lives.count < 5 && timeToNextLife <= 0 // if lives are less than 5 and there is no nextLifeTime, then set the nextLifeTime
+
+          if (lifeLost || lifeGained) {
+            this.lives.nextLifeTime = Date.now() + this.timeToRegainLife
+          } else if (timeToNextLife > 2400000) { // second check is a safety guard - If timeToNextLife > 40 min, then something went wrong. Should always be under 1800000 (30min), can even be negative if there are 2 or more lives owed, see checkLives() for more info.
+            this.lives.nextLifeTime = null
+          }
         }
-      }
 
+        if (this.lives.count < 2 && adsStore.rewardAdsLoaded < 1)
+          adsStore.prepareRewardAd()
+
+        if (this.lives.count <= 0) {
+          this.stats.zeroLivesTally += 1
+          this.saveStats()
+        }
+
+        Preferences.set({
+          key: 'letterlock-lives',
+          value: JSON.stringify(this.lives)
+        })
+      } catch (error) {
+        console.log('handleLives error', error)
+      }
       this.processingLife = false
-
-      if (this.lives.count < 2 && adsStore.rewardAdsLoaded < 1)
-        adsStore.prepareRewardAd()
-
-      if (this.lives.count <= 0) {
-        this.stats.zeroLivesTally += 1
-        this.saveStats()
-      }
-
-      Preferences.set({
-        key: 'letterlock-lives',
-        value: JSON.stringify(this.lives)
-      })
     },
 
     async checkLives() {
@@ -263,14 +267,12 @@ export const useGameStore = defineStore('game', {
 
         // check if enough time has passed to regain a life
         if (this.lives.count < this.maxLives && timeToNextLife <= 0) {
-          const livesGained = Math.max(Math.floor(-timeToNextLife / this.timeToRegainLife), 1) // calculate how many lives should be regained, at least one
+          const livesGained = 1 + Math.max(Math.floor((timeToNextLife * -1) / this.timeToRegainLife), 0) // calculate how many lives should be regained, definitely 1, plus however many 30 min periods have passed
           this.lives.count = Math.min(this.lives.count + livesGained, this.maxLives) // add regained lives up to the maximum
     
-          if (this.lives.count >= this.maxLives) { // if maximum lives is reached, reset nextLifeTime
+          if (this.lives.count >= this.maxLives) { // if maximum lives is reached, reset nextLifeTime. Shouldn't get passed the Math.min() above, but need to set nextLifeTime to null anyway, and may as well set lives to max (5) again to be safe.
             this.lives.nextLifeTime = null;
-
-            if (this.lives.count > this.maxLives) // if lives are over the max, set to max
-              this.lives.count = this.maxLives
+            this.lives.count = this.maxLives
           } else { // otherwise, calculate the new nextLifeTime
             this.lives.nextLifeTime = now + this.timeToRegainLife;
           }

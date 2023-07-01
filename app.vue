@@ -7,6 +7,7 @@
 <script>
 import axios from 'axios'
 import Sortable, { Swap } from "sortablejs";
+import { storeToRefs } from "pinia";
 import { App } from "@capacitor/app";
 import { Capacitor } from '@capacitor/core';
 import { Device } from '@capacitor/device';
@@ -21,16 +22,31 @@ export default {
   setup() {
     const gameStore = useGameStore()
     const adsStore = useAdsStore()
+    
+    const { rewardAdsLoaded } = storeToRefs(adsStore)
 
-    return { gameStore, adsStore }
+    return { gameStore, adsStore, rewardAdsLoaded }
   },
 
   watch: {
+    rewardAdsLoaded(newValue) {
+      console.log('rewardAdsLoaded', newValue)
+      if (newValue <= 0)
+        this.adStore.prepareRewardAd()
+    },
+
     'gameStore.stats': {
       handler() {
         this.sendStats()
       },
       deep: true
+    },
+
+    'gameStore.currentLevelId': {
+      handler(newLevelId, oldLevelId) {
+        if (newLevelId > oldLevelId)
+          this.sendStats()
+      }
     }
   },
 
@@ -58,8 +74,9 @@ export default {
       this.sendingStats = true
       let deviceInfo = {};
       let appInfo = {};
+      const platform = Capacitor.getPlatform()
 
-      if (Capacitor.getPlatform() !== 'web') {
+      if (platform !== 'web') {
         deviceInfo = await Device.getInfo();
         appInfo = await App.getInfo();
       }
@@ -71,7 +88,8 @@ export default {
         levelHistory: this.gameStore.levelHistory,
         stats: this.gameStore.stats,
         settings: this.gameStore.settings,
-        adsWatched: this.adsStore.adsWatched
+        adsWatched: this.adsStore.adsWatched,
+        platform: platform
       })
 
       // const url = 'http://localhost:8888/api/letterlock-stats-upsert'

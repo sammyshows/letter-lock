@@ -86,6 +86,7 @@
 import { storeToRefs } from "pinia";
 import { Capacitor } from "@capacitor/core"
 import { useGameStore } from "@/stores/game";
+import { useAdsStore } from "@/stores/ads";
 import SettingsModal from "../components/SettingsModal";
 
 export default {
@@ -95,13 +96,18 @@ export default {
 
   setup() {
     const gameStore = useGameStore()
+    const adsStore = useAdsStore()
 
     const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings } = storeToRefs(gameStore)
+    const { rewardAdsLoaded } = storeToRefs(adsStore)
 
-    return { gameStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings }
+    return { gameStore, adsStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings, rewardAdsLoaded }
   },
 
   mounted() {
+    if (this.rewardAdsLoaded <= 0)
+      this.adsStore.prepareRewardAd()
+
     // Show animation if levelled up
     if (this.$route.query.levelUp) {
       this.levelUp = true
@@ -114,7 +120,7 @@ export default {
         this.showLetterSwapReminderModal = true
     }
 
-    // Check life count
+    // Check life count - checks every 6 seconds. Dunno why it's 6, but fuck it.
     this.lifeCheckInterval = window.setInterval(() => {
       if (this.lives.count < this.maxLives) {
         this.gameStore.checkLives();

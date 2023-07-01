@@ -46,7 +46,7 @@ const levels: IndexedLevelData = {
   },
   10: {
     gridSize: 4,
-    maxMoves: 10,
+    maxMoves: 8,
     par: 16,
     tiles: [{
       id: 1,
@@ -160,7 +160,7 @@ const levels: IndexedLevelData = {
   },
   101: {
     gridSize: 5,
-    maxMoves: 32,
+    maxMoves: 30,
     par: 30,
     tiles: [{
       id: 1,
@@ -467,7 +467,7 @@ const levels: IndexedLevelData = {
   },
   106: {
     gridSize: 5,
-    maxMoves: 38,
+    maxMoves: 30,
     par: 30,
     tiles: [{
       id: 1,
@@ -731,7 +731,7 @@ const levels: IndexedLevelData = {
   },
   11: {
     gridSize: 4,
-    maxMoves: 9,
+    maxMoves: 5,
     par: 30,
     tiles: [{
       id: 1,
@@ -1301,7 +1301,7 @@ const levels: IndexedLevelData = {
   },
   119: {
     gridSize: 4,
-    maxMoves: 22,
+    maxMoves: 14,
     par: 30,
     tiles: [{
       id: 1,
@@ -1372,7 +1372,7 @@ const levels: IndexedLevelData = {
   },
   12: {
     gridSize: 4,
-    maxMoves: 7,
+    maxMoves: 5,
     par: 30,
     tiles: [{
       id: 1,
@@ -1514,7 +1514,7 @@ const levels: IndexedLevelData = {
   },
   121: {
     gridSize: 5,
-    maxMoves: 17,
+    maxMoves: 16,
     par: 30,
     tiles: [{
       id: 1,
@@ -1735,7 +1735,7 @@ const levels: IndexedLevelData = {
   },
   124: {
     gridSize: 5,
-    maxMoves: 47,
+    maxMoves: 43,
     par: 30,
     tiles: [{
       id: 1,
@@ -2248,7 +2248,7 @@ const levels: IndexedLevelData = {
   },
   130: {
     gridSize: 3,
-    maxMoves: 8,
+    maxMoves: 7,
     par: 19,
     tiles: [{
       id: 1,
@@ -2948,7 +2948,7 @@ const levels: IndexedLevelData = {
   },
   141: {
     gridSize: 5,
-    maxMoves: 36,
+    maxMoves: 34,
     par: 30,
     tiles: [{
       id: 1,
@@ -3197,7 +3197,7 @@ const levels: IndexedLevelData = {
   },
   144: {
     gridSize: 5,
-    maxMoves: 28,
+    maxMoves: 26,
     par: 30,
     tiles: [{
       id: 1,
@@ -3375,7 +3375,7 @@ const levels: IndexedLevelData = {
   },
   146: {
     gridSize: 4,
-    maxMoves: 25,
+    maxMoves: 22,
     par: 19,
     tiles: [{
       id: 1,
@@ -3446,7 +3446,7 @@ const levels: IndexedLevelData = {
   },
   147: {
     gridSize: 5,
-    maxMoves: 45,
+    maxMoves: 36,
     par: 30,
     tiles: [{
       id: 1,
@@ -3731,7 +3731,7 @@ const levels: IndexedLevelData = {
   },
   167: {
     gridSize: 5,
-    maxMoves: 42,
+    maxMoves: 37,
     par: 30,
     tiles: [{
       id: 1,
@@ -4600,7 +4600,7 @@ const levels: IndexedLevelData = {
   },
   16: {
     gridSize: 3,
-    maxMoves: 11,
+    maxMoves: 8,
     par: 19,
     tiles: [{
       id: 1,
@@ -4643,7 +4643,7 @@ const levels: IndexedLevelData = {
   },
   160: {
     gridSize: 5,
-    maxMoves: 26,
+    maxMoves: 23,
     par: 30,
     tiles: [{
       id: 1,
@@ -4821,7 +4821,7 @@ const levels: IndexedLevelData = {
   },
   162: {
     gridSize: 5,
-    maxMoves: 35,
+    maxMoves: 28,
     par: 30,
     tiles: [{
       id: 1,
@@ -5220,7 +5220,7 @@ const levels: IndexedLevelData = {
   },
   15: {
     gridSize: 3,
-    maxMoves: 10,
+    maxMoves: 8,
     par: 7,
     tiles: [{
       id: 1,
@@ -5377,7 +5377,7 @@ const levels: IndexedLevelData = {
   },
   17: {
     gridSize: 3,
-    maxMoves: 9,
+    maxMoves: 6,
     par: 19,
     tiles: [{
       id: 1,
@@ -6062,7 +6062,7 @@ const levels: IndexedLevelData = {
   },
   18: {
     gridSize: 3,
-    maxMoves: 8,
+    maxMoves: 5,
     par: 30,
     tiles: [{
       id: 1,
@@ -6326,7 +6326,7 @@ const levels: IndexedLevelData = {
   },
   25: {
     gridSize: 3,
-    maxMoves: 9,
+    maxMoves: 8,
     par: 19,
     tiles: [{
       id: 1,
@@ -6369,7 +6369,7 @@ const levels: IndexedLevelData = {
   },
   184: {
     gridSize: 4,
-    maxMoves: 14,
+    maxMoves: 12,
     par: 19,
     tiles: [{
       id: 1,
@@ -6747,7 +6747,7 @@ const levels: IndexedLevelData = {
   },
   19: {
     gridSize: 4,
-    maxMoves: 19,
+    maxMoves: 16,
     par: 14,
     tiles: [{
       id: 1,
@@ -7189,7 +7189,7 @@ const levels: IndexedLevelData = {
   },
   195: {
     gridSize: 4,
-    maxMoves: 19,
+    maxMoves: 15,
     par: 19,
     tiles: [{
       id: 1,
@@ -7303,7 +7303,7 @@ const levels: IndexedLevelData = {
   },
   197: {
     gridSize: 5,
-    maxMoves: 29,
+    maxMoves: 23,
     par: 30,
     tiles: [{
       id: 1,
@@ -7567,7 +7567,7 @@ const levels: IndexedLevelData = {
   },
   20: {
     gridSize: 3,
-    maxMoves: 9,
+    maxMoves: 7,
     par: 19,
     tiles: [{
       id: 1,
@@ -7897,7 +7897,7 @@ const levels: IndexedLevelData = {
   },
   138: {
     gridSize: 5,
-    maxMoves: 29,
+    maxMoves: 26,
     par: 30,
     tiles: [{
       id: 1,
@@ -8004,7 +8004,7 @@ const levels: IndexedLevelData = {
   },
   23: {
     gridSize: 4,
-    maxMoves: 21,
+    maxMoves: 17,
     par: 19,
     tiles: [{
       id: 1,
@@ -8075,7 +8075,7 @@ const levels: IndexedLevelData = {
   },
   24: {
     gridSize: 4,
-    maxMoves: 14,
+    maxMoves: 10,
     par: 30,
     tiles: [{
       id: 1,
@@ -8146,7 +8146,7 @@ const levels: IndexedLevelData = {
   },
   183: {
     gridSize: 5,
-    maxMoves: 36,
+    maxMoves: 33,
     par: 30,
     tiles: [{
       id: 1,
@@ -8253,7 +8253,7 @@ const levels: IndexedLevelData = {
   },
   26: {
     gridSize: 3,
-    maxMoves: 10,
+    maxMoves: 8,
     par: 7,
     tiles: [{
       id: 1,
@@ -8296,7 +8296,7 @@ const levels: IndexedLevelData = {
   },
   27: {
     gridSize: 4,
-    maxMoves: 17,
+    maxMoves: 13,
     par: 19,
     tiles: [{
       id: 1,
@@ -8367,7 +8367,7 @@ const levels: IndexedLevelData = {
   },
   28: {
     gridSize: 3,
-    maxMoves: 10,
+    maxMoves: 8,
     par: 19,
     tiles: [{
       id: 1,
@@ -8410,7 +8410,7 @@ const levels: IndexedLevelData = {
   },
   29: {
     gridSize: 4,
-    maxMoves: 17,
+    maxMoves: 13,
     par: 19,
     tiles: [{
       id: 1,
@@ -8524,7 +8524,7 @@ const levels: IndexedLevelData = {
   },
   30: {
     gridSize: 3,
-    maxMoves: 6,
+    maxMoves: 3,
     par: 30,
     tiles: [{
       id: 1,
@@ -8567,7 +8567,7 @@ const levels: IndexedLevelData = {
   },
   31: {
     gridSize: 4,
-    maxMoves: 24,
+    maxMoves: 20,
     par: 30,
     tiles: [{
       id: 1,
@@ -8638,7 +8638,7 @@ const levels: IndexedLevelData = {
   },
   32: {
     gridSize: 5,
-    maxMoves: 32,
+    maxMoves: 29,
     par: 30,
     tiles: [{
       id: 1,
@@ -8745,7 +8745,7 @@ const levels: IndexedLevelData = {
   },
   33: {
     gridSize: 3,
-    maxMoves: 7,
+    maxMoves: 5,
     par: 30,
     tiles: [{
       id: 1,
@@ -8831,7 +8831,7 @@ const levels: IndexedLevelData = {
   },
   35: {
     gridSize: 4,
-    maxMoves: 15,
+    maxMoves: 13,
     par: 11,
     tiles: [{
       id: 1,
@@ -8902,7 +8902,7 @@ const levels: IndexedLevelData = {
   },
   68: {
     gridSize: 5,
-    maxMoves: 32,
+    maxMoves: 28,
     par: 30,
     tiles: [{
       id: 1,
@@ -9009,7 +9009,7 @@ const levels: IndexedLevelData = {
   },
   37: {
     gridSize: 4,
-    maxMoves: 18,
+    maxMoves: 14,
     par: 19,
     tiles: [{
       id: 1,
@@ -9187,7 +9187,7 @@ const levels: IndexedLevelData = {
   },
   39: {
     gridSize: 4,
-    maxMoves: 20,
+    maxMoves: 19,
     par: 30,
     tiles: [{
       id: 1,
@@ -9301,7 +9301,7 @@ const levels: IndexedLevelData = {
   },
   40: {
     gridSize: 3,
-    maxMoves: 6,
+    maxMoves: 5,
     par: 5,
     tiles: [{
       id: 1,
@@ -9458,7 +9458,7 @@ const levels: IndexedLevelData = {
   },
   43: {
     gridSize: 4,
-    maxMoves: 18,
+    maxMoves: 16,
     par: 19,
     tiles: [{
       id: 1,
@@ -9529,7 +9529,7 @@ const levels: IndexedLevelData = {
   },
   44: {
     gridSize: 4,
-    maxMoves: 21,
+    maxMoves: 20,
     par: 19,
     tiles: [{
       id: 1,
@@ -9790,11 +9790,11 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: "B"
+      letter: "A"
     }, {
       id: 9,
       isPartOfWord: false,
-      letter: "A"
+      letter: "W"
     }, {
       id: 10,
       isPartOfWord: false,
@@ -9824,7 +9824,7 @@ const levels: IndexedLevelData = {
       isPartOfWord: false,
       letter: ""
     }],
-    validWords: ["TECH", "COY", "ABYS"]
+    validWords: ["TECH", "COY", "WAYS"]
   },
   49: {
     gridSize: 3,
@@ -9871,7 +9871,7 @@ const levels: IndexedLevelData = {
   },
   5: {
     gridSize: 3,
-    maxMoves: 9,
+    maxMoves: 7,
     par: 6,
     tiles: [{
       id: 1,
@@ -10043,7 +10043,7 @@ const levels: IndexedLevelData = {
   },
   53: {
     gridSize: 4,
-    maxMoves: 11,
+    maxMoves: 10,
     par: 30,
     tiles: [{
       id: 1,
@@ -10528,7 +10528,7 @@ const levels: IndexedLevelData = {
   },
   6: {
     gridSize: 3,
-    maxMoves: 8,
+    maxMoves: 6,
     par: 5,
     tiles: [{
       id: 1,
@@ -10571,7 +10571,7 @@ const levels: IndexedLevelData = {
   },
   60: {
     gridSize: 3,
-    maxMoves: 7,
+    maxMoves: 6,
     par: 30,
     tiles: [{
       id: 1,
@@ -10614,7 +10614,7 @@ const levels: IndexedLevelData = {
   },
   61: {
     gridSize: 4,
-    maxMoves: 21,
+    maxMoves: 19,
     par: 30,
     tiles: [{
       id: 1,
@@ -10728,7 +10728,7 @@ const levels: IndexedLevelData = {
   },
   63: {
     gridSize: 4,
-    maxMoves: 23,
+    maxMoves: 20,
     par: 19,
     tiles: [{
       id: 1,
@@ -10999,7 +10999,7 @@ const levels: IndexedLevelData = {
   },
   36: {
     gridSize: 5,
-    maxMoves: 22,
+    maxMoves: 21,
     par: 30,
     tiles: [{
       id: 1,
@@ -11149,7 +11149,7 @@ const levels: IndexedLevelData = {
   },
   7: {
     gridSize: 3,
-    maxMoves: 10,
+    maxMoves: 8,
     par: 6,
     tiles: [{
       id: 1,
@@ -11697,7 +11697,7 @@ const levels: IndexedLevelData = {
   },
   77: {
     gridSize: 5,
-    maxMoves: 28,
+    maxMoves: 24,
     par: 30,
     tiles: [{
       id: 1,
@@ -11804,7 +11804,7 @@ const levels: IndexedLevelData = {
   },
   78: {
     gridSize: 4,
-    maxMoves: 16,
+    maxMoves: 11,
     par: 30,
     tiles: [{
       id: 1,
@@ -11946,7 +11946,7 @@ const levels: IndexedLevelData = {
   },
   8: {
     gridSize: 3,
-    maxMoves: 8,
+    maxMoves: 7,
     par: 6,
     tiles: [{
       id: 1,
@@ -12032,7 +12032,7 @@ const levels: IndexedLevelData = {
   },
   81: {
     gridSize: 5,
-    maxMoves: 30,
+    maxMoves: 23,
     par: 30,
     tiles: [{
       id: 1,
@@ -12360,7 +12360,7 @@ const levels: IndexedLevelData = {
   },
   85: {
     gridSize: 3,
-    maxMoves: 9,
+    maxMoves: 7,
     par: 30,
     tiles: [{
       id: 1,
@@ -12517,7 +12517,7 @@ const levels: IndexedLevelData = {
   },
   88: {
     gridSize: 4,
-    maxMoves: 28,
+    maxMoves: 26,
     par: 30,
     tiles: [{
       id: 1,
@@ -12695,7 +12695,7 @@ const levels: IndexedLevelData = {
   },
   9: {
     gridSize: 3,
-    maxMoves: 10,
+    maxMoves: 8,
     par: 7,
     tiles: [{
       id: 1,
@@ -12824,7 +12824,7 @@ const levels: IndexedLevelData = {
   },
   92: {
     gridSize: 4,
-    maxMoves: 21,
+    maxMoves: 20,
     par: 19,
     tiles: [{
       id: 1,
@@ -13131,7 +13131,7 @@ const levels: IndexedLevelData = {
   },
   97: {
     gridSize: 5,
-    maxMoves: 25,
+    maxMoves: 24,
     par: 30,
     tiles: [{
       id: 1,
