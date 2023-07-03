@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">letter-lock</string>
-    <string name="title_activity_main">letter-lock</string>
+    <string name="app_name">LetterLock</string>
+    <string name="title_activity_main">LetterLock</string>
     <string name="package_name">app.letterlock</string>
     <string name="custom_url_scheme">app.letterlock</string>
 </resources>

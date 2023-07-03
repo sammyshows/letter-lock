@@ -3,7 +3,7 @@ import { IndexedLevelData } from "@/types/types";
 const levels: IndexedLevelData = {
   1: {
     gridSize: 3,
-    maxMoves: 6,
+    maxMoves: 9,
     par: 5,
     tiles: [{
       id: 1,
@@ -5149,7 +5149,7 @@ const levels: IndexedLevelData = {
   },
   166: {
     gridSize: 4,
-    maxMoves: 12,
+    maxMoves: 14,
     par: 19,
     tiles: [{
       id: 1,
