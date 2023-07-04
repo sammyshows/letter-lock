@@ -4,4 +4,7 @@
     <string name="title_activity_main">LetterLock</string>
     <string name="package_name">app.letterlock</string>
     <string name="custom_url_scheme">app.letterlock</string>
+    <string name="facebook_app_id">1335787460616450</string>
+    <string name="fb_login_protocol_scheme">fb1335787460616450</string>
+    <string name="facebook_client_token">c42830a08c9a01e7a555cdb87478eade</string>
 </resources>
