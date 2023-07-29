@@ -7524,7 +7524,7 @@ const levels: IndexedLevelData = {
   },
   2: {
     gridSize: 3,
-    maxMoves: 8,
+    maxMoves: 11,
     par: 5,
     tiles: [{
       id: 1,
@@ -10314,7 +10314,7 @@ const levels: IndexedLevelData = {
   },
   58: {
     gridSize: 5,
-    maxMoves: 30,
+    maxMoves: 34,
     par: 30,
     tiles: [{
       id: 1,
@@ -10421,7 +10421,7 @@ const levels: IndexedLevelData = {
   },
   59: {
     gridSize: 5,
-    maxMoves: 23,
+    maxMoves: 28,
     par: 30,
     tiles: [{
       id: 1,
