@@ -22,3 +22,6 @@ project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacit
 
 include ':capacitor-text-zoom'
 project(':capacitor-text-zoom').projectDir = new File('../node_modules/@capacitor/text-zoom/android')
+
+include ':capacitor-plugin-facebook-events'
+project(':capacitor-plugin-facebook-events').projectDir = new File('../capacitor-plugin-facebook-events/android')

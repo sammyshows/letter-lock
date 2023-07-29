@@ -28,6 +28,7 @@
     "@nuxtjs/tailwindcss": "^6.6.5",
     "@pinia/nuxt": "^0.4.8",
     "axios": "^1.4.0",
+    "capacitor-plugin-facebook-events": "file:capacitor-plugin-facebook-events",
     "cordova-plugin-screen-orientation": "^3.0.3",
     "lodash": "^4.17.21",
     "pinia": "^2.0.34",

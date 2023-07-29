@@ -1,5 +1,8 @@
 include ':app'
 include ':capacitor-cordova-android-plugins'
 project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
+include ':capacitor-plugin-facebook-events'
+project(':capacitor-plugin-facebook-events').projectDir = new File('../capacitor-plugin-facebook-events/android')
+
 
 apply from: 'capacitor.settings.gradle'

@@ -112,9 +112,11 @@
   import _ from 'lodash'
   import Sortable from "sortablejs";
   import { App } from '@capacitor/app';
-  import { Capacitor } from "@capacitor/core"
+  import { Capacitor, registerPlugin } from "@capacitor/core"
   import { storeToRefs } from "pinia"
   import { useGameStore } from "@/stores/game";
+
+  const FacebookEvents = registerPlugin('FacebookEvents');
 
   export default {
     name: "game",
@@ -187,6 +189,8 @@
       this.checkWords()
       this.setAnimationClasses()
       this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-12pc rounded-tr-12pc rounded-br-12pc rounded-tl-12pc')
+
+      FacebookEvents.levelCompleted({ levelName: 'Level 1' })
     },
 
     watch: {
