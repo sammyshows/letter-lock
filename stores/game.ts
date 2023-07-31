@@ -1,9 +1,11 @@
 import { v4 as uuid } from 'uuid';
 import { defineStore } from 'pinia'
 import { Preferences } from '@capacitor/preferences'
+import axios from 'axios'
 
 import { useAdsStore } from '@/stores/ads'
 import levels from "@/helpers/levels"
+import { generateUsername } from "@/helpers"
 import { Tile, IndexedLevelHistoryData } from "@/types/types"
 
 export const useGameStore = defineStore('game', {
@@ -25,6 +27,9 @@ export const useGameStore = defineStore('game', {
     maxLives: 5,
     processingLife: false,
 
+    leaderboardDisplayedOnMount: false,
+    leaderboardAllTime: null as (Array<{}> | null), // top 5 users
+
     event: {
       type: '',
       quantity: 0
@@ -44,6 +49,7 @@ export const useGameStore = defineStore('game', {
     // Settings
     settings: {
       id: uuid(),
+      username: '',
       notifications: true,
       sound: true,
       vibrations: true,
@@ -78,15 +84,18 @@ export const useGameStore = defineStore('game', {
       const lives = await Preferences.get({ key: 'letterlock-lives' })
       const currency = await Preferences.get({ key: 'letterlock-currency' })
       const stats = await Preferences.get({ key: 'letterlock-stats' })
+      const leaderboard = await Preferences.get({ key: 'letterlock-leaderboard' })
 
       if (levelHistory.value)
         this.levelHistory = JSON.parse((levelHistory.value))
       else
         this.showUserDemo = true
 
-      if (settings.value)
+      if (settings.value) { // If settings exits
         this.settings = JSON.parse((settings.value))
-      else { // initialise settings so we have a unique id from the start
+      }
+      if (!settings.value || !this.settings.username) { // initialise settings so we have a unique id from the start - OR - add username if it doesn't exist
+        this.settings.username = generateUsername()
         await Preferences.set({
           key: 'letterlock-settings',
           value: JSON.stringify(this.settings)
@@ -103,6 +112,9 @@ export const useGameStore = defineStore('game', {
 
       if (stats.value)
         this.stats = JSON.parse((stats.value))
+
+      if (leaderboard.value)
+        this.leaderboardAllTime = JSON.parse((leaderboard.value))
 
       await this.setCurrentLevel()
     },
@@ -315,6 +327,46 @@ export const useGameStore = defineStore('game', {
         key: 'letterlock-stats',
         value: JSON.stringify(this.stats)
       })
+    },
+
+    async getLeaderboard() {
+      // const url = 'http://localhost:3020/api/letterlock-leaderboard-read' // testing
+      const url = 'https://www.stockwise.app/api/letterlock-leaderboard-read'
+
+      const body = JSON.stringify({
+        userId: this.settings.id
+      })
+
+      const res = await axios.post(url, body)
+        .catch(error => {
+          console.error(error)
+        })
+
+      if (res && res.data) {
+        this.leaderboardAllTime = res.data.leaderboardAllTime
+        console.log('leaderboardAllTime', this.leaderboardAllTime)
+
+        Preferences.set({
+          key: 'letterlock-leaderboard',
+          value: JSON.stringify(this.leaderboardAllTime)
+        })
+      }
+
+      const user = this.leaderboardAllTime?.find((user) => user.user_id === this.settings.id)
+
+      if (user && this.settings.username) { // supports offline changes to user's leaderboard name/levels completed
+        user.levels_completed_count = this.maxLevelId - 1
+        user.username = this.settings.username
+      }
+
+      // TEMPORARY TO POPULATE OLD USER'S USERNAMES FROM DB (I insterted random usernames for all users)
+      if (user && !this.settings.username) {
+        this.settings.username = user.username
+        Preferences.set({
+          key: 'letterlock-settings',
+          value: JSON.stringify(this.settings)
+        })
+      }
     }
   },
 })

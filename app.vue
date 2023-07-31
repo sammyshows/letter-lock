@@ -23,9 +23,10 @@ export default {
     const gameStore = useGameStore()
     const adsStore = useAdsStore()
     
+    const { settings } = storeToRefs(gameStore)
     const { rewardAdsLoaded } = storeToRefs(adsStore)
 
-    return { gameStore, adsStore, rewardAdsLoaded }
+    return { gameStore, adsStore, settings, rewardAdsLoaded }
   },
 
   watch: {
@@ -60,6 +61,7 @@ export default {
 
   async created() {
     await this.gameStore.setInitialState()
+    this.gameStore.getLeaderboard()
     this.adsStore.initialiseRewardAd()
     this.adsStore.prepareRewardAd()
     this.gameStateLoaded = true
@@ -84,7 +86,7 @@ export default {
       const body = JSON.stringify({
         deviceOS: deviceInfo.osVersion || null,
         deviceModel: deviceInfo.model || null,
-        stockwiseVersion: appInfo.version || null,
+        letterlockVersion: appInfo.version || null,
         levelHistory: this.gameStore.levelHistory,
         stats: this.gameStore.stats,
         settings: this.gameStore.settings,
@@ -92,7 +94,7 @@ export default {
         platform: platform
       })
 
-      // const url = 'http://localhost:8888/api/letterlock-stats-upsert'
+      // const url = 'http://localhost:3020/api/letterlock-stats-upsert'
       const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
       
       await axios.post(url, body)

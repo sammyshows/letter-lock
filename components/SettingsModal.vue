@@ -8,6 +8,11 @@
       </div>
       <div class="settings-margin w-full flex flex-col grow items-center px-8 text-sm sm:px-12 sm:text-2xl lg:px-16 lg:text-3xl">
         <div class="w-full flex justify-between mt-4">
+          <span class="flex items-center pr-2 font-medium text-slate-500">Username</span>
+          <input v-model="settings.username" maxlength="17" type="text" class="w-36 pl-2 text-sm text-right font-bold text-slate-600 border-b-2 outline-none sm:w-56 sm:text-2xl lg:w-72 lg:text-3xl" style="font-family: Poppins; touch-action: manipulation;">
+        </div>
+
+        <div class="w-full flex justify-between mt-4">
           <span class="flex items-center font-medium text-slate-500">Notifications</span>
           <label class="relative inline-flex items-center cursor-pointer">
             <input v-model="settings.notifications" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">

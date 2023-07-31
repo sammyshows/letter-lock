@@ -43,21 +43,30 @@
       </div>
 
       <div>
-        <div class="icons-bar flex justify-around items-center mt-12 sm:px-16">
+        <div class="icons-bar flex justify-between items-center mt-6 px-12 sm:px-24 lg:px-32">
+          <div class="relative drop-shadow">
+            <IconsHeart class="icons-2 text-red-500 sm:h-16 sm:w-16 lg:h-24 lg:w-24" />
+            <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xl font-medium sm:text-3xl lg:text-5xl">{{ lives.count }}</span>
+          </div>
+
+          <IconsChart @click="showLeaderboard" class="icons-1 sm:h-16 lg:h-24" style="touch-action: manipulation;"/>
+        </div>
+
+        <div class="icons-bar flex justify-between items-center mt-10 px-12 sm:mt-16 sm:px-24 lg:mt-20 lg:px-32">
           <IconsSettings @click="showSettingsModal = true" class="icons-1 drop-shadow sm:h-16 lg:h-24" style="touch-action: manipulation;" />
 
           <NuxtLink :to="{ path: '/levels' }" style="touch-action: manipulation;">
             <IconsMap class="icons-1 sm:h-16 lg:h-24" />
           </NuxtLink>
-
-          <div class="relative drop-shadow">
-            <IconsHeart class="icons-2 text-red-500 sm:h-16 sm:w-16 lg:h-24 lg:w-24" />
-            <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xl font-medium sm:text-3xl lg:text-5xl">{{ lives.count }}</span>
-          </div>
         </div>
       </div>
     </div>
 
+
+    <Leaderboard v-if="showLeaderboardModal || hideLeaderboardModal"
+                 :showLeaderboardModal="showLeaderboardModal"
+                 :hideLeaderboardModal="hideLeaderboardModal"
+                 @close="closeLeaderboardModal" />
 
     <SettingsModal :showSettingsModal="showSettingsModal"
                    :hideSettingsModal="hideSettingsModal"
@@ -78,7 +87,7 @@
                 :hideLetterSwapReminderModal="hideLetterSwapReminderModal"
                 @close="closeLetterSwapReminderModal" />
 
-    <div :class="[ showSettingsModal || showLivesModal || showAllLevelsCompleteModal || showLetterSwapReminderModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-500 pointer-events-none z-10"></div>
+    <div :class="[ showLeaderboardModal || showSettingsModal || showLivesModal || showAllLevelsCompleteModal || showLetterSwapReminderModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-500 pointer-events-none z-10"></div>
   </div>
 </template>
 
@@ -98,10 +107,10 @@ export default {
     const gameStore = useGameStore()
     const adsStore = useAdsStore()
 
-    const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings } = storeToRefs(gameStore)
+    const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings, leaderboardDisplayedOnMount, leaderboardAllTime } = storeToRefs(gameStore)
     const { rewardAdsLoaded } = storeToRefs(adsStore)
 
-    return { gameStore, adsStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings, rewardAdsLoaded }
+    return { gameStore, adsStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings, leaderboardDisplayedOnMount, leaderboardAllTime, rewardAdsLoaded }
   },
 
   mounted() {
@@ -128,14 +137,13 @@ export default {
     }, 6000);
 
 
-    // one-off modals
+    // game over modal - damn a user really won the game
     if (!this.allLevelsCompleteModalShown && this.currentLevelId > this.totalLevelCount) {
       this.showAllLevelsCompleteModal = true
       this.allLevelsCompleteModalShown = true
-    }
-
-    if (this.currentLevelId === 2 && this.settings.showLetterSwapReminder) {
-
+    } else if (!this.leaderboardDisplayedOnMount && this.currentLevelId > 4) { // easy way to ensure 'showLetterSwapReminderModal' above is not shown at the same time
+      this.showLeaderboard()
+      this.gameStore.$patch({ leaderboardDisplayedOnMount: true })
     }
   },
 
@@ -146,6 +154,8 @@ export default {
   data() {
     return {
       platform: Capacitor.getPlatform(),
+      showLeaderboardModal: false,
+      hideLeaderboardModal: false,
       showSettingsModal: false,
       hideSettingsModal: false,
       showLivesModal: false,
@@ -174,6 +184,13 @@ export default {
         } else {
           this.showLivesModal = true
         }
+      }
+    },
+
+    showLeaderboard() {
+      if (this.leaderboardAllTime) { // if leaderboard data is available
+        this.gameStore.getLeaderboard()
+        this.showLeaderboardModal = true
       }
     },
 
@@ -214,6 +231,16 @@ export default {
       setTimeout(() => {
         this.showLetterSwapReminderModal = false
         this.hideLetterSwapReminderModal = false
+      }, 700) // delay should match utility-modal-slide-out time
+    },
+
+    closeLeaderboardModal() {
+      this.hideLeaderboardModal = true
+
+      // Not the prettiest, but this resets the modal animations 
+      setTimeout(() => {
+        this.showLeaderboardModal = false
+        this.hideLeaderboardModal = false
       }, 700) // delay should match utility-modal-slide-out time
     }
   },
