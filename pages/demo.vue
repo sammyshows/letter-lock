@@ -443,7 +443,6 @@ export default {
     },
 
     async checkWords() {
-      console.log('here')
       await this.delay(25)
       const wordsFormed = []
 

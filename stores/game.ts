@@ -344,7 +344,6 @@ export const useGameStore = defineStore('game', {
 
       if (res && res.data) {
         this.leaderboardAllTime = res.data.leaderboardAllTime
-        console.log('leaderboardAllTime', this.leaderboardAllTime)
 
         Preferences.set({
           key: 'letterlock-leaderboard',
