@@ -20,7 +20,7 @@
     
     <div class="flex flex-col justify-center gap-y-2 w-full h-16 text-lg sm:h-24 lg:h-36">
       <div class="h-3/5 flex justify-center text-sm sm:text-3xl lg:text-4-5xl">
-        <ButtonsWatchAd v-if="offerExtraMoves" @watchAd="watchRewardAd" text="Play On!" />
+        <ButtonsWatchAd v-if="offerExtraMoves" @watchAd="watchRewardAd" text="Watch Ad!" />
         <div v-else @click="$emit('close', true)" class="button-pulse flex self-center rounded-full bg-gradient-to-br from-rose-300 to-rose-500 focus:from-red-400 focus:to-red-600">
           <button class="text-white font-medium shadow-sm drop-shadow" style="touch-action: manipulation;">Try Again</button>
         </div>
