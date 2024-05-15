@@ -9,30 +9,30 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@capacitor/cli": "^4.7.3",
-    "nuxt": "^3.3.3",
+    "@capacitor/cli": "^6.0.0",
+    "nuxt": "^3.11.2",
     "tailwindcss": "^3.3.1"
   },
   "dependencies": {
-    "@capacitor-community/admob": "^4.2.0",
-    "@capacitor/android": "^4.4.0",
-    "@capacitor/app": "^4.1.1",
-    "@capacitor/core": "^4.3.0",
-    "@capacitor/device": "^4.1.0",
-    "@capacitor/haptics": "^4.1.0",
-    "@capacitor/ios": "^4.7.3",
-    "@capacitor/preferences": "^4.0.2",
-    "@capacitor/status-bar": "^4.1.1",
-    "@capacitor/text-zoom": "^4.1.0",
+    "@capacitor-community/admob": "^6.0.0",
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/device": "^6.0.0",
+    "@capacitor/haptics": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/preferences": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
+    "@capacitor/text-zoom": "^6.0.0",
     "@headlessui/vue": "^1.7.13",
     "@nuxtjs/tailwindcss": "^6.6.5",
     "@pinia/nuxt": "^0.4.8",
     "axios": "^1.4.0",
     "cordova-plugin-screen-orientation": "^3.0.3",
+    "es6-promise-plugin": "^4.2.2",
     "lodash": "^4.17.21",
     "pinia": "^2.0.34",
     "sortablejs": "^1.15.0",
-    "sortablejs-vue3": "^1.2.9",
     "uuidv4": "^6.2.13"
   }
 }

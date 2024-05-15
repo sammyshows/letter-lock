@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    namespace 'app.letterlock.com'
+    compileSdk 34
     defaultConfig {
         applicationId "app.letterlock"
         minSdkVersion rootProject.ext.minSdkVersion

@@ -167,11 +167,14 @@ export const useGameStore = defineStore('game', {
           extraMovesUsed: false
         }
 
+        this.bestRemainingMoves = 0;
+
         await Preferences.set({
           key: 'letterlock-levels',
           value: JSON.stringify(this.levelHistory)
         })
       } else {
+        this.bestRemainingMoves = 0;
         this.replayingLevel = false
       }
     },

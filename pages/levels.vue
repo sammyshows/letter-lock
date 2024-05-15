@@ -49,15 +49,16 @@ import { storeToRefs } from "pinia"
 import { Capacitor } from "@capacitor/core"
 import { useGameStore } from "@/stores/game";
 
+
 export default {
   name: "Levels",
 
   setup() {
     const gameStore = useGameStore()
 
-    const { maxLevelId, lives } = storeToRefs(gameStore)
+    const { maxLevelId, lives, settings } = storeToRefs(gameStore)
 
-    return { gameStore, maxLevelId, lives }
+    return { gameStore, maxLevelId, lives, settings }
   },
 
   mounted() {
@@ -75,7 +76,7 @@ export default {
 
   methods: {
     async goToLevel(num) {
-      if ((num + (this.currentPage - 1) * 20) <= this.maxLevelId) {
+      if ((num + (this.currentPage - 1) * 20) <= this.maxLevelId || this.settings.testMode) {
         if (this.lives.count > 0) {
           this.gameStore.setCurrentLevel(num + (this.currentPage - 1) * 20)
           this.gameStore.startLevel()
@@ -93,14 +94,13 @@ export default {
     },
 
     nextPage() {
-      if ((this.currentPage * 20) < this.maxLevelId)
+      if ((this.currentPage * 20) < this.maxLevelId || this.settings.testMode)
         this.currentPage++
     },
 
     prevPage() {
-      if(this.currentPage > 1) {
+      if (this.currentPage > 1)
         this.currentPage--
-      }
     },
 
     closeLivesModal() {

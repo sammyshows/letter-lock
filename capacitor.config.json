@@ -1,6 +1,5 @@
 {
   "appId": "app.letterlock.com",
   "appName": "LetterLock Puzzle",
-  "webDir": ".output/public",
-  "bundledWebRuntime": false
+  "webDir": ".output/public"
 }

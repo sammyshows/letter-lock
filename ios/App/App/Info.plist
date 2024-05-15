@@ -21,9 +21,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.2</string>
+	<string>2.4</string>
 	<key>CFBundleVersion</key>
-	<string>2.2</string>
+	<string>2.4</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-7719091147897476~3940006472</string>
 	<key>GADIsAdManagerApp</key>
