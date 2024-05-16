@@ -69,12 +69,16 @@ export const useGameStore = defineStore('game', {
       amount: 0
     },
 
+    // Stats
     stats: {
       streak: 0,
       adsWatchedForLives: 0,
       adsWatchedForMoves: 0,
       zeroLivesTally: 0
-    }
+    },
+
+    // Logs
+    logs: [] as Array<{ logType: number, levelId: number, createdAt: string }>, // UserId is added to the log on the server side
   }),
 
   actions: {
@@ -120,7 +124,7 @@ export const useGameStore = defineStore('game', {
     },
 
     async startLevel() {
-      setTimeout(() => this.handleLives(-1), 2000) // delay so there's no UI lag, game page heart lives count can be set before this changes it
+      setTimeout(() => this.handleLives(-1), 2000) // delay so there's no UI lag. The heart lives count on the game page is static and should appear as if they haven't lost a life yet - this delay allows it to be set before 1 gets removed behind the scenes
       this.$router.push({ path: `/game` })
 
       await Preferences.set({
@@ -301,6 +305,10 @@ export const useGameStore = defineStore('game', {
       } else {
         this.lives.count = this.maxLives
       }
+    },
+
+    insertLog(logType: number, levelId: number) {
+      this.logs.push({ logType, levelId, createdAt: new Date().toISOString() })
     },
 
     async resetProgress() {

@@ -23,10 +23,10 @@ export default {
     const gameStore = useGameStore()
     const adsStore = useAdsStore()
     
-    const { settings } = storeToRefs(gameStore)
+    const { settings, logs } = storeToRefs(gameStore)
     const { rewardAdsLoaded } = storeToRefs(adsStore)
 
-    return { gameStore, adsStore, settings, rewardAdsLoaded }
+    return { gameStore, adsStore, settings, logs, rewardAdsLoaded }
   },
 
   watch: {
@@ -37,6 +37,13 @@ export default {
     },
 
     'gameStore.stats': {
+      handler() {
+        this.sendStats()
+      },
+      deep: true
+    },
+
+    'gameStore.logs': {
       handler() {
         this.sendStats()
       },
@@ -83,6 +90,8 @@ export default {
         appInfo = await App.getInfo();
       }
 
+      const logsCopy = [...this.logs] // Copy logs so we can safely remove them from state later without affecting new logs that were added during this process
+
       const body = JSON.stringify({
         deviceOS: deviceInfo.osVersion || null,
         deviceModel: deviceInfo.model || null,
@@ -91,19 +100,19 @@ export default {
         stats: this.gameStore.stats,
         settings: this.gameStore.settings,
         adsWatched: this.adsStore.adsWatched,
-        platform: platform
+        logs: logsCopy,
+        platform
       })
 
       // const url = 'http://localhost:3020/api/letterlock-stats-upsert'
       const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
-      
+
       await axios.post(url, body)
         .then(() => {
+          this.gameStore.$patch(state => state.logs = state.logs.filter(log => !logsCopy.includes(log)))
           this.adsStore.$patch({ adsWatched: [] })
         })
-        .catch(error => {
-          console.error(error)
-        })
+        .catch(error => console.error(error))
 
       this.sendingStats = false
     }

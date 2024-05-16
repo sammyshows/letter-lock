@@ -126,6 +126,8 @@
       lives = JSON.parse(JSON.stringify(lives.value.count))
       currentLevelId = JSON.parse(JSON.stringify(currentLevelId.value))
 
+      gameStore.insertLog(1, currentLevelId); // Level attempted
+
       return { event, gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives }
     },
 
@@ -240,6 +242,8 @@
 
       async completeLevel() {
         await this.gameStore.saveLevelProgress(true, this.remainingMoves, this.extraMovesUsed)
+
+        this.gameStore.insertLog(2, this.currentLevelId); // Level completed
 
         if (!this.settings.showAnimations)
           return this.showLevelCompleteModal = true

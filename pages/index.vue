@@ -96,7 +96,7 @@ import { storeToRefs } from "pinia";
 import { Capacitor } from "@capacitor/core"
 import { useGameStore } from "@/stores/game";
 import { useAdsStore } from "@/stores/ads";
-import SettingsModal from "../components/SettingsModal";
+import SettingsModal from "@/components/SettingsModal";
 
 export default {
   name: 'Home',
