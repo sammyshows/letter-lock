@@ -45,7 +45,12 @@ export default defineComponent({
   props: [
     'showAllLevelsCompleteModal',
     'hideAllLevelsCompleteModal'
-  ]
+  ],
+
+  hideAllLevelsCompleteModal(newValue) {
+    if (newValue)
+      playSound('swoosh')
+  }
 })
 </script>
 

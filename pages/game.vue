@@ -4,7 +4,7 @@
       <img v-else src="@/assets/images/background-large.png" alt="background" class="h-full w-full absolute top-0 left-0">
 
       <div class="w-full flex justify-between px-4 z-10">
-        <IconsArrowLeft @click="showLoseLifeModal = true" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" style="touch-action: manipulation;" />
+        <IconsArrowLeft @click="showLoseLifeModal = true; playSound('click')" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" style="touch-action: manipulation;" />
 
         <div class="relative h-6 w-6 xs:h-7 xs:w-7 drop-shadow opacity-50 sm:h-14 sm:w-14">
           <IconsHeart class="h-6 h-6 xs:h-7 xs:w-7 text-red-400 sm:h-14 sm:w-14" />
@@ -108,7 +108,7 @@
     </div>
   </template>
 
-  <script>
+  <script setup>
   import _ from 'lodash'
   import Sortable from "sortablejs";
   import { App } from '@capacitor/app';
@@ -116,649 +116,573 @@
   import { storeToRefs } from "pinia"
   import { useGameStore } from "@/stores/game";
 
-  export default {
-    name: "game",
-
-    setup() {
-      const gameStore = useGameStore()
-
-      let { event, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
-      lives = JSON.parse(JSON.stringify(lives.value.count))
-      currentLevelId = JSON.parse(JSON.stringify(currentLevelId.value))
-
-      gameStore.insertLog(1, currentLevelId); // Level attempted
-
-      return { event, gameStore, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives }
-    },
-
-    data() {
-      return {
-        platform: Capacitor.getPlatform(),
-        tiles: [], // copy of the tiles used internally for monitoring the state/position of tiles. This is manually kept up to date with tile swaps via our code.
-        sortableTiles: [], // copy used for sortable. Changes are not made to this array by sortable so tiles could be swapped and this array wouldn't reflect it.
-        gridSize: 3,
-        remainingMoves: 0,
-        extraMovesUsed: false,
-        validWords: [],
-        wordsFormed: [],
-        levelCompleted: false,
-        levelFailed: false,
-        showLevelCompleteModal: false,
-        hideLevelCompleteModal: false,
-        showLoseLifeModal: false,
-        hideLoseLifeModal: false,
-        showFailedModal: false,
-        hideFailedModal: false,
-        animationClasses: null,
-        borderRadiusClasses: null,
-        initialTilePosition: null,
-        showCollideEffect: false,
-        displayBoard: true,
-        gridCSS: this.getResponsiveValue('gridGap1'),
-        lockBoltHeight: this.getResponsiveValue('lockBoltHeight'),
-        lockBoltColor: this.getResponsiveValue('lockBoltColor1'),
-        lockDropShadow: 'drop-shadow(0 0 0 rgb(251, 163, 69))',
-        lockTransitionDuration: '700ms', // also gets sets back to 700ms at end of failLevel()
-        colors: ["#ff9054", "#22ff32", "#FFF176", "#214aff", "#ffbb2e", "#79f37c"]
-      }
-    },
-
-    computed: {
-      gridCols() {
-        return {
-          gridTemplateColumns: `repeat(${this.gridSize}, minmax(0, 1fr))`,
-          gridTemplateRows: `repeat(${this.gridSize}, minmax(0, 1fr))`,
-        }
-      },
-
-      isMobile() {
-        return window.innerWidth <= 640;
-      }
-    },
-
-    created() {
-      App.addListener('backButton', this.onBackButton)
-    },
-    beforeDestroy() {
-      App.removeAllListeners()
-    },
-
-    mounted() {
-      this.getLevelConfig()
-      this.createSortable()
-      this.checkWords()
-      this.setAnimationClasses()
-      this.borderRadiusClasses = Array(this.tiles.length).fill('rounded-bl-12pc rounded-tr-12pc rounded-br-12pc rounded-tl-12pc')
-    },
-
-    watch: {
-      levelCompleted(newValue, oldValue) {
-        // levelCompleted (newValue)
-        this.sortable.option("disabled", newValue)
-      },
-
-      levelFailed(newValue, oldValue) {
-        // levelFailed (newValue)
-        this.sortable.option("disabled", newValue)
-      },
-
-      event: {
-        deep: true,
-        handler: async function (newAdEvent, oldAdEvent) {
-          await this.closeFailedModal(false)
-
-          await this.delay(100)
-          this.addMoves(newAdEvent.quantity) // after modal is closed add the moves, visible to the user
-          this.extraMovesUsed = true
-        }
-      },
-    },
-
-    methods: {
-      getLevelConfig() {
-        this.tiles = _.cloneDeep(this.gameStore.currentLevelTiles)
-        this.sortableTiles = _.cloneDeep(this.gameStore.currentLevelTiles)
-        this.gridSize = this.gameStore.gridSize
-        this.remainingMoves = this.gameStore.maxMoves
-        this.validWords = this.gameStore.currentLevelValidWords
-      },
-
-      onBackButton() {
-        if (this.showLoseLifeModal)
-          this.closeLoseLifeModal(false)
-        else if (!this.showLevelCompleteModal && !this.hideLevelCompleteModal && !this.showFailedModal && !this.hideFailedModal && !this.levelCompleted && !this.levelFailed)
-          this.showLoseLifeModal = true
-      },
-
-      async failLevel() {
-        if (!this.settings.showAnimations)
-          return this.showFailedModal = true
-
-        this.levelFailed = true
-
-        await this.delay(800);
-        this.showFailedModal = true
-      },
-
-      async completeLevel() {
-        await this.gameStore.saveLevelProgress(true, this.remainingMoves, this.extraMovesUsed)
-
-        this.gameStore.insertLog(2, this.currentLevelId); // Level completed
-
-        if (!this.settings.showAnimations)
-          return this.showLevelCompleteModal = true
-
-        this.levelCompleted = true;
-        this.displayBoard = false;
-
-        await this.delay(2300);
-        // looks complicated, but it's just a simple calculation to get the correct grid gap for different grid sizes. Otherwise, 5x5 spreads the letters out too far on animation.
-        this.gridCSS = 'gap-' + (this.getResponsiveValue('gridGap2') + 3 - this.gridSize) + ' duration-700 ease-in-out'
-
-        await this.delay(800);
-        this.gridCSS = this.getResponsiveValue('gridGap3') + ' duration-100 ease-in'
-        this.setBorderRadiusClasses();
-
-        await this.delay(75);
-        this.showCollideEffect = true;
-
-        await this.delay(50);
-        this.$vibrateLight()
-
-        await this.delay(875);
-        this.lockBoltColor = this.getResponsiveValue('lockBoltColor2')
-
-        await this.delay(1500);
-        this.lockBoltHeight = "0";
-
-        await this.delay(75);
-        this.lockDropShadow = "drop-shadow(0 0 40px rgb(251, 163, 69))";
-
-        await this.delay(50);
-        this.$vibrateLight()
-
-        let intervalID;
-        const totalRemainingMoves = this.remainingMoves
-        intervalID = setInterval(async () => {
-          if (this.remainingMoves > 0) {
-            this.remainingMoves -= 1;
-            this.$vibrateLight()
-          } else {
-            clearInterval(intervalID);
-            this.showLevelCompleteModal = true
-          }
-        }, totalRemainingMoves > 1 ? (1000 / totalRemainingMoves) : 500);
-      },
-
-      delay(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
-      },
-
-      createSortable() {
-        // If there is an existing sortable instance, destroy it first
-        if (this.sortable)
-          this.sortable.destroy()
-
-        this.sortable = Sortable.create(this.$refs.gameBoard, {
-          swap: true,
-          swapClass: "highlight",
-          dragClass: "dragging",
-          animation: 150,
-          onStart: this.handleDragStart,
-          onUpdate: this.handleUpdate,
-          onMove: (event) => {
-            const distanceThreshold = event.dragged.clientWidth * 1.5;
-
-            // Calculate the distance from the starting position
-            const distanceX = Math.abs(event.originalEvent.clientX - this.initialTilePosition.left);
-            const distanceY = Math.abs(event.originalEvent.clientY - this.initialTilePosition.top);
-
-            // Log the distances
-            // console.log("Distance X:", distanceX);
-            // console.log("Distance Y:", distanceY);
-            // console.log("Threshold:", distanceThreshold);
-
-            // If the distance is too large, cancel the drag
-            if (distanceX > distanceThreshold || distanceY > distanceThreshold)
-              return false
-
-            // Save the old and new indices for swapping
-            const oldIndex = parseInt(event.dragged.dataset.index, 10);
-            const newIndex = parseInt(event.related.dataset.index, 10);
-
-            // Calculate row and column for both oldIndex and newIndex
-            const oldIndexRow = Math.floor(oldIndex / this.gridSize);
-            const oldIndexCol = oldIndex % this.gridSize;
-            const newIndexRow = Math.floor(newIndex / this.gridSize);
-            const newIndexCol = newIndex % this.gridSize;
-
-            // Check if the tiles are horizontally or vertically adjacent
-            const isAdjacent =
-              (Math.abs(newIndexRow - oldIndexRow) === 1 && newIndexCol === oldIndexCol) || // vertically adjacent
-              (Math.abs(newIndexCol - oldIndexCol) === 1 && newIndexRow === oldIndexRow); // horizontally adjacent
-
-            // console.log('IS ADJACENT', isAdjacent)
-            if (!isAdjacent)
-              return false
-
-            this.handleOnMove(event);
-          },
-        });
-      },
-
-      async nextLevel() {
-        this.hideLevelCompleteModal = true // 25/03/23 - the complete modal only shows if one of these two are true. That might cause issues if there's a split second where they're both false.
-        this.showLevelCompleteModal = false
-
-        await this.delay(700)
-        await this.gameStore.setCurrentLevel(this.currentLevelId + 1)
-        this.$router.push({ path: '/', query: { levelUp: true } })
-      },
-
-      async resetLevel() {
-        if (this.showFailedModal)
-          this.hideFailedModal = true
-        else if (this.showLevelCompleteModal)
-          this.hideLevelCompleteModal = true
-
-        await this.delay(1000)
-        this.gameStore.resetLevel()
-        this.$router.push('/')
-      },
-
-      async handleOnMove(event) {
-        // Save the old and new indices for swapping
-        const oldIndex = parseInt(event.dragged.dataset.index, 10);
-        const newIndex = parseInt(event.related.dataset.index, 10);
-
-        // Calculate row and column for both oldIndex and newIndex
-        const oldIndexRow = Math.floor(oldIndex / this.gridSize);
-        const oldIndexCol = oldIndex % this.gridSize;
-        const newIndexRow = Math.floor(newIndex / this.gridSize);
-        const newIndexCol = newIndex % this.gridSize;
-
-        // Check if the tiles are horizontally or vertically adjacent
-        const isAdjacent =
-          (Math.abs(newIndexRow - oldIndexRow) === 1 && newIndexCol === oldIndexCol) || // vertically adjacent
-          (Math.abs(newIndexCol - oldIndexCol) === 1 && newIndexRow === oldIndexRow); // horizontally adjacent
-
-        if (isAdjacent) {
-          // Deduct 1 from the remaining moves, if not the same character
-          if (this.tiles[oldIndex].letter !== this.tiles[newIndex].letter) {
-            this.remainingMoves -= 1
-            this.$vibrateLight()
-          } else {
-            this.$vibrateMedium()
-          }
-
-          // Schedule a swap after the current frame
-          requestAnimationFrame(() => {
-            // Swap the elements in the tiles array
-            [this.tiles[oldIndex], this.tiles[newIndex]] = [this.tiles[newIndex], this.tiles[oldIndex]]
-
-            // Update the data-index attributes of the swapped elements
-            event.dragged.setAttribute('data-index', newIndex);
-            event.related.setAttribute('data-index', oldIndex);
-
-            // Complete the Sortable operation by simulating a mouseup event
-            const mouseUpEvent = new MouseEvent("mouseup", {
-              bubbles: true,
-              cancelable: true,
-              view: window,
-            });
-            event.originalEvent.target.dispatchEvent(mouseUpEvent);
-          });
-
-          // Return false to cancel the default Sortable behavior
-          return false;
-        }
-      },
-
-      handleDragStart(event) {
-        const rect = event.item.getBoundingClientRect();
-        this.initialTilePosition = {
-          left: rect.left + window.scrollX + rect.width / 2,
-          top: rect.top + window.scrollY + rect.height / 2,
-        };
-      },
-
-      handleDragEnd(event) {
-        const { newIndex, oldIndex } = event;
-        const newIndexRow = Math.floor(newIndex / this.gridSize);
-        const newIndexCol = newIndex % this.gridSize;
-        const oldIndexRow = Math.floor(oldIndex / this.gridSize);
-        const oldIndexCol = oldIndex % this.gridSize;
-
-        const isHorizontalSwap = newIndexRow === oldIndexRow && Math.abs(newIndexCol - oldIndexCol) === 1;
-        const isVerticalSwap = newIndexCol === oldIndexCol && Math.abs(newIndexRow - oldIndexRow) === 1;
-
-        if (!isHorizontalSwap && !isVerticalSwap) {
-          // Revert the swap if it's not a valid move
-          const temp = this.tiles[newIndex];
-          this.tiles[newIndex] = this.tiles[oldIndex];
-          this.tiles[oldIndex] = temp;
-        } else {
-          // Properly handle vertical swaps
-          if (isVerticalSwap) {
-            const temp = this.tiles[newIndex];
-            this.tiles[newIndex] = this.tiles[oldIndex];
-            this.tiles[oldIndex] = temp;
-          }
-        }
-
-        this.checkWords()
-      },
-
-      async checkWords() {
-        await this.delay(25)
-        const wordsFormed = []
-
-        // Reset isPartOfWord property for all tiles
-        this.sortableTiles.forEach((tile, index) => {
-          tile.isPartOfWord = false;
-        });
-
-        function isAlphabet(char) {
-          return /^[A-Z]$/i.test(char);
-        }
-
-        const highlightTiles = (word, tiles) => {
-          wordsFormed.push(word)
-          let startIndex = -1;
-          for (let i = 0; i < tiles.length; i++) {
-            if (tiles.slice(i, i + word.length).map(t => t.letter).join('') === word) {
-              // Check the letters before and after the word
-              const prevLetter = i > 0 ? tiles[i-1].letter : null;
-              const nextLetter = i + word.length < tiles.length ? tiles[i + word.length].letter : null;
-              
-              // If the letters before and after the word are not part of the word or are not present (null), 
-              // then this is not part of another word, so we can highlight it
-              if ((!prevLetter || !word.includes(prevLetter)) && (!nextLetter || !word.includes(nextLetter))) {
-                startIndex = i;
-                break;
-              }
-            }
-          }
-
-          if (startIndex !== -1) {
-            word.split('').forEach((letter, index) => {
-              const tile = tiles[startIndex + index];
-              if (tile) {
-                this.sortableTiles.find((t) => t.id === tile.id).isPartOfWord = true
-              }
-            });
-          }
-        };
-
-        // Sort valid words by length, from shortest to longest
-        const sortedValidWords = this.validWords.sort((a, b) => a.length - b.length);
-
-        // Check the rows for valid words
-        for (let rowIndex = 0; rowIndex < this.gridSize; rowIndex++) {
-          const rowTiles = this.tiles.slice(rowIndex * this.gridSize, rowIndex * this.gridSize + this.gridSize);
-          const rowLetters = rowTiles.map((tile) => tile.letter);
-          sortedValidWords.forEach((word) => {
-            for (let i = 0; i <= rowLetters.length - word.length; i++) {
-              let slicedLetters = rowLetters.slice(i, i + word.length).join('');
-              if (slicedLetters === word &&
-                  (i === 0 || !isAlphabet(rowLetters[i - 1])) && // Check preceding letter
-                  (i + word.length === rowLetters.length || !isAlphabet(rowLetters[i + word.length]))) { // Check succeeding letter
-                console.log(`Found valid word: ${word}`);
-                highlightTiles(word, rowTiles.slice(i, i + word.length));
-              }
-            }
-          });
-        }
-
-        // Check the columns for valid words
-        for (let colIndex = 0; colIndex < this.gridSize; colIndex++) {
-          let colTiles = [];
-          for (let rowIndex = 0; rowIndex < this.gridSize; rowIndex++) {
-            colTiles.push(this.tiles[rowIndex * this.gridSize + colIndex]);
-          }
-          const colLetters = colTiles.map((tile) => tile.letter);
-          sortedValidWords.forEach((word) => {
-            for (let i = 0; i <= colLetters.length - word.length; i++) {
-              let slicedLetters = colLetters.slice(i, i + word.length).join('');
-              if (slicedLetters === word &&
-                  (i === 0 || !isAlphabet(colLetters[i - 1])) && // Check preceding letter
-                  (i + word.length === colLetters.length || !isAlphabet(colLetters[i + word.length]))) { // Check succeeding letter
-                console.log(`Found valid word: ${word}`);
-                highlightTiles(word, colTiles.slice(i, i + word.length));
-              }
-            }
-          });
-        }
-
-        this.wordsFormed = wordsFormed
-
-        if (this.arraysEqual(this.validWords, wordsFormed))
-          await this.completeLevel()
-        else if (this.remainingMoves <= 0)
-          await this.failLevel()
-      },
-
-      arraysEqual(arr1, arr2) {
-        if (arr1.length !== arr2.length) {
-          return false;
-        }
-
-        const sortedArr1 = arr1.slice().sort();
-        const sortedArr2 = arr2.slice().sort();
-
-        for (let i = 0; i < sortedArr1.length; i++) {
-          if (sortedArr1[i] !== sortedArr2[i]) {
-            return false;
-          }
-        }
-
-        return true;
-      },
-
-      handleUpdate(event) {
-        // Save the old and new indices for swapping
-        const oldIndex = event.oldIndex;
-        const newIndex = event.newIndex;
-
-        // Calculate row and column for both oldIndex and newIndex
-        const oldIndexRow = Math.floor(oldIndex / this.gridSize);
-        const oldIndexCol = oldIndex % this.gridSize;
-        const newIndexRow = Math.floor(newIndex / this.gridSize);
-        const newIndexCol = newIndex % this.gridSize;
-
-        // Check if the tiles are horizontally or vertically adjacent
-        const isAdjacent =
-          (Math.abs(newIndexRow - oldIndexRow) === 1 && newIndexCol === oldIndexCol) || // vertically adjacent
-          (Math.abs(newIndexCol - oldIndexCol) === 1 && newIndexRow === oldIndexRow); // horizontally adjacent
-
-        if (!isAdjacent) {
-          // Revert the swap if it's not a valid move
-          const temp = this.tiles[newIndex];
-          this.tiles[newIndex] = this.tiles[oldIndex];
-          this.tiles[oldIndex] = temp;
-        } else {
-          this.checkWords()
-        }
-      },
-
-      setAnimationClasses() {
-        this.animationClasses = Array(this.tiles.length).fill('')
-
-        this.tiles.forEach((tile, index) => {
-          if (tile.letter === '')
-            this.animationClasses[index] = `shake-and-fall-${Math.floor(Math.random() * 4) + 1}`
-          // else
-          //   this.animationClasses[index] = `slide-right`
-        });
-      },
-
-      setBorderRadiusClasses() {
-        this.tiles.forEach((tile, index) => {
-          // This is important: we use the `tiles` array since that is the one we keep for reference, since the sortableTiles aren't reactive. Tiles are swapped but the array doesn't change.
-          // Therefore we MUST get the index of the tile in the sortableTiles array and update the classes at that index.
-          const sortableTileIndex = this.sortableTiles.findIndex((sortableTile) => sortableTile.id === tile.id)
-
-          let borderClasses = 'tile-shadow duration-100 rounded-bl-16pc rounded-tr-16pc rounded-br-16pc rounded-tl-16pc ' + this.tiles[index].letter;
-
-          const row = Math.floor(index / this.gridSize);
-          const col = index % this.gridSize;
-
-          // Check for a tile on the left
-          if (col > 0 && this.tiles[index - 1]?.letter) {
-            borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-tl-16pc', '');
-          }
-
-          // Check for a tile on the right
-          if (col < this.gridSize - 1 && this.tiles[index + 1]?.letter) {
-            // console.log(index, this.tiles[index].letter)
-            borderClasses = borderClasses.replace('rounded-br-16pc', '').replace('rounded-tr-16pc', '');
-          }
-
-          // Check for a tile on the top
-          if (row > 0 && this.tiles[index - this.gridSize]?.letter) {
-            // console.log(index, this.tiles[index].letter)
-            borderClasses = borderClasses.replace('rounded-tl-16pc', '').replace('rounded-tr-16pc', '');
-          }
-
-          // Check for a tile on the bottom
-          if (row < this.gridSize - 1 && this.tiles[index + this.gridSize]?.letter) {
-            borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-br-16pc', '');
-          }
-
-          this.borderRadiusClasses[sortableTileIndex] = borderClasses
-        });
-      },
-
-      async closeFailedModal(resetLevel) {
-        if (resetLevel)
-          await this.gameStore.saveLevelProgress(false, this.remainingMoves, this.extraMovesUsed)
+const gameStore = useGameStore()
+
+let { event, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
+lives = JSON.parse(JSON.stringify(lives.value.count))
+currentLevelId = JSON.parse(JSON.stringify(currentLevelId.value))
+
+const platform = ref(Capacitor.getPlatform());
+const router = useRouter();
+
+let sortable;
+let gameBoard = ref(null);
+let tiles = ref([]); // copy of the tiles used internally for monitoring the state/position of tiles. This is manually kept up to date with tile swaps via our code.
+let sortableTiles = ref([]); // copy used for sortable. Changes are not made to this array by sortable so tiles could be swapped and this array wouldn't reflect it.
+let gridSize = ref(3);
+let remainingMoves = ref(0);
+let extraMovesUsed = ref(false);
+let validWords = ref([]);
+let wordsFormed = ref([]);
+let levelCompleted = ref(false);
+let levelFailed = ref(false);
+let showLevelCompleteModal = ref(false);
+let hideLevelCompleteModal = ref(false);
+let showLoseLifeModal = ref(false);
+let hideLoseLifeModal = ref(false);
+let showFailedModal = ref(false);
+let hideFailedModal = ref(false);
+let animationClasses = ref(null);
+let borderRadiusClasses = ref(null);
+let initialTilePosition = ref(null);
+let showCollideEffect = ref(false);
+let displayBoard = ref(true);
+let lockDropShadow = ref('drop-shadow(0 0 0 rgb(251, 163, 69))');
+let lockTransitionDuration = ref('700ms'); // also gets sets back to 700ms at end of failLevel()
+let colors = ref(["#ff9054", "#22ff32", "#FFF176", "#214aff", "#ffbb2e", "#79f37c"]);
+
+let gridCSS = ref(getResponsiveValue('gridGap1'));
+let lockBoltHeight = ref(getResponsiveValue('lockBoltHeight'));
+let lockBoltColor = ref(getResponsiveValue('lockBoltColor1'));
+
+    // computed: {
+    //   gridCols() {
+    //     return {
+    //       gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
+    //       gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))`,
+    //     }
+    //   },
+
+    //   isMobile() {
+    //     return window.innerWidth <= 640;
+    //   }
+    // },
+
+const gridCols = computed(() => {
+  return {
+    gridTemplateColumns: `repeat(${gridSize.value}, minmax(0, 1fr))`,
+    gridTemplateRows: `repeat(${gridSize.value}, minmax(0, 1fr)`,
+  }
+});
+
+const isMobile = computed(() => window.innerWidth <= 640);
+
+onMounted(() => {
+  playTrack('game')
+  gameStore.insertLog(1, currentLevelId)
+
+  App.addListener('backButton', onBackButton);
+
+  getLevelConfig();
+  createSortable();
+  checkWords();
+  setAnimationClasses();
+  borderRadiusClasses.value = Array(tiles.value.length).fill('rounded-bl-12pc rounded-tr-12pc rounded-br-12pc rounded-tl-12pc');
+});
+
+onUnmounted(() => {
+  App.removeAllListeners();
+});
+
+watch(levelCompleted, (newValue) => {
+  // levelCompleted (newValue)
+  sortable.option("disabled", newValue);
+});
+
+watch(levelFailed, (newValue) => {
+  // levelFailed (newValue)
+  sortable.option("disabled", newValue);
+});
+
+watch(event, async (newAdEvent) => {
+  await closeFailedModal(false);
+  await delay(100);
+  addMoves(newAdEvent.quantity); // after modal is closed add the moves, visible to the user
+  extraMovesUsed.value = true;
+}, { deep: true });
+
+const getLevelConfig = () => {
+  tiles.value = _.cloneDeep(gameStore.currentLevelTiles)
+  sortableTiles.value = _.cloneDeep(gameStore.currentLevelTiles)
+  gridSize.value = gameStore.gridSize
+  remainingMoves.value = gameStore.maxMoves
+  validWords.value = gameStore.currentLevelValidWords
+}
+
+const onBackButton = () => {
+  if (showLoseLifeModal.value)
+    closeLoseLifeModal(false)
+  else if (!showLevelCompleteModal.value && !hideLevelCompleteModal.value && !showFailedModal.value && !hideFailedModal.value && !levelCompleted.value && !levelFailed.value)
+    showLoseLifeModal.value = true
+}
+
+const failLevel = async () => {
+  if (!settings.showAnimations)
+    return showFailedModal.value = true
+
+  levelFailed.value = true
+
+  await delay(800);
+  showFailedModal.value = true
+}
+
+const completeLevel = async () => {
+  setTimeout(() => playSound('levelComplete'), 300)
+  await gameStore.saveLevelProgress(true, remainingMoves.value, extraMovesUsed.value)
+
+  gameStore.insertLog(2, currentLevelId.value); // Level completed
+
+  if (!settings.showAnimations)
+    return showLevelCompleteModal.value = true
+
+  levelCompleted.value = true;
+  displayBoard.value = false;
+
+  await delay(2300);
+  // looks complicated, but it's just a simple calculation to get the correct grid gap for different grid sizes. Otherwise, 5x5 spreads the letters out too far on animation.
+  gridCSS.value = 'gap-' + (getResponsiveValue('gridGap2') + 3 - gridSize.value) + ' duration-700 ease-in-out'
+
+  await delay(800);
+  gridCSS.value = getResponsiveValue('gridGap3') + ' duration-100 ease-in'
+  setBorderRadiusClasses();
+
+  await delay(75);
+  showCollideEffect.value = true;
+
+  await delay(50);
+  vibrateLight()
+
+  await delay(875);
+  lockBoltColor.value = getResponsiveValue('lockBoltColor2')
+
+  await delay(1500);
+  lockBoltHeight.value = "0";
+
+  await delay(75);
+  lockDropShadow.value = "drop-shadow(0 0 40px rgb(251, 163, 69))";
+
+  await delay(50);
+  vibrateLight()
+
+  let intervalID;
+  const totalRemainingMoves = remainingMoves.value
+  intervalID = setInterval(async () => {
+    if (remainingMoves.value > 0) {
+      remainingMoves.value -= 1;
+      vibrateLight()
+    } else {
+      clearInterval(intervalID);
+      showLevelCompleteModal.value = true
+    }
+  }, totalRemainingMoves > 1 ? (1000 / totalRemainingMoves) : 500);
+}
+
+const createSortable = () => {
+  // If there is an existing sortable instance, destroy it first
+  if (sortable)
+    sortable.destroy()
+
+  sortable = Sortable.create(gameBoard.value, {
+    swap: true,
+    swapClass: "highlight",
+    dragClass: "dragging",
+    animation: 150,
+    onStart: handleDragStart,
+    onUpdate: handleUpdate,
+    onMove: (event) => {
+      const distanceThreshold = event.dragged.clientWidth * 1.5;
+
+      // Calculate the distance from the starting position
+      const distanceX = Math.abs(event.originalEvent.clientX - initialTilePosition.value.left);
+      const distanceY = Math.abs(event.originalEvent.clientY - initialTilePosition.value.top);
+
+      // Log the distances
+      // console.log("Distance X:", distanceX);
+      // console.log("Distance Y:", distanceY);
+      // console.log("Threshold:", distanceThreshold);
+
+      // If the distance is too large, cancel the drag
+      if (distanceX > distanceThreshold || distanceY > distanceThreshold)
+        return false
+
+      // Save the old and new indices for swapping
+      const oldIndex = parseInt(event.dragged.dataset.index, 10);
+      const newIndex = parseInt(event.related.dataset.index, 10);
+
+      // Calculate row and column for both oldIndex and newIndex
+      const oldIndexRow = Math.floor(oldIndex / gridSize.value);
+      const oldIndexCol = oldIndex % gridSize.value;
+      const newIndexRow = Math.floor(newIndex / gridSize.value);
+      const newIndexCol = newIndex % gridSize.value;
+
+      // Check if the tiles are horizontally or vertically adjacent
+      const isAdjacent =
+        (Math.abs(newIndexRow - oldIndexRow) === 1 && newIndexCol === oldIndexCol) || // vertically adjacent
+        (Math.abs(newIndexCol - oldIndexCol) === 1 && newIndexRow === oldIndexRow); // horizontally adjacent
+
+      // console.log('IS ADJACENT', isAdjacent)
+      if (!isAdjacent)
+        return false
+
+      handleOnMove(event);
+    }
+  });
+}
+
+const nextLevel = async () => {
+  hideLevelCompleteModal.value = true // 25/03/23 - the complete modal only shows if one of these two are true. That might cause issues if there's a split second where they're both false.
+  showLevelCompleteModal.value = false
+
+  await delay(700)
+  await gameStore.setCurrentLevel(currentLevelId + 1)
+  router.push({ path: '/', query: { levelUp: true } })
+}
+
+const resetLevel = async () => {
+  if (showFailedModal.value)
+    hideFailedModal.value = true
+  else if (showLevelCompleteModal.value)
+    hideLevelCompleteModal.value = true
+
+  await delay(1000)
+  gameStore.resetLevel()
+  router.push('/')
+}
+
+const handleOnMove = async (event) => {
+  playSound('tileSwap')
+
+  // Save the old and new indices for swapping
+  const oldIndex = parseInt(event.dragged.dataset.index, 10);
+  const newIndex = parseInt(event.related.dataset.index, 10);
+
+  // Calculate row and column for both oldIndex and newIndex
+  const oldIndexRow = Math.floor(oldIndex / gridSize.value);
+  const oldIndexCol = oldIndex % gridSize.value;
+  const newIndexRow = Math.floor(newIndex / gridSize.value);
+  const newIndexCol = newIndex % gridSize.value;
+
+  // Check if the tiles are horizontally or vertically adjacent
+  const isAdjacent =
+    (Math.abs(newIndexRow - oldIndexRow) === 1 && newIndexCol === oldIndexCol) || // vertically adjacent
+    (Math.abs(newIndexCol - oldIndexCol) === 1 && newIndexRow === oldIndexRow); // horizontally adjacent
+
+  if (isAdjacent) {
+    // Deduct 1 from the remaining moves, if not the same character
+    if (tiles.value[oldIndex].letter !== tiles.value[newIndex].letter) {
+      remainingMoves.value -= 1
+      vibrateLight()
+    } else {
+      vibrateMedium()
+    }
+
+    // Schedule a swap after the current frame
+    requestAnimationFrame(() => {
+      // Swap the elements in the tiles array
+      [tiles.value[oldIndex], tiles.value[newIndex]] = [tiles.value[newIndex], tiles.value[oldIndex]]
+
+      // Update the data-index attributes of the swapped elements
+      event.dragged.setAttribute('data-index', newIndex);
+      event.related.setAttribute('data-index', oldIndex);
+
+      // Complete the Sortable operation by simulating a mouseup event
+      const mouseUpEvent = new MouseEvent("mouseup", {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+      });
+      event.originalEvent.target.dispatchEvent(mouseUpEvent);
+    });
+
+    // Return false to cancel the default Sortable behavior
+    return false;
+  }
+}
+
+const handleDragStart = (event) => {
+  const rect = event.item.getBoundingClientRect();
+  initialTilePosition.value = {
+    left: rect.left + window.scrollX + rect.width / 2,
+    top: rect.top + window.scrollY + rect.height / 2,
+  };
+}
+
+const handleDragEnd = (event) => {
+  const { newIndex, oldIndex } = event;
+  const newIndexRow = Math.floor(newIndex / gridSize.value);
+  const newIndexCol = newIndex % gridSize.value;
+  const oldIndexRow = Math.floor(oldIndex / gridSize.value);
+  const oldIndexCol = oldIndex % gridSize.value;
+
+  const isHorizontalSwap = newIndexRow === oldIndexRow && Math.abs(newIndexCol - oldIndexCol) === 1;
+  const isVerticalSwap = newIndexCol === oldIndexCol && Math.abs(newIndexRow - oldIndexRow) === 1;
+
+  if (!isHorizontalSwap && !isVerticalSwap) {
+    // Revert the swap if it's not a valid move
+    const temp = tiles.value[newIndex];
+    tiles.value[newIndex] = tiles.value[oldIndex];
+    tiles.value[oldIndex] = temp;
+  } else {
+    // Properly handle vertical swaps
+    if (isVerticalSwap) {
+      const temp = tiles.value[newIndex];
+      tiles.value[newIndex] = tiles.value[oldIndex];
+      tiles.value[oldIndex] = temp;
+    }
+  }
+
+  checkWords()
+}
+
+const checkWords = async () => {
+  await delay(25)
+  const wordsFound = []
+
+  // Reset isPartOfWord property for all tiles
+  sortableTiles.value.forEach((tile, index) => {
+    tile.isPartOfWord = false;
+  });
+
+  function isAlphabet(char) {
+    return /^[A-Z]$/i.test(char);
+  }
+
+  const highlightTiles = (word, tiles) => {
+    wordsFound.push(word)
+    let startIndex = -1;
+    for (let i = 0; i < tiles.length; i++) {
+      if (tiles.slice(i, i + word.length).map(t => t.letter).join('') === word) {
+        // Check the letters before and after the word
+        const prevLetter = i > 0 ? tiles[i-1].letter : null;
+        const nextLetter = i + word.length < tiles.length ? tiles[i + word.length].letter : null;
         
-        this.hideFailedModal = true
-
-        await this.delay(700)  // delay should match utility-modal-slide-out time
-
-        this.showFailedModal = false
-        this.hideFailedModal = false
-
-        if (resetLevel) {
-          this.gameStore.resetLevel()
-          this.$router.push('/')
-        }
-      },
-
-      async addMoves(quantity) {
-        this.lockTransitionDuration = '200ms' // reduce duration for a nice strobe effect
-        let intervalID
-        
-        intervalID = setInterval(async () => {
-          if (quantity > 0) {
-            quantity -= 1;
-            this.remainingMoves += 1
-
-            this.lockDropShadow = "drop-shadow(0 0 15px rgb(251, 163, 69))";
-            await this.delay(200)
-            this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
-
-            this.$vibrateLight()
-          } else {
-            this.levelFailed = false
-            clearInterval(intervalID);
-          }
-        }, 400)
-      },
-
-      getResponsiveValue(variableName) {
-        const values = {
-          topPadding1: {
-            'xs': 'pt-3',
-            '': 'pt-8',
-            'sm': 'pt-8',
-            'md': 'pt-8',
-            'lg': 'pt-8'
-          },
-          topPadding2: {
-            'xs': 'pt-3',
-            '': 'pt-12',
-            'sm': 'pt-12',
-            'md': 'pt-12',
-            'lg': 'pt-12'
-          },
-          lockBoltHeight: {
-            '': '0.60rem',
-            'sm': '0.60rem',
-            'md': '0.96rem',
-            'lg': '1.536rem'
-          },
-          lockBoltColor1: {
-            'xs': 'rgb(42,101,229)',
-            '': 'rgb(31,99,227)',
-            'sm': 'rgb(31,99,227)',
-            'md': 'rgb(31,99,227)',
-            'lg': 'rgb(39, 97, 227)'
-          },
-          lockBoltColor2: {
-            '': 'rgb(50, 120, 239)',
-            'sm': 'rgb(50, 120, 239)',
-            'md': 'rgb(50, 120, 239)',
-            'lg': 'rgb(52, 120, 240)'
-          },
-          gridGap1: {
-            'xs': 'gap-1.5',
-            '': 'gap-2',
-            'sm': 'gap-2',
-            'md': 'gap-3',
-            'lg': 'gap-4'
-          },
-          gridGap2: { // just the number because it's dynamically changed when set based on gridSize
-            'xs': 4,
-            '': 5,
-            'sm': 6,
-            'md': 7,
-            'lg': 8
-          },
-          gridGap3: {
-            '': 'gap-1',
-            'sm': 'gap-2',
-            'md': 'gap-2',
-            'lg': 'gap-2'
-          }
-        };
-
-        const currentScreenWidth = window.innerWidth;
-        const currentScreenHeight = window.innerHeight;
-        const pixelRatio = window.devicePixelRatio;
-        let screen = '';
-        let extraSmallOptions = ['gridGap1', 'gridGap2', 'topPadding1', 'topPadding2']
-
-        if (currentScreenWidth >= 1536) screen = '2xl';
-        else if (currentScreenWidth >= 1280) screen = 'xl';
-        else if (currentScreenWidth >= 1024) screen = 'lg';
-        else if (currentScreenWidth >= 768) screen = 'md';
-        else if (currentScreenWidth >= 640) screen = 'sm';
-        else if (extraSmallOptions.includes(variableName) && currentScreenWidth < 320) screen = 'xs';
-        if (extraSmallOptions.includes(variableName) && pixelRatio === 2 && currentScreenWidth < 380 && currentScreenHeight < 700) screen = 'xs'; // special case for iPhone SE, iPhone 8, iPhone 7, iPhone 6s, iPhone 6 etc.
-
-        return values[variableName][screen];
-      },
-
-      async closeLoseLifeModal(resetLevel) {
-        if (resetLevel)
-          await this.gameStore.saveLevelProgress(false, this.remainingMoves, this.extraMovesUsed)
-        
-        this.hideLoseLifeModal = true
-
-        await this.delay(700)  // delay should match utility-modal-slide-out time
-
-        this.showLoseLifeModal = false
-        this.hideLoseLifeModal = false
-
-        if (resetLevel) {
-          this.gameStore.resetLevel()
-          this.$router.push('/')
+        // If the letters before and after the word are not part of the word or are not present (null), 
+        // then this is not part of another word, so we can highlight it
+        if ((!prevLetter || !word.includes(prevLetter)) && (!nextLetter || !word.includes(nextLetter))) {
+          startIndex = i;
+          break;
         }
       }
     }
+
+    if (startIndex !== -1) {
+      word.split('').forEach((letter, index) => {
+        const tile = tiles[startIndex + index];
+        if (tile) {
+          sortableTiles.value.find((t) => t.id === tile.id).isPartOfWord = true
+        }
+      });
+    }
   };
+
+  // Sort valid words by length, from shortest to longest
+  const sortedValidWords = validWords.value.sort((a, b) => a.length - b.length);
+
+  // Check the rows for valid words
+  for (let rowIndex = 0; rowIndex < gridSize.value; rowIndex++) {
+    const rowTiles = tiles.value.slice(rowIndex * gridSize.value, rowIndex * gridSize.value + gridSize.value);
+    const rowLetters = rowTiles.map((tile) => tile.letter);
+    sortedValidWords.forEach((word) => {
+      for (let i = 0; i <= rowLetters.length - word.length; i++) {
+        let slicedLetters = rowLetters.slice(i, i + word.length).join('');
+        if (slicedLetters === word &&
+          (i === 0 || !isAlphabet(rowLetters[i - 1])) && // Check preceding letter
+          (i + word.length === rowLetters.length || !isAlphabet(rowLetters[i + word.length]))) { // Check succeeding letter
+          console.log(`Found valid word: ${word}`);
+          highlightTiles(word, rowTiles.slice(i, i + word.length));
+        }
+      }
+    });
+  }
+
+  // Check the columns for valid words
+  for (let colIndex = 0; colIndex < gridSize.value; colIndex++) {
+    let colTiles = [];
+    for (let rowIndex = 0; rowIndex < gridSize.value; rowIndex++) {
+      colTiles.push(tiles.value[rowIndex * gridSize.value + colIndex]);
+    }
+    const colLetters = colTiles.map((tile) => tile.letter);
+    sortedValidWords.forEach((word) => {
+      for (let i = 0; i <= colLetters.length - word.length; i++) {
+        let slicedLetters = colLetters.slice(i, i + word.length).join('');
+        if (slicedLetters === word &&
+          (i === 0 || !isAlphabet(colLetters[i - 1])) && // Check preceding letter
+          (i + word.length === colLetters.length || !isAlphabet(colLetters[i + word.length]))) { // Check succeeding letter
+          console.log(`Found valid word: ${word}`);
+          highlightTiles(word, colTiles.slice(i, i + word.length));
+        }
+      }
+    });
+  }
+  
+  // Compare previous and current words formed and play sound if new words are formed
+  const newWords = wordsFound.filter(word => !wordsFormed.value.includes(word));
+  if (newWords.length)
+    playSound('wordFormed') 
+
+  wordsFormed.value = wordsFound
+
+  if (arraysEqual(validWords.value, wordsFormed.value))
+    await completeLevel()
+  else if (remainingMoves.value <= 0)
+    await failLevel()
+}
+
+const arraysEqual = (arr1, arr2) => {
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+
+  const sortedArr1 = arr1.slice().sort();
+  const sortedArr2 = arr2.slice().sort();
+
+  for (let i = 0; i < sortedArr1.length; i++) {
+    if (sortedArr1[i] !== sortedArr2[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+const handleUpdate = (event) => {
+  // Save the old and new indices for swapping
+  const oldIndex = event.oldIndex;
+  const newIndex = event.newIndex;
+
+  // Calculate row and column for both oldIndex and newIndex
+  const oldIndexRow = Math.floor(oldIndex / gridSize.value);
+  const oldIndexCol = oldIndex % gridSize.value;
+  const newIndexRow = Math.floor(newIndex / gridSize.value);
+  const newIndexCol = newIndex % gridSize.value;
+
+  // Check if the tiles are horizontally or vertically adjacent
+  const isAdjacent =
+    (Math.abs(newIndexRow - oldIndexRow) === 1 && newIndexCol === oldIndexCol) || // vertically adjacent
+    (Math.abs(newIndexCol - oldIndexCol) === 1 && newIndexRow === oldIndexRow); // horizontally adjacent
+
+  if (!isAdjacent) {
+    // Revert the swap if it's not a valid move
+    const temp = tiles.value[newIndex];
+    tiles.value[newIndex] = tiles.value[oldIndex];
+    tiles.value[oldIndex] = temp;
+  } else {
+    checkWords()
+  }
+}
+
+const setAnimationClasses = () => {
+  animationClasses = Array(tiles.value.length).fill('')
+
+  tiles.value.forEach((tile, index) => {
+    if (tile.letter === '')
+      animationClasses[index] = `shake-and-fall-${Math.floor(Math.random() * 4) + 1}`
+    // else
+    //   animationClasses[index] = `slide-right`
+  });
+}
+
+const setBorderRadiusClasses = () => {
+  tiles.value.forEach((tile, index) => {
+    // This is important: we use the `tiles` array since that is the one we keep for reference, since the sortableTiles aren't reactive. Tiles are swapped but the array doesn't change.
+    // Therefore we MUST get the index of the tile in the sortableTiles array and update the classes at that index.
+    const sortableTileIndex = sortableTiles.value.findIndex((sortableTile) => sortableTile.id === tile.id)
+
+    let borderClasses = 'tile-shadow duration-100 rounded-bl-16pc rounded-tr-16pc rounded-br-16pc rounded-tl-16pc ' + tiles.value[index].letter;
+
+    const row = Math.floor(index / gridSize.value);
+    const col = index % gridSize.value;
+
+    // Check for a tile on the left
+    if (col > 0 && tiles.value[index - 1]?.letter) {
+      borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-tl-16pc', '');
+    }
+
+    // Check for a tile on the right
+    if (col < gridSize.value - 1 && tiles.value[index + 1]?.letter) {
+      // console.log(index, tiles[index].letter)
+      borderClasses = borderClasses.replace('rounded-br-16pc', '').replace('rounded-tr-16pc', '');
+    }
+
+    // Check for a tile on the top
+    if (row > 0 && tiles.value[index - gridSize.value]?.letter) {
+      // console.log(index, tiles[index].letter)
+      borderClasses = borderClasses.replace('rounded-tl-16pc', '').replace('rounded-tr-16pc', '');
+    }
+
+    // Check for a tile on the bottom
+    if (row < gridSize.value - 1 && tiles[index + gridSize.value]?.letter) {
+      borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-br-16pc', '');
+    }
+
+    borderRadiusClasses.value[sortableTileIndex] = borderClasses
+  });
+}
+
+const closeFailedModal = async (resetLevel) => {
+  if (resetLevel)
+    await gameStore.saveLevelProgress(false, remainingMoves.value, extraMovesUsed.value)
+  
+  hideFailedModal.value = true
+
+  await delay(700)  // delay should match utility-modal-slide-out time
+
+  showFailedModal.value = false
+  hideFailedModal.value = false
+
+  if (resetLevel) {
+    gameStore.resetLevel()
+    router.push('/')
+  }
+}
+
+const addMoves = async (quantity) => {
+  lockTransitionDuration = '200ms' // reduce duration for a nice strobe effect
+  let intervalID
+  
+  intervalID = setInterval(async () => {
+    if (quantity > 0) {
+      quantity -= 1;
+      remainingMoves.value += 1
+
+      lockDropShadow.value = "drop-shadow(0 0 15px rgb(251, 163, 69))";
+      await delay(200)
+      lockDropShadow.value = "drop-shadow(0 0 0 rgb(251, 163, 69))";
+
+      vibrateLight()
+    } else {
+      levelFailed.value = false
+      clearInterval(intervalID);
+    }
+  }, 400)
+}
+
+const closeLoseLifeModal = async (resetLevel) => {
+  if (resetLevel)
+    await gameStore.saveLevelProgress(false, remainingMoves.value, extraMovesUsed.value)
+  
+  hideLoseLifeModal.value = true
+
+  await delay(700)  // delay should match utility-modal-slide-out time
+
+  showLoseLifeModal.value = false
+  hideLoseLifeModal.value = false
+
+  if (resetLevel) {
+    gameStore.resetLevel()
+    router.push('/')
+  }
+}
 </script>
 
 <style>

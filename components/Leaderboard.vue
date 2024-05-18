@@ -65,6 +65,13 @@ export default defineComponent({
     }
   },
 
+  watch: {
+    hideLeaderboardModal(newValue) {
+      if (newValue)
+        playSound('swoosh')
+    }
+  },
+
   methods: {
     getColor(index, opacity) {
       const colors = [

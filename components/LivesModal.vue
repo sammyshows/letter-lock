@@ -102,9 +102,14 @@ export default defineComponent({
       deep: true
     },
 
-    showLiveseModal(newValue) {
+    showLivesModal(newValue) {
       if (!newValue)
         this.showHeart = false
+    },
+
+    hideLivesModal(newValue) {
+      if (newValue)
+        playSound('swoosh')
     }
   },
 

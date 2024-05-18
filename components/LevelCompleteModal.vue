@@ -37,6 +37,13 @@ export default defineComponent({
     return {
       HTMLText: levelCompleteText[Math.floor(Math.random() * levelCompleteText.length)]
     }
+  },
+
+  watch: {
+    hideLevelCompleteModal(newValue) {
+      if (newValue)
+        playSound('swoosh')
+    }
   }
 })
 </script>

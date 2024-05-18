@@ -234,7 +234,7 @@ export default {
       this.showCollideEffect = true;
 
       await this.delay(50);
-      this.$vibrateLight()
+      vibrateLight()
 
       await this.delay(875);
       this.lockBoltColor = this.getResponsiveValue('lockBoltColor2')
@@ -246,14 +246,14 @@ export default {
       this.lockDropShadow = "drop-shadow(0 0 40px rgb(251, 163, 69))";
 
       await this.delay(50);
-      this.$vibrateLight()
+      vibrateLight()
 
       let intervalID;
       const totalRemainingMoves = this.remainingMoves
       intervalID = setInterval(async () => {
         if (this.remainingMoves > 0) {
           this.remainingMoves -= 1;
-          this.$vibrateLight()
+          vibrateLight()
         } else {
           clearInterval(intervalID);
           this.showCompleteModal = true
@@ -379,9 +379,9 @@ export default {
         // Deduct 1 from the remaining moves, if not the same character
         if (this.tiles[oldIndex].letter !== this.tiles[newIndex].letter) {
           this.remainingMoves -= 1
-          this.$vibrateLight()
+          vibrateLight()
         } else {
-          this.$vibrateMedium()
+          vibrateMedium()
         }
 
         // Schedule a swap after the current frame
@@ -652,7 +652,7 @@ export default {
           await this.delay(200)
           this.lockDropShadow = "drop-shadow(0 0 0 rgb(251, 163, 69))";
 
-          this.$vibrateLight()
+          vibrateLight()
         } else {
           this.levelFailed = false
           clearInterval(intervalID);

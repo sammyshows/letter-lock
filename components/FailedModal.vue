@@ -76,6 +76,7 @@ export default defineComponent({
   },
 
   mounted() {
+    playTrack('failed')
     setTimeout(() => this.showHeart = true, 2000)
 
     this.updateLifeRemainingTime();
@@ -87,6 +88,7 @@ export default defineComponent({
   },
 
   beforeUnmount() {
+    playTrack('game')
     clearInterval(this.lifeTimeInterval);
   },
 
@@ -99,6 +101,11 @@ export default defineComponent({
         })
       },
       deep: true
+    },
+    
+    hideFailedModal(newValue) {
+      if (newValue)
+        playSound('swoosh')
     }
   },
 

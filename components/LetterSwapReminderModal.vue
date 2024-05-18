@@ -62,7 +62,14 @@ export default defineComponent({
   props: [
     'showLetterSwapReminderModal',
     'hideLetterSwapReminderModal'
-  ]
+  ],
+
+  watch: {
+    hideLetterSwapReminderModal(newValue) {
+      if (newValue)
+        playSound('swoosh')
+    }
+  },
 })
 </script>
 

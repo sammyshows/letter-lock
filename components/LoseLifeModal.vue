@@ -39,7 +39,14 @@ export default defineComponent({
   props: [
     'showLoseLifeModal',
     'hideLoseLifeModal'
-  ]
+  ],
+
+  watch: {
+    hideLoseLifeModal(newValue) {
+      if (newValue)
+        playSound('swoosh')
+    }
+  }
 })
 </script>
 

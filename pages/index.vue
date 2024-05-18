@@ -12,7 +12,6 @@
       <div class="mt-16">
         <div v-if="currentLevelId && currentLevelId <= totalLevelCount">
           <div v-if="!showUserDemo" class="flex justify-center items-center text-4xl text-center tracking-wider font-medium sm:text-7xl lg:text-8xl" style="font-family: 'Luckiest Guy';">
-            <!-- <IconsMap class="h-10 mb-2.5 text-slate-200" /> -->
             <p class="mr-1 sm:mr-3 lg:mr-5">LEVEL</p>
   
             <div v-if="(currentLevelId - 1).toString().length !== currentLevelId.toString().length" class="relative flex items-end text-6xl pt-1 pl-4 rounded-full sm:text-8xl lg:text-9xl">
@@ -49,13 +48,13 @@
             <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xl font-medium sm:text-3xl lg:text-5xl">{{ lives.count }}</span>
           </div>
 
-          <IconsChart @click="showLeaderboard" class="icons-1 sm:h-16 lg:h-24" style="touch-action: manipulation;"/>
+          <IconsChart @click="showLeaderboard(); playSound('click')" class="icons-1 sm:h-16 lg:h-24" style="touch-action: manipulation;"/>
         </div>
 
         <div class="icons-bar flex justify-between items-center mt-10 px-12 sm:mt-16 sm:px-24 lg:mt-20 lg:px-32">
-          <IconsSettings @click="showSettingsModal = true" class="icons-1 drop-shadow sm:h-16 lg:h-24" style="touch-action: manipulation;" />
+          <IconsSettings @click="showSettingsModal = true; playSound('click');" class="icons-1 drop-shadow sm:h-16 lg:h-24" style="touch-action: manipulation;" />
 
-          <NuxtLink :to="{ path: '/levels' }" style="touch-action: manipulation;">
+          <NuxtLink :to="{ path: '/levels' }" @click="playSound('click')" style="touch-action: manipulation;">
             <IconsMap class="icons-1 sm:h-16 lg:h-24" />
           </NuxtLink>
         </div>
@@ -91,160 +90,156 @@
   </div>
 </template>
 
-<script>
-import { storeToRefs } from "pinia";
-import { Capacitor } from "@capacitor/core"
-import { useGameStore } from "@/stores/game";
-import { useAdsStore } from "@/stores/ads";
-import SettingsModal from "@/components/SettingsModal";
+<script setup>
+import { storeToRefs } from 'pinia';
+import { Capacitor } from '@capacitor/core';
+import { useGameStore } from '@/stores/game';
+import { useAdsStore } from '@/stores/ads';
+import SettingsModal from '@/components/SettingsModal';
 
-export default {
-  name: 'Home',
-  
-  components: { SettingsModal },
+const gameStore = useGameStore();
+const adsStore = useAdsStore();
 
-  setup() {
-    const gameStore = useGameStore()
-    const adsStore = useAdsStore()
+const {
+  showUserDemo,
+  totalLevelCount,
+  allLevelsCompleteModalShown,
+  currentLevelId,
+  lives,
+  maxLives,
+  stats,
+  settings,
+  leaderboardDisplayedOnMount,
+  leaderboardAllTime
+} = storeToRefs(gameStore);
+const { rewardAdsLoaded } = storeToRefs(adsStore);
 
-    const { showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings, leaderboardDisplayedOnMount, leaderboardAllTime } = storeToRefs(gameStore)
-    const { rewardAdsLoaded } = storeToRefs(adsStore)
+const router = useRouter();
+const route = useRoute();
+const platform = ref(Capacitor.getPlatform());
 
-    return { gameStore, adsStore, showUserDemo, totalLevelCount, allLevelsCompleteModalShown, currentLevelId, lives, maxLives, stats, settings, leaderboardDisplayedOnMount, leaderboardAllTime, rewardAdsLoaded }
-  },
+const showLeaderboardModal = ref(false);
+const hideLeaderboardModal = ref(false);
+const showSettingsModal = ref(false);
+const hideSettingsModal = ref(false);
+const showLivesModal = ref(false);
+const hideLivesModal = ref(false);
+const showAllLevelsCompleteModal = ref(false);
+const hideAllLevelsCompleteModal = ref(false);
+const showLetterSwapReminderModal = ref(false);
+const hideLetterSwapReminderModal = ref(false);
+const levelUp = ref(false);
+let lifeCheckInterval = null;
+const letters = ref([
+  'f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g',
+  'q', 'f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g'
+]);
 
-  mounted() {
-    if (this.rewardAdsLoaded <= 0)
-      this.adsStore.prepareRewardAd()
+const startGame = async () => {
+  playSound('click');
+  if (showUserDemo.value) {
+    return router.push({ name: 'demo' });
+  }
 
-    // Show animation if levelled up
-    if (this.$route.query.levelUp) {
-      this.levelUp = true
-      this.$router.replace({
-        path: this.$route.path,
-        query: {}
-      })
+  if (lives.value.count > 0) {
+    gameStore.startLevel();
+  } else {
+    await gameStore.checkLives();
 
-      if (this.currentLevelId === 2)
-        this.showLetterSwapReminderModal = true
+    if (lives.value.count > 0) {
+      gameStore.startLevel();
+    } else {
+      showLivesModal.value = true;
     }
-
-    // Check life count - checks every 6 seconds. Dunno why it's 6, but fuck it.
-    this.lifeCheckInterval = window.setInterval(() => {
-      if (this.lives.count < this.maxLives) {
-        this.gameStore.checkLives();
-      }
-    }, 6000);
-
-
-    // game over modal - damn a user really won the game
-    if (!this.allLevelsCompleteModalShown && this.currentLevelId > this.totalLevelCount) {
-      this.showAllLevelsCompleteModal = true
-      this.allLevelsCompleteModalShown = true
-    } else if (!this.leaderboardDisplayedOnMount && this.currentLevelId > 4) { // easy way to ensure 'showLetterSwapReminderModal' above is not shown at the same time
-      this.showLeaderboard()
-      this.gameStore.$patch({ leaderboardDisplayedOnMount: true })
-    }
-  },
-
-  beforeUnmount() {
-    clearInterval(this.lifeCheckInterval);
-  },
-
-  data() {
-    return {
-      platform: Capacitor.getPlatform(),
-      showLeaderboardModal: false,
-      hideLeaderboardModal: false,
-      showSettingsModal: false,
-      hideSettingsModal: false,
-      showLivesModal: false,
-      hideLivesModal: false,
-      showAllLevelsCompleteModal: false,
-      hideAllLevelsCompleteModal: false,
-      showLetterSwapReminderModal: false,
-      hideLetterSwapReminderModal: false,
-      levelUp: false,
-      letters: ['f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g', 'q', 'f', 'j', 't', 'l', 'u', 'y', 'v', 'd', 'n', 'h', 'o', 'p', 'a', 'c', 's', 'b', 'm', 'e', 'z', 'x', 'k', 'w', 'i', 'r', 'g']
-    }
-  },
-
-  methods: {
-    async startGame() {
-      if (this.showUserDemo)
-        return this.$router.push({ name: 'demo' })
-
-      if (this.lives.count > 0)
-        this.gameStore.startLevel()
-      else {
-        await this.gameStore.checkLives()
-
-        if (this.lives.count > 0) {
-          this.gameStore.startLevel()
-        } else {
-          this.showLivesModal = true
-        }
-      }
-    },
-
-    showLeaderboard() {
-      if (this.leaderboardAllTime) { // if leaderboard data is available
-        this.gameStore.getLeaderboard()
-        this.showLeaderboardModal = true
-      }
-    },
-
-    closeLivesModal() {
-      this.hideLivesModal = true
-
-      // Not the prettiest, but this resets the modal animations 
-      setTimeout(() => {
-        this.showLivesModal = false
-        this.hideLivesModal = false
-      }, 700) // delay should match utility-modal-slide-out time
-    },
-
-    closeSettingsModal() {
-      this.hideSettingsModal = true
-
-      // Not the prettiest, but this resets the modal animations 
-      setTimeout(() => {
-        this.showSettingsModal = false
-        this.hideSettingsModal = false
-      }, 700) // delay should match utility-modal-slide-out time
-    },
-
-    closeAllLevelsCompleteModal() {
-      this.hideAllLevelsCompleteModal = true
-
-      // Not the prettiest, but this resets the modal animations 
-      setTimeout(() => {
-        this.showAllLevelsCompleteModal = false
-        this.hideAllLevelsCompleteModal = false
-      }, 700) // delay should match utility-modal-slide-out time
-    },
-
-    closeLetterSwapReminderModal() {
-      this.hideLetterSwapReminderModal = true
-
-      // Not the prettiest, but this resets the modal animations 
-      setTimeout(() => {
-        this.showLetterSwapReminderModal = false
-        this.hideLetterSwapReminderModal = false
-      }, 700) // delay should match utility-modal-slide-out time
-    },
-
-    closeLeaderboardModal() {
-      this.hideLeaderboardModal = true
-
-      // Not the prettiest, but this resets the modal animations 
-      setTimeout(() => {
-        this.showLeaderboardModal = false
-        this.hideLeaderboardModal = false
-      }, 700) // delay should match utility-modal-slide-out time
-    }
-  },
+  }
 };
+
+const showLeaderboard = () => {
+  if (leaderboardAllTime.value) {
+    gameStore.getLeaderboard();
+    showLeaderboardModal.value = true;
+  }
+};
+
+const closeLivesModal = () => {
+  hideLivesModal.value = true;
+
+  setTimeout(() => {
+    showLivesModal.value = false;
+    hideLivesModal.value = false;
+  }, 700);
+};
+
+const closeSettingsModal = () => {
+  hideSettingsModal.value = true;
+
+  setTimeout(() => {
+    showSettingsModal.value = false;
+    hideSettingsModal.value = false;
+  }, 700);
+};
+
+const closeAllLevelsCompleteModal = () => {
+  hideAllLevelsCompleteModal.value = true;
+
+  setTimeout(() => {
+    showAllLevelsCompleteModal.value = false;
+    hideAllLevelsCompleteModal.value = false;
+  }, 700);
+};
+
+const closeLetterSwapReminderModal = () => {
+  hideLetterSwapReminderModal.value = true;
+
+  setTimeout(() => {
+    showLetterSwapReminderModal.value = false;
+    hideLetterSwapReminderModal.value = false;
+  }, 700);
+};
+
+const closeLeaderboardModal = () => {
+  hideLeaderboardModal.value = true;
+
+  setTimeout(() => {
+    showLeaderboardModal.value = false;
+    hideLeaderboardModal.value = false;
+  }, 700);
+};
+
+onMounted(() => {
+  playTrack('home');
+
+  if (rewardAdsLoaded.value <= 0) {
+    adsStore.prepareRewardAd();
+  }
+
+  if (route.query.levelUp) {
+    levelUp.value = true;
+    router.replace({ path: route.path, query: {} });
+
+    if (currentLevelId.value === 2) {
+      showLetterSwapReminderModal.value = true;
+    }
+  }
+
+  lifeCheckInterval = setInterval(() => {
+    if (lives.value.count < maxLives.value) {
+      gameStore.checkLives();
+    }
+  }, 6000);
+
+  if (!allLevelsCompleteModalShown.value && currentLevelId.value > totalLevelCount.value) {
+    showAllLevelsCompleteModal.value = true;
+    allLevelsCompleteModalShown.value = true;
+  } else if (!leaderboardDisplayedOnMount.value && currentLevelId.value > 4) {
+    showLeaderboard();
+    gameStore.$patch({ leaderboardDisplayedOnMount: true });
+  }
+});
+
+onBeforeUnmount(() => {
+  clearInterval(lifeCheckInterval);
+});
 </script>
 
 <style>
