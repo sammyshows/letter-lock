@@ -291,9 +291,9 @@ export default {
           const distanceY = Math.abs(event.originalEvent.clientY - this.initialTilePosition.top);
 
           // Log the distances
-          console.log("Distance X:", distanceX);
-          console.log("Distance Y:", distanceY);
-          console.log("Threshold:", distanceThreshold);
+          // console.log("Distance X:", distanceX);
+          // console.log("Distance Y:", distanceY);
+          // console.log("Threshold:", distanceThreshold);
 
           // If the distance is too large, cancel the drag
           if (distanceX > distanceThreshold || distanceY > distanceThreshold)
@@ -314,7 +314,7 @@ export default {
             (Math.abs(newIndexRow - oldIndexRow) === 1 && newIndexCol === oldIndexCol) || // vertically adjacent
             (Math.abs(newIndexCol - oldIndexCol) === 1 && newIndexRow === oldIndexRow); // horizontally adjacent
 
-          console.log('IS ADJACENT', isAdjacent)
+          // console.log('IS ADJACENT', isAdjacent)
           if (!isAdjacent)
             return false
 
@@ -617,7 +617,7 @@ export default {
 
         // Check for a tile on the right
         if (col < this.gridSize - 1 && this.tiles[index + 1]?.letter) {
-          console.log(index, this.tiles[index].letter)
+          // console.log(index, this.tiles[index].letter)
           borderClasses = borderClasses.replace('rounded-br-16pc', '').replace('rounded-tr-16pc', '');
         }
 
