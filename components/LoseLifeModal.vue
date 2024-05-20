@@ -14,7 +14,7 @@
 
     <p class="px-6 font-medium text-slate-500 text-lg sm:text-4xl lg:text-5xl">This level isn't finished, are you sure you want to leave now?</p>
 
-    <ButtonsGiveUp @giveUp="$emit('close', true)" text="Play On!" />
+    <ButtonsGiveUp @giveUp="$emit('close', true); playSound('click')" text="Play On!" />
   </div>
 </template>
 

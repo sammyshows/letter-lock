@@ -1,96 +1,132 @@
+import { Howl, Howler } from 'howler';
+import { useGameStore } from '@/stores/game';
+
 class MusicManager {
   constructor() {
     this.tracks = {};
     this.currentTrack = null;
+    this.gameStore = useGameStore();
   }
 
   loadTrack(name, src, volume = 1, playbackRate = 1) {
-    const audio = new Audio(src);
-    audio.volume = volume;
-    audio.playbackRate = playbackRate;
-    
-    this.tracks[name] = audio;
+    console.log(`Loading track: ${name}, src: ${src}, volume: ${volume}, playbackRate: ${playbackRate}`);
+    this.tracks[name] = {
+      howl: new Howl({
+        src: [src],
+        volume: volume,
+        rate: playbackRate,
+        loop: false,
+        html5: false,
+        onload: () => console.log(`${name} loaded successfully`),
+        onplay: () => console.log(`${name} started playing`),
+        onend: () => console.log(`${name} finished playing`),
+        onstop: () => console.log(`${name} stopped`),
+        onpause: () => console.log(`${name} paused`),
+        onfade: () => console.log(`${name} fading`),
+        onloaderror: (id, err) => console.error(`Error loading ${name}:`, err),
+        onplayerror: (id, err) => console.error(`Error playing ${name}:`, err),
+      }),
+      initialVolume: volume // Store the initial volume
+    };
   }
 
-  fadeOut(track) {
+  fadeOutTrack(track, duration = 500) {
+    console.log(`Fading out track over ${duration}ms`);
     return new Promise((resolve) => {
-      if (!track) return resolve();
+      if (!track) {
+        console.log('No track to fade out');
+        return resolve();
+      }
 
-      const defaultVolume = track.volume;
+      const startVolume = track.initialVolume;
 
-      const step = track.volume / (500 / 50);
-
-      const fade = setInterval(() => {
-        if (track.volume > 0) {
-          track.volume = Math.max(0, track.volume - step);
-        } else {
-          clearInterval(fade);
-          resolve();
-          track.volume = defaultVolume;
-        }
-      }, 50);
+      track.howl.fade(track.howl.volume(), 0, duration);
+      setTimeout(() => {
+        track.howl.pause();
+        track.howl.volume(startVolume); // Reset to initial volume
+        track.howl.seek(0);
+        console.log('Track faded out and stopped');
+        resolve();
+      }, duration);
     });
   }
 
-  fadeIn(track) {
+  fadeInTrack(track, duration = 500) {
+    console.log('Fading in track');
     return new Promise((resolve) => {
-      if (!track) return resolve();
+      if (!track) {
+        console.log('No track to fade in');
+        return resolve();
+      }
 
-      const targetVolume = track.volume;
-      track.volume = 0;
-      const step = targetVolume / (400 / 50);
-
-      const fade = setInterval(() => {
-        if (track.volume < targetVolume) {
-          track.volume = Math.min(targetVolume, track.volume + step);
-        } else {
-          clearInterval(fade);
-          resolve();
-        }
-      }, 50);
-
-      track.play();
+      const targetVolume = track.initialVolume;
+      console.log('Initial track volume:', targetVolume);
+      track.howl.volume(0);
+      track.howl.play();
+      track.howl.fade(0, targetVolume, duration);
+      console.log('Finished fading in track to ' + targetVolume);
+      setTimeout(resolve, duration);
     });
   }
 
-  async playTrack(name, loop = true) {
+  async playTrack(name = null, loop = true) {
+    if (!this.gameStore.settings.music) {
+      console.log('Music is disabled in settings');
+      return;
+    }
+
+    if (name === null) {
+      if (this.currentTrack && !this.currentTrack.howl.playing()) {
+        console.log('Resuming the current track');
+        this.currentTrack.howl.play();
+        return;
+      } else {
+        console.log('Current track is already playing or no track to resume');
+        return;
+      }
+    }
+  
+    console.log(`Playing track: ${name}, loop: ${loop}`);
     try {
       if (this.tracks[name] !== this.currentTrack) {
+        console.log('Switching to a different track');
         if (this.currentTrack) {
-          await this.fadeOut(this.currentTrack);
-          this.currentTrack.pause();
-          this.currentTrack.currentTime = 0;
+          console.log('Fading out current track');
+          this.fadeOutTrack(this.currentTrack);
         }
-
+  
         this.currentTrack = this.tracks[name];
-        this.currentTrack.loop = loop;
-        await this.fadeIn(this.currentTrack);
+        this.currentTrack.howl.loop(loop);
+        console.log('Fading in new track');
+        this.fadeInTrack(this.currentTrack);
+        console.log('New track playing');
       } else {
-        await this.fadeIn(this.currentTrack);
+        if (!this.currentTrack.howl.playing()) {
+          this.currentTrack.howl.play();
+        } else {
+          console.log('Track is already playing');
+        }
       }
     } catch (error) {
-      console.error(error);
+      console.error('Error playing track:', error);
     }
   }
 
-  stopTrack() {
+  pauseTrack(reset = false) {
+    console.log('Pausing current track');
     try {
       if (this.currentTrack) {
-        this.currentTrack.pause();
-        this.currentTrack.currentTime = 0;
-        this.currentTrack = null;
+        this.currentTrack.howl.pause();
+        console.log('Current track paused');
+
+        if (reset) {
+          this.currentTrack.howl.seek(0);
+          this.currentTrack = null;
+          console.log('Current track reset');
+        }
       }
     } catch (error) {
-      console.error(error);
-    }
-  }
-
-  setVolume(name, volume) {
-    if (this.tracks[name]) {
-      const validVolume = isNaN(volume) ? 0 : volume / 100;
-      this.tracks[name].volume = validVolume;
-    } else {
-      console.warn(`Track ${name} not found!`);
+      console.error('Error pausing track:', error);
     }
   }
 }
@@ -100,9 +136,9 @@ const musicManager = ref(null);
 export const useMusicManager = () => {
   if (!musicManager.value) {
     musicManager.value = new MusicManager();
-    musicManager.value.loadTrack('home', '/music/home.mp3', 0.3); // Home page music
-    musicManager.value.loadTrack('game', '/music/game.mp3', 0.3); // Gameplay music
-    musicManager.value.loadTrack('failed', '/music/failed.mp3', 0.3); // Failed modal music
+    musicManager.value.loadTrack('home', '/music/home.mp3', 0.15); // Home page music
+    musicManager.value.loadTrack('game', '/music/game.mp3', 0.09); // Gameplay music
+    musicManager.value.loadTrack('failed', '/music/failed.mp3', 0.1); // Failed modal music
   }
 
   return musicManager.value;

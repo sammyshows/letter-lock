@@ -1,7 +1,9 @@
-export const playTrack = (track) => {
-  useMusicManager().playTrack(track);
+export const playTrack = async (track) => {
+  const musicManager = await useMusicManager()
+  musicManager.playTrack(track);
 }
 
-export const stopTrack = () => {
-  useMusicManager().stopTrack();
+export const pauseTrack = async (resetTrack) => {
+  const musicManager = await useMusicManager()
+  musicManager.pauseTrack(resetTrack);
 }

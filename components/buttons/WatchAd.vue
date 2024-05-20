@@ -1,5 +1,5 @@
 <template>
-  <div @click="$emit('watchAd')" class="ad-button-pulse flex self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500">
+  <div @click="$emit('watchAd'); playSound('click')" class="ad-button-pulse flex self-center rounded-full bg-gradient-to-br from-green-400 to-green-600 focus:from-green-500 focus:to-green-700 disabled:from-slate-300 disabled:to-slate-500">
     <IconsClapperboard class="w-6 h-6 mr-3 -rotate-6 text-white sm:mr-4 sm:w-8 sm:h-8 lg:mr-6 lg:w-10 lg:h-10" />
     <button :disabled="disableAds" class="text-white font-medium shadow-sm drop-shadow text-sm sm:text-3xl lg:text-5xl" style="touch-action: manipulation;">{{ text }}</button>
   </div>

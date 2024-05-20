@@ -9,8 +9,8 @@
       </div>
 
       <div class="text-ll-orange text-4xl font-bold tracking-widest drop-shadow-sm sm:text-5-5xl sm:leading-14 lg:text-7xl" style="font-family: 'Luckiest Guy';">
-        <p class="word-slide-left ml-6 sm:ml-14">GET MORE</p>
-        <p class="word-slide-right mr-6 sm:mr-14">LIVES</p>
+        <p class="word-slide-left ml-8 sm:ml-14">OUT OF</p>
+        <p class="word-slide-right mr-8 sm:mr-14">LIVES</p>
       </div>
 
       <div class="w-3/4 flex justify-between items-center">

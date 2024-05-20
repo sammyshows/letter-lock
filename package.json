@@ -30,6 +30,7 @@
     "axios": "^1.4.0",
     "cordova-plugin-screen-orientation": "^3.0.3",
     "es6-promise-plugin": "^4.2.2",
+    "howler": "^2.2.4",
     "lodash": "^4.17.21",
     "pinia": "^2.0.34",
     "sortablejs": "^1.15.0",

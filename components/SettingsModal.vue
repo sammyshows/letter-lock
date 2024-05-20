@@ -28,9 +28,17 @@
           </div>
           
           <div class="w-full flex justify-between mt-4">
-            <span class="flex items-center font-medium text-slate-500">Sound</span>
+            <span class="flex items-center font-medium text-slate-500">Music</span>
             <label @click="playSound('switch')" class="relative inline-flex items-center cursor-pointer">
-              <input v-model="settings.sound" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
+              <input v-model="settings.music" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
+              <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
+            </label>
+          </div>
+
+          <div class="w-full flex justify-between mt-4">
+            <span class="flex items-center font-medium text-slate-500">Sound Effects</span>
+            <label @click="playSound('switch')" class="relative inline-flex items-center cursor-pointer">
+              <input v-model="settings.soundEffects" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
             </label>
           </div>
@@ -44,13 +52,13 @@
           </div>
   
           <!-- TEST MODE BUTTON -->
-          <div class="w-full flex justify-between mt-4">
+          <!-- <div class="w-full flex justify-between mt-4">
             <span class="flex items-center font-medium text-slate-500">Test Mode</span>
             <label @click="playSound('switch')" class="relative inline-flex items-center cursor-pointer">
               <input v-model="settings.testMode" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
             </label>
-          </div>
+          </div> -->
   
           <div v-if="settings.testMode" class="w-full flex flex-col items-center">
             <div class="w-full flex justify-between mt-4">
@@ -133,13 +141,20 @@ export default defineComponent({
 
   watch: {
     settings: {
-      async handler(newValue) {
+      async handler(newValue, oldValue) {
         await Preferences.set({
           key: 'letterlock-settings',
           value: JSON.stringify(newValue)
         })
       },
       deep: true
+    },
+
+    'settings.music': function(newValue, oldValue) {
+      if (!oldValue && newValue)
+        playTrack('home')
+      else if (oldValue && !newValue)
+        pauseTrack(true)
     },
 
     hideSettingsModal(newValue) {

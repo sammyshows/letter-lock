@@ -51,7 +51,8 @@ export const useGameStore = defineStore('game', {
       id: uuid(),
       username: '',
       notifications: true,
-      sound: true,
+      music: true,
+      soundEffects: true,
       vibrations: true,
       testMode: false,
       showAnimations: true,
@@ -97,6 +98,19 @@ export const useGameStore = defineStore('game', {
 
       if (settings.value) { // If settings exits
         this.settings = JSON.parse((settings.value))
+
+        // Handle old 'sound' property by converting it to 'music' and 'soundEffects'
+        if (this.settings.sound !== undefined) {
+          this.settings.music = true;
+          this.settings.soundEffects = true;
+          delete this.settings.sound;
+          
+          // Save the updated settings back to Preferences
+          await Preferences.set({
+            key: 'letterlock-settings',
+            value: JSON.stringify(this.settings)
+          });
+        }
       }
       if (!settings.value || !this.settings.username) { // initialise settings so we have a unique id from the start - OR - add username if it doesn't exist
         this.settings.username = generateUsername()

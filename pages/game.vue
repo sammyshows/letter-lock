@@ -119,14 +119,89 @@
 const gameStore = useGameStore()
 
 let { event, currentLevelId, bestRemainingMoves, replayingLevel, settings, lives } = storeToRefs(gameStore)
-lives = JSON.parse(JSON.stringify(lives.value.count))
-currentLevelId = JSON.parse(JSON.stringify(currentLevelId.value))
+lives = ref(JSON.parse(JSON.stringify(lives.value.count)))
+currentLevelId = ref(JSON.parse(JSON.stringify(currentLevelId.value)))
 
 const platform = ref(Capacitor.getPlatform());
 const router = useRouter();
 
+const getResponsiveValue = (variableName) => {
+  const values = {
+    topPadding1: {
+      'xs': 'pt-3',
+      '': 'pt-8',
+      'sm': 'pt-8',
+      'md': 'pt-8',
+      'lg': 'pt-8'
+    },
+    topPadding2: {
+      'xs': 'pt-3',
+      '': 'pt-12',
+      'sm': 'pt-12',
+      'md': 'pt-12',
+      'lg': 'pt-12'
+    },
+    lockBoltHeight: {
+      '': '0.60rem',
+      'sm': '0.60rem',
+      'md': '0.96rem',
+      'lg': '1.536rem'
+    },
+    lockBoltColor1: {
+      'xs': 'rgb(42,101,229)',
+      '': 'rgb(31,99,227)',
+      'sm': 'rgb(31,99,227)',
+      'md': 'rgb(31,99,227)',
+      'lg': 'rgb(39, 97, 227)'
+    },
+    lockBoltColor2: {
+      '': 'rgb(50, 120, 239)',
+      'sm': 'rgb(50, 120, 239)',
+      'md': 'rgb(50, 120, 239)',
+      'lg': 'rgb(52, 120, 240)'
+    },
+    gridGap1: {
+      'xs': 'gap-1.5',
+      '': 'gap-2',
+      'sm': 'gap-2',
+      'md': 'gap-3',
+      'lg': 'gap-4'
+    },
+    gridGap2: { // just the number because it's dynamically changed when set based on gridSize
+      'xs': 4,
+      '': 5,
+      'sm': 6,
+      'md': 7,
+      'lg': 8
+    },
+    gridGap3: {
+      '': 'gap-1',
+      'sm': 'gap-2',
+      'md': 'gap-2',
+      'lg': 'gap-2'
+    }
+  };
+
+  const currentScreenWidth = window.innerWidth;
+  const currentScreenHeight = window.innerHeight;
+  const pixelRatio = window.devicePixelRatio;
+  let screen = '';
+  let extraSmallOptions = ['gridGap1', 'gridGap2', 'topPadding1', 'topPadding2']
+
+  if (currentScreenWidth >= 1536) screen = '2xl';
+  else if (currentScreenWidth >= 1280) screen = 'xl';
+  else if (currentScreenWidth >= 1024) screen = 'lg';
+  else if (currentScreenWidth >= 768) screen = 'md';
+  else if (currentScreenWidth >= 640) screen = 'sm';
+  else if (extraSmallOptions.includes(variableName) && currentScreenWidth < 320) screen = 'xs';
+  if (extraSmallOptions.includes(variableName) && pixelRatio === 2 && currentScreenWidth < 380 && currentScreenHeight < 700) screen = 'xs'; // special case for iPhone SE, iPhone 8, iPhone 7, iPhone 6s, iPhone 6 etc.
+
+  return values[variableName][screen];
+}
+
 let sortable;
 let gameBoard = ref(null);
+let backButtonListenerHandle = ref(null);
 let tiles = ref([]); // copy of the tiles used internally for monitoring the state/position of tiles. This is manually kept up to date with tile swaps via our code.
 let sortableTiles = ref([]); // copy used for sortable. Changes are not made to this array by sortable so tiles could be swapped and this array wouldn't reflect it.
 let gridSize = ref(3);
@@ -155,19 +230,6 @@ let gridCSS = ref(getResponsiveValue('gridGap1'));
 let lockBoltHeight = ref(getResponsiveValue('lockBoltHeight'));
 let lockBoltColor = ref(getResponsiveValue('lockBoltColor1'));
 
-    // computed: {
-    //   gridCols() {
-    //     return {
-    //       gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
-    //       gridTemplateRows: `repeat(${gridSize}, minmax(0, 1fr))`,
-    //     }
-    //   },
-
-    //   isMobile() {
-    //     return window.innerWidth <= 640;
-    //   }
-    // },
-
 const gridCols = computed(() => {
   return {
     gridTemplateColumns: `repeat(${gridSize.value}, minmax(0, 1fr))`,
@@ -179,9 +241,9 @@ const isMobile = computed(() => window.innerWidth <= 640);
 
 onMounted(() => {
   playTrack('game')
-  gameStore.insertLog(1, currentLevelId)
+  gameStore.insertLog(1, currentLevelId.value)
 
-  App.addListener('backButton', onBackButton);
+  backButtonListenerHandle = App.addListener('backButton', onBackButton);
 
   getLevelConfig();
   createSortable();
@@ -191,7 +253,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  App.removeAllListeners();
+  if (backButtonListenerHandle.value)
+    backButtonListenerHandle.value.remove()
 });
 
 watch(levelCompleted, (newValue) => {
@@ -227,22 +290,23 @@ const onBackButton = () => {
 }
 
 const failLevel = async () => {
-  if (!settings.showAnimations)
-    return showFailedModal.value = true
+  if (settings.showAnimations) {
+    levelFailed.value = true // disables sortable tile swapping
+    await delay(800);
+  }
 
-  levelFailed.value = true
-
-  await delay(800);
   showFailedModal.value = true
+  playTrack('failed')
 }
 
 const completeLevel = async () => {
-  setTimeout(() => playSound('levelComplete'), 300)
+  playSound('levelComplete')
+  // playTrack('win')
   await gameStore.saveLevelProgress(true, remainingMoves.value, extraMovesUsed.value)
 
   gameStore.insertLog(2, currentLevelId.value); // Level completed
 
-  if (!settings.showAnimations)
+  if (!settings.value.showAnimations)
     return showLevelCompleteModal.value = true
 
   levelCompleted.value = true;
@@ -251,6 +315,7 @@ const completeLevel = async () => {
   await delay(2300);
   // looks complicated, but it's just a simple calculation to get the correct grid gap for different grid sizes. Otherwise, 5x5 spreads the letters out too far on animation.
   gridCSS.value = 'gap-' + (getResponsiveValue('gridGap2') + 3 - gridSize.value) + ' duration-700 ease-in-out'
+  playSound('whoosh')
 
   await delay(800);
   gridCSS.value = getResponsiveValue('gridGap3') + ' duration-100 ease-in'
@@ -260,6 +325,7 @@ const completeLevel = async () => {
   showCollideEffect.value = true;
 
   await delay(50);
+  playSound('boom')
   vibrateLight()
 
   await delay(875);
@@ -270,6 +336,7 @@ const completeLevel = async () => {
 
   await delay(75);
   lockDropShadow.value = "drop-shadow(0 0 40px rgb(251, 163, 69))";
+  playSound('metalDong')
 
   await delay(50);
   vibrateLight()
@@ -344,7 +411,7 @@ const nextLevel = async () => {
   showLevelCompleteModal.value = false
 
   await delay(700)
-  await gameStore.setCurrentLevel(currentLevelId + 1)
+  await gameStore.setCurrentLevel(currentLevelId.value + 1)
   router.push({ path: '/', query: { levelUp: true } })
 }
 
@@ -527,14 +594,16 @@ const checkWords = async () => {
   
   // Compare previous and current words formed and play sound if new words are formed
   const newWords = wordsFound.filter(word => !wordsFormed.value.includes(word));
-  if (newWords.length)
-    playSound('wordFormed') 
 
   wordsFormed.value = wordsFound
 
   if (arraysEqual(validWords.value, wordsFormed.value))
-    await completeLevel()
-  else if (remainingMoves.value <= 0)
+    return await completeLevel()
+  
+  if (newWords.length)
+    playSound('wordFormed') 
+  
+  if (remainingMoves.value <= 0)
     await failLevel()
 }
 
@@ -621,7 +690,7 @@ const setBorderRadiusClasses = () => {
     }
 
     // Check for a tile on the bottom
-    if (row < gridSize.value - 1 && tiles[index + gridSize.value]?.letter) {
+    if (row < gridSize.value - 1 && tiles.value[index + gridSize.value]?.letter) {
       borderClasses = borderClasses.replace('rounded-bl-16pc', '').replace('rounded-br-16pc', '');
     }
 
@@ -643,6 +712,8 @@ const closeFailedModal = async (resetLevel) => {
   if (resetLevel) {
     gameStore.resetLevel()
     router.push('/')
+  } else {
+    playTrack('game')
   }
 }
 

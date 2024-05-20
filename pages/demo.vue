@@ -65,7 +65,7 @@
       </div>
       <p class="px-6 text-xl font-medium text-slate-500 sm:text-4xl lg:text-5xl">Nice job - you nailed it! Now try it yourself!</p>
       <div class="flex flex-col justify-center gap-y-2 text-lg sm:text-3xl lg:text-4-5xl" :class="[ settings.testMode ? 'h-28 mt-4' : 'h-16' ]">
-        <button @click="nextLevel" class="next-button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm sm:text-3xl lg:text-5xl" style="touch-action: manipulation;">Next Level</button>
+        <button @click="nextLevel(); playSound('click')" class="next-button-pulse self-center rounded-full bg-purple-400 text-white font-medium shadow-sm sm:text-3xl lg:text-5xl" style="touch-action: manipulation;">Next Level</button>
       </div>
     </div>
 
@@ -209,6 +209,7 @@ export default {
   },
 
   mounted() {
+    playTrack('game')
     this.createSortable()
     this.checkWords()
     this.setAnimationClasses()
@@ -217,6 +218,8 @@ export default {
 
   methods: {
     async completeLevel() {
+      playSound('levelComplete')
+      
       if (!this.settings.showAnimations)
         return this.showCompleteModal = true
 
@@ -225,6 +228,7 @@ export default {
 
       await this.delay(2300);
       this.gridCSS = this.getResponsiveValue('gridGap2') + ' duration-700 ease-in-out'
+      playSound('whoosh')
 
       await this.delay(800);
       this.gridCSS = this.getResponsiveValue('gridGap3') + ' duration-100 ease-in'
@@ -234,6 +238,7 @@ export default {
       this.showCollideEffect = true;
 
       await this.delay(50);
+      playSound('boom')
       vibrateLight()
 
       await this.delay(875);
@@ -244,6 +249,7 @@ export default {
 
       await this.delay(75);
       this.lockDropShadow = "drop-shadow(0 0 40px rgb(251, 163, 69))";
+      playSound('metalDong')
 
       await this.delay(50);
       vibrateLight()
@@ -358,6 +364,7 @@ export default {
     },
 
     async handleOnMove(event) {
+      playSound('tileSwap')
       // Save the old and new indices for swapping
       const oldIndex = parseInt(event.dragged.dataset.index, 10);
       const newIndex = parseInt(event.related.dataset.index, 10);
@@ -523,11 +530,18 @@ export default {
         });
       }
 
+      // Compare previous and current words formed and play sound if new words are formed
+      const newWords = wordsFormed.filter(word => !this.wordsFormed.includes(word));
+
       this.wordsFormed = wordsFormed
 
       if (this.arraysEqual(this.validWords, wordsFormed))
-        await this.completeLevel()
-      else if (this.remainingMoves <= 0)
+        return await this.completeLevel()
+      
+      if (newWords.length)
+        playSound('wordFormed')       
+
+      if (this.remainingMoves <= 0)
         await this.failLevel()
     },
 
