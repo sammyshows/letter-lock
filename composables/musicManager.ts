@@ -52,7 +52,7 @@ class MusicManager {
   }
 
   fadeInTrack(track, duration = 500) {
-    console.log('Fading in track');
+    // console.log('Fading in track');
     return new Promise((resolve) => {
       if (!track) {
         // console.log('No track to fade in');
@@ -86,7 +86,7 @@ class MusicManager {
       }
     }
   
-    console.log(`Playing track: ${name}, loop: ${loop}`);
+    // console.log(`Playing track: ${name}, loop: ${loop}`);
     try {
       if (this.tracks[name] !== this.currentTrack) {
         // console.log('Switching to a different track');

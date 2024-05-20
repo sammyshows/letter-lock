@@ -301,7 +301,6 @@ const failLevel = async () => {
 
 const completeLevel = async () => {
   playSound('levelComplete')
-  // playTrack('win')
   await gameStore.saveLevelProgress(true, remainingMoves.value, extraMovesUsed.value)
 
   gameStore.insertLog(2, currentLevelId.value); // Level completed
