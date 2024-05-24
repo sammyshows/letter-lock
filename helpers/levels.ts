@@ -18707,7 +18707,7 @@ const levels: IndexedLevelData = {
   },
   "257": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 5,
     "par": 30,
     "tiles": [
       {
@@ -18763,7 +18763,7 @@ const levels: IndexedLevelData = {
   },
   "258": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 16,
     "par": 30,
     "tiles": [
       {
@@ -18856,7 +18856,7 @@ const levels: IndexedLevelData = {
   },
   "259": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 10,
     "par": 30,
     "tiles": [
       {
@@ -18948,13 +18948,13 @@ const levels: IndexedLevelData = {
   },
   "260": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 31,
     "par": 30,
     "tiles": [
       {
         "id": 1,
         "isPartOfWord": false,
-        "letter": "I"
+        "letter": ""
       },
       {
         "id": 2,
@@ -19085,7 +19085,7 @@ const levels: IndexedLevelData = {
   },
   "261": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 14,
     "par": 30,
     "tiles": [
       {
@@ -19136,7 +19136,7 @@ const levels: IndexedLevelData = {
       {
         "id": 10,
         "isPartOfWord": false,
-        "letter": "O"
+        "letter": ""
       },
       {
         "id": 11,
@@ -19176,7 +19176,7 @@ const levels: IndexedLevelData = {
   },
   "262": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 13,
     "par": 30,
     "tiles": [
       {
@@ -19268,7 +19268,7 @@ const levels: IndexedLevelData = {
   },
   "263": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 28,
     "par": 30,
     "tiles": [
       {
@@ -19334,7 +19334,7 @@ const levels: IndexedLevelData = {
       {
         "id": 13,
         "isPartOfWord": false,
-        "letter": "A"
+        "letter": "O"
       },
       {
         "id": 14,
@@ -19398,14 +19398,14 @@ const levels: IndexedLevelData = {
       }
     ],
     "validWords": [
-      "FLOAD",
+      "FLOOD",
       "BROWN",
       "DYE"
     ]
   },
   "264": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 32,
     "par": 30,
     "tiles": [
       {
@@ -19501,12 +19501,12 @@ const levels: IndexedLevelData = {
       {
         "id": 19,
         "isPartOfWord": false,
-        "letter": "R"
+        "letter": "S"
       },
       {
         "id": 20,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "M"
       },
       {
         "id": 21,
@@ -19535,7 +19535,7 @@ const levels: IndexedLevelData = {
       }
     ],
     "validWords": [
-      "CRU",
+      "SCUM",
       "PIT",
       "MOUNT",
       "AROMA"
@@ -19543,7 +19543,7 @@ const levels: IndexedLevelData = {
   },
   "265": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 22,
     "par": 30,
     "tiles": [
       {
@@ -19679,7 +19679,7 @@ const levels: IndexedLevelData = {
   },
   "266": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 23,
     "par": 30,
     "tiles": [
       {
@@ -19816,7 +19816,7 @@ const levels: IndexedLevelData = {
   },
   "267": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 12,
     "par": 30,
     "tiles": [
       {
@@ -19907,7 +19907,7 @@ const levels: IndexedLevelData = {
   },
   "268": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 5,
     "par": 30,
     "tiles": [
       {
@@ -19963,7 +19963,7 @@ const levels: IndexedLevelData = {
   },
   "269": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 12,
     "par": 30,
     "tiles": [
       {
@@ -20054,7 +20054,7 @@ const levels: IndexedLevelData = {
   },
   "270": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 14,
     "par": 30,
     "tiles": [
       {
@@ -20146,7 +20146,7 @@ const levels: IndexedLevelData = {
   },
   "271": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 10,
     "par": 30,
     "tiles": [
       {
@@ -20238,7 +20238,7 @@ const levels: IndexedLevelData = {
   },
   "272": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 21,
     "par": 30,
     "tiles": [
       {
@@ -20375,7 +20375,7 @@ const levels: IndexedLevelData = {
   },
   "273": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 14,
     "par": 30,
     "tiles": [
       {
@@ -20512,23 +20512,23 @@ const levels: IndexedLevelData = {
   },
   "274": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 6,
     "par": 30,
     "tiles": [
       {
         "id": 1,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "O"
       },
       {
         "id": 2,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "D"
       },
       {
         "id": 3,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "O"
       },
       {
         "id": 4,
@@ -20538,12 +20538,12 @@ const levels: IndexedLevelData = {
       {
         "id": 5,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "N"
       },
       {
         "id": 6,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "C"
       },
       {
         "id": 7,
@@ -20553,21 +20553,23 @@ const levels: IndexedLevelData = {
       {
         "id": 8,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "O"
       },
       {
         "id": 9,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "D"
       }
     ],
     "validWords": [
-      ""
+      "CON",
+      "NOD",
+      "COD"
     ]
   },
   "275": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 25,
     "par": 30,
     "tiles": [
       {
@@ -20704,7 +20706,7 @@ const levels: IndexedLevelData = {
   },
   "276": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 22,
     "par": 30,
     "tiles": [
       {
@@ -20842,7 +20844,7 @@ const levels: IndexedLevelData = {
   },
   "277": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 8,
     "par": 30,
     "tiles": [
       {
@@ -20898,7 +20900,7 @@ const levels: IndexedLevelData = {
   },
   "278": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 28,
     "par": 30,
     "tiles": [
       {
@@ -21034,7 +21036,7 @@ const levels: IndexedLevelData = {
   },
   "279": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 18,
     "par": 30,
     "tiles": [
       {
@@ -21126,7 +21128,7 @@ const levels: IndexedLevelData = {
   },
   "280": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 7,
     "par": 30,
     "tiles": [
       {
@@ -21182,7 +21184,7 @@ const levels: IndexedLevelData = {
   },
   "281": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 3,
     "par": 30,
     "tiles": [
       {
@@ -21239,7 +21241,7 @@ const levels: IndexedLevelData = {
   },
   "282": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 20,
     "par": 30,
     "tiles": [
       {
@@ -21331,7 +21333,7 @@ const levels: IndexedLevelData = {
   },
   "283": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 12,
     "par": 30,
     "tiles": [
       {
@@ -21422,7 +21424,7 @@ const levels: IndexedLevelData = {
   },
   "284": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 33,
     "par": 30,
     "tiles": [
       {
@@ -21433,12 +21435,12 @@ const levels: IndexedLevelData = {
       {
         "id": 2,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "T"
       },
       {
         "id": 3,
         "isPartOfWord": false,
-        "letter": "D"
+        "letter": ""
       },
       {
         "id": 4,
@@ -21458,7 +21460,7 @@ const levels: IndexedLevelData = {
       {
         "id": 7,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "E"
       },
       {
         "id": 8,
@@ -21528,7 +21530,7 @@ const levels: IndexedLevelData = {
       {
         "id": 21,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "O"
       },
       {
         "id": 22,
@@ -21559,7 +21561,7 @@ const levels: IndexedLevelData = {
   },
   "285": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 15,
     "par": 30,
     "tiles": [
       {
@@ -21696,7 +21698,7 @@ const levels: IndexedLevelData = {
   },
   "286": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 1,
     "par": 30,
     "tiles": [
       {
@@ -21808,7 +21810,7 @@ const levels: IndexedLevelData = {
       {
         "id": 11,
         "isPartOfWord": false,
-        "letter": "O"
+        "letter": ""
       },
       {
         "id": 12,
