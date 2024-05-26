@@ -18948,7 +18948,7 @@ const levels: IndexedLevelData = {
   },
   "260": {
     "gridSize": 5,
-    "maxMoves": 31,
+    "maxMoves": 34,
     "par": 30,
     "tiles": [
       {
@@ -19074,7 +19074,7 @@ const levels: IndexedLevelData = {
       {
         "id": 25,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "I"
       }
     ],
     "validWords": [
@@ -21754,7 +21754,7 @@ const levels: IndexedLevelData = {
   },
   "287": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 10,
     "par": 30,
     "tiles": [
       {
@@ -21845,7 +21845,7 @@ const levels: IndexedLevelData = {
   },
   "288": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 6,
     "par": 30,
     "tiles": [
       {
@@ -21901,7 +21901,7 @@ const levels: IndexedLevelData = {
   },
   "289": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 9,
     "par": 30,
     "tiles": [
       {
@@ -21958,7 +21958,7 @@ const levels: IndexedLevelData = {
   },
   "290": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 26,
     "par": 30,
     "tiles": [
       {
@@ -22095,7 +22095,7 @@ const levels: IndexedLevelData = {
   },
   "291": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 14,
     "par": 30,
     "tiles": [
       {
@@ -22186,7 +22186,7 @@ const levels: IndexedLevelData = {
   },
   "292": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 14,
     "par": 30,
     "tiles": [
       {
@@ -22278,7 +22278,7 @@ const levels: IndexedLevelData = {
   },
   "293": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 14,
     "par": 30,
     "tiles": [
       {
@@ -22369,7 +22369,7 @@ const levels: IndexedLevelData = {
   },
   "294": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 5,
     "par": 30,
     "tiles": [
       {
@@ -22415,18 +22415,17 @@ const levels: IndexedLevelData = {
       {
         "id": 9,
         "isPartOfWord": false,
-        "letter": "O"
+        "letter": ""
       }
     ],
     "validWords": [
       "HAD",
-      "TAG",
-      "GO"
+      "TAG"
     ]
   },
   "295": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 7,
     "par": 30,
     "tiles": [
       {
@@ -22482,7 +22481,7 @@ const levels: IndexedLevelData = {
   },
   "296": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 25,
     "par": 30,
     "tiles": [
       {
@@ -22619,7 +22618,7 @@ const levels: IndexedLevelData = {
   },
   "297": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 6,
     "par": 30,
     "tiles": [
       {
@@ -22635,7 +22634,7 @@ const levels: IndexedLevelData = {
       {
         "id": 3,
         "isPartOfWord": false,
-        "letter": "I"
+        "letter": "E"
       },
       {
         "id": 4,
@@ -22655,7 +22654,7 @@ const levels: IndexedLevelData = {
       {
         "id": 7,
         "isPartOfWord": false,
-        "letter": "X"
+        "letter": "G"
       },
       {
         "id": 8,
@@ -22671,12 +22670,12 @@ const levels: IndexedLevelData = {
     "validWords": [
       "GYM",
       "FOG",
-      "GIX"
+      "GEM"
     ]
   },
   "298": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 14,
     "par": 30,
     "tiles": [
       {
@@ -22722,7 +22721,7 @@ const levels: IndexedLevelData = {
       {
         "id": 9,
         "isPartOfWord": false,
-        "letter": ""
+        "letter": "R"
       },
       {
         "id": 10,
@@ -22769,7 +22768,7 @@ const levels: IndexedLevelData = {
   },
   "299": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 23,
     "par": 30,
     "tiles": [
       {
@@ -22905,7 +22904,7 @@ const levels: IndexedLevelData = {
   },
   "300": {
     "gridSize": 3,
-    "maxMoves": 50,
+    "maxMoves": 4,
     "par": 30,
     "tiles": [
       {
@@ -22961,7 +22960,7 @@ const levels: IndexedLevelData = {
   },
   "301": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 15,
     "par": 30,
     "tiles": [
       {
@@ -23053,7 +23052,7 @@ const levels: IndexedLevelData = {
   },
   "302": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 11,
     "par": 30,
     "tiles": [
       {
@@ -23144,7 +23143,7 @@ const levels: IndexedLevelData = {
   },
   "303": {
     "gridSize": 4,
-    "maxMoves": 50,
+    "maxMoves": 13,
     "par": 30,
     "tiles": [
       {
@@ -23235,7 +23234,7 @@ const levels: IndexedLevelData = {
   },
   "304": {
     "gridSize": 5,
-    "maxMoves": 50,
+    "maxMoves": 34,
     "par": 30,
     "tiles": [
       {
