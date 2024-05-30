@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "884029722007",
+    "project_id": "letterlock-puzzle",
+    "storage_bucket": "letterlock-puzzle.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:884029722007:android:1c32c5ae92db5f554348d2",
+        "android_client_info": {
+          "package_name": "app.letterlock.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp_tA19slIzM-qqC1MjCbH8n99YDPFJKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

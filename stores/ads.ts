@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia'
 import { Capacitor } from '@capacitor/core';
-import { AdMob, RewardAdPluginEvents, RewardAdOptions } from '@capacitor-community/admob';
+import { AdMob, RewardAdPluginEvents } from '@capacitor-community/admob';
 
 import { useGameStore } from '@/stores/game'
-import { Reward } from "@/types/types"
+import { logFirebaseEvent } from '@/composables/firebase'
+
+import type { RewardAdOptions } from '@capacitor-community/admob';
+import type { Reward } from "@/types/types";
 
 export const useAdsStore = defineStore('ads', {
   state: () => {
@@ -85,6 +88,7 @@ export const useAdsStore = defineStore('ads', {
     },
 
     async showRewardAd(reward: Reward) {
+      logFirebaseEvent('adWatched', { reward: reward.type, level: useGameStore().currentLevelId})
       this.currentReward = reward
       this.prepareRewardAd()
       await AdMob.showRewardVideoAd()

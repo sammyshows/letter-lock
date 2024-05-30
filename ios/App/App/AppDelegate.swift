@@ -1,7 +1,8 @@
 import UIKit
-import FBSDKCoreKit
 import Capacitor
 import AppTrackingTransparency
+import AdServices
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -9,13 +10,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        ApplicationDelegate.shared.application(
-            application,
-            didFinishLaunchingWithOptions: launchOptions
-        )
         requestIDFA()
+        FirebaseApp.configure()
         return true
     }
+    
     
     func requestIDFA() {
         if #available(iOS 14, *) {
@@ -54,16 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        let handledByFacebook = ApplicationDelegate.shared.application(
-            app,
-            open: url,
-            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
-            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
-        )
-        let handledByCapacitor = ApplicationDelegateProxy.shared.application(app, open: url, options: options)
-        
-        return handledByFacebook || handledByCapacitor
+        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
+
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)

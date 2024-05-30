@@ -3,5 +3,7 @@ export {
   LevelData,
   IndexedLevelData,
   IndexedLevelHistoryData,
-  Reward
+  Reward,
+  SearchAdsAttributionPlugin,
+  FirebaseAnalyticsPlugin
 } from "@/types/interfaces";

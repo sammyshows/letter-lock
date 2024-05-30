@@ -17,26 +17,27 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0</string>
+	<string>3.3</string>
+    <key>CFBundleVersion</key>
+    <string>3.3</string>
+    <key>FacebookAdvertiserIDCollectionEnabled</key>
+    <true/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb1335787460616450</string>
+				<string>fb980151876572949</string>
+                <string>letterlockpuzzle</string>
 			</array>
 		</dict>
 	</array>
-	<key>CFBundleVersion</key>
-	<string>3.0</string>
-	<key>FacebookAdvertiserIDCollectionEnabled</key>
-	<true/>
 	<key>FacebookAppID</key>
-	<string>1335787460616450</string>
+	<string>980151876572949</string>
 	<key>FacebookAutoLogAppEventsEnabled</key>
 	<true/>
 	<key>FacebookClientToken</key>
-	<string>c42830a08c9a01e7a555cdb87478eade</string>
+	<string>bdf7a7a6ef1821a03aea69b6e6e403a1</string>
 	<key>FacebookDisplayName</key>
 	<string>LetterLock Puzzle</string>
 	<key>GADApplicationIdentifier</key>

@@ -42,10 +42,10 @@ const soundManager = ref(null);
 export const useSoundManager = () => {
   if (!soundManager.value) {
     soundManager.value = new SoundManager();
-    soundManager.value.loadSound('boom', '/sounds/boom.mp3', 0.3, 1);
+    soundManager.value.loadSound('boom', '/sounds/boom.mp3', 0.25, 1);
     soundManager.value.loadSound('click', '/sounds/click.wav', 0.8);
     soundManager.value.loadSound('switch', '/sounds/switch.wav', 0.1);
-    soundManager.value.loadSound('metalDong', '/sounds/metal-dong.mp3', 0.2, 4);
+    soundManager.value.loadSound('metalDong', '/sounds/metal-dong.mp3', 0.15, 4);
     soundManager.value.loadSound('tileSwap', '/sounds/tile-swap.flac', 0.08);
     soundManager.value.loadSound('swoosh', '/sounds/swoosh.flac', 0.06);
     soundManager.value.loadSound('whoosh', '/sounds/whoosh.wav', 0.05);

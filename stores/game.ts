@@ -84,12 +84,14 @@ export const useGameStore = defineStore('game', {
 
   actions: {
     async setInitialState() {
-      const levelHistory = await Preferences.get({ key: 'letterlock-levels' })
-      const settings = await Preferences.get({ key: 'letterlock-settings' })
-      const lives = await Preferences.get({ key: 'letterlock-lives' })
-      const currency = await Preferences.get({ key: 'letterlock-currency' })
-      const stats = await Preferences.get({ key: 'letterlock-stats' })
-      const leaderboard = await Preferences.get({ key: 'letterlock-leaderboard' })
+      const [levelHistory, settings, lives, currency, stats, leaderboard] = await Promise.all([
+        Preferences.get({ key: 'letterlock-levels' }),
+        Preferences.get({ key: 'letterlock-settings' }),
+        Preferences.get({ key: 'letterlock-lives' }),
+        Preferences.get({ key: 'letterlock-currency' }),
+        Preferences.get({ key: 'letterlock-stats' }),
+        Preferences.get({ key: 'letterlock-leaderboard' })
+      ])
 
       if (levelHistory.value)
         this.levelHistory = JSON.parse((levelHistory.value))

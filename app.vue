@@ -62,7 +62,6 @@ export default {
     return {
       gameStateLoaded: false,
       sendingStats: false,
-      platform: Capacitor.getPlatform()
     }
   },
 
@@ -72,6 +71,8 @@ export default {
     this.adsStore.initialiseRewardAd()
     this.adsStore.prepareRewardAd()
     this.gameStateLoaded = true
+    this.initialiseFirebase()
+    this.checkAdAttributionAndLog()
 
     window.screen.orientation.lock('portrait')
 
@@ -117,6 +118,25 @@ export default {
         .catch(error => console.error(error))
 
       this.sendingStats = false
+    },
+
+    async initialiseFirebase() {
+      const appInfo = await App.getInfo();
+      await setFirebaseUserId(this.gameStore.settings.id)
+      await setFirebaseUserProperties({ 'letterlockVersion': appInfo.version || 'Unknown' })
+    },
+
+    async checkAdAttributionAndLog() {
+      console.log('Checking ad attribution')
+      const attributionData = await checkAdAttribution();
+      if (attributionData?.attribution) {
+        logFirebaseEvent("appleSearchAdsAttribution", {
+          campaignId: attributionData.campaignId,
+          adGroupId: attributionData.adGroupId,
+          adGroupName: attributionData.adGroupName,
+          keyword: attributionData.keyword
+        });
+      }
     }
   }
 }

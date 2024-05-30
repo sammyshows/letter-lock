@@ -10,13 +10,11 @@
         android:theme="@style/AppTheme">
 
         <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID"
-                   android:value="ca-app-pub-7719091147897476~5255329863"/>
+            android:value="ca-app-pub-7719091147897476~5255329863"/>
         <meta-data android:name="com.facebook.sdk.ApplicationId"
-                   android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id"/>
         <meta-data android:name="com.facebook.sdk.ClientToken"
-                   android:value="@string/facebook_client_token"/>
-
-
+            android:value="@string/facebook_client_token"/>
 
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
@@ -29,6 +27,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="letterlockpuzzle" android:host="level1" />
             </intent-filter>
 
         </activity>

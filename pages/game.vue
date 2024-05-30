@@ -241,6 +241,7 @@ const isMobile = computed(() => window.innerWidth <= 640);
 
 onMounted(() => {
   playTrack('game')
+  logFirebaseEvent('levelAttempted', { level: currentLevelId.value })
   gameStore.insertLog(1, currentLevelId.value)
 
   backButtonListenerHandle = App.addListener('backButton', onBackButton);
@@ -303,6 +304,11 @@ const completeLevel = async () => {
   playSound('levelComplete')
   await gameStore.saveLevelProgress(true, remainingMoves.value, extraMovesUsed.value)
 
+  logFirebaseEvent('levelCompleted', { 
+    level: currentLevelId.value,
+    remainingMoves: remainingMoves.value,
+    extraMovesUsed: extraMovesUsed.value
+  })
   gameStore.insertLog(2, currentLevelId.value); // Level completed
 
   if (!settings.value.showAnimations)

@@ -23,8 +23,8 @@ end
 
 target 'App' do
   capacitor_pods
-  #pod 'FBSDKCoreKit', '~> 8.0.0'
-  pod 'FBSDKCoreKit', '~> 16.1'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Core'
 end
 
 post_install do |installer|
