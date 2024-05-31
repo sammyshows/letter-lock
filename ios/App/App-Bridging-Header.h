@@ -1,12 +1,12 @@
 //
-//  LetterLock-Bridging-Header.h
+//  App-Bridging-Header.h
 //  App
 //
 //  Created by Sam McCarthy on 31/5/2024.
 //
 
-#ifndef LetterLock_Bridging_Header_h
-#define LetterLock_Bridging_Header_h
+#ifndef App_Bridging_Header_h
+#define App_Bridging_Header_h
 
 #import <Capacitor/Capacitor.h>
 

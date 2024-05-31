@@ -2,7 +2,7 @@ import UIKit
 import Capacitor
 import AppTrackingTransparency
 import AdServices
-import Firebase
+import FirebaseCore
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -12,6 +12,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         requestIDFA()
         FirebaseApp.configure()
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+        let viewController = MyViewController()
+        window?.rootViewController = viewController
+        window?.makeKeyAndVisible()
         return true
     }
     

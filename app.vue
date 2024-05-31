@@ -4,143 +4,119 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import axios from 'axios'
-import Sortable, { Swap } from "sortablejs";
-import { storeToRefs } from "pinia";
-import { App } from "@capacitor/app";
-import { Capacitor } from '@capacitor/core';
-import { Device } from '@capacitor/device';
-import { useGameStore } from "@/stores/game";
-import { useAdsStore } from "@/stores/ads";
+import Sortable, { Swap } from 'sortablejs'
+import { App } from '@capacitor/app'
+import { Capacitor } from '@capacitor/core'
+import { Device } from '@capacitor/device'
+import { useGameStore } from '@/stores/game'
+import { useAdsStore } from '@/stores/ads'
 
-Sortable.mount(new Swap());
+Sortable.mount(new Swap())
 
-export default {
-  name: 'App',
+const gameStore = useGameStore()
+const adsStore = useAdsStore()
 
-  setup() {
-    const gameStore = useGameStore()
-    const adsStore = useAdsStore()
-    
-    const { settings, logs } = storeToRefs(gameStore)
-    const { rewardAdsLoaded } = storeToRefs(adsStore)
+const { settings, logs, stats, currentLevelId, levelHistory } = storeToRefs(gameStore)
+const { rewardAdsLoaded, adsWatched } = storeToRefs(adsStore)
 
-    return { gameStore, adsStore, settings, logs, rewardAdsLoaded }
-  },
+const gameStateLoaded = ref(false)
+const sendingStats = ref(false)
 
-  watch: {
-    rewardAdsLoaded(newValue) {
-      console.log('rewardAdsLoaded', newValue)
-      if (newValue <= 0)
-        this.adStore.prepareRewardAd()
-    },
+const sendStats = async () => {
+  if (sendingStats.value) return
 
-    'gameStore.stats': {
-      handler() {
-        this.sendStats()
-      },
-      deep: true
-    },
+  sendingStats.value = true
+  let deviceInfo = {}
+  let appInfo = {}
+  const platform = Capacitor.getPlatform()
 
-    'gameStore.logs': {
-      handler() {
-        this.sendStats()
-      },
-      deep: true
-    },
+  if (platform !== 'web') {
+    deviceInfo = await Device.getInfo()
+    appInfo = await App.getInfo()
+  }
 
-    'gameStore.currentLevelId': {
-      handler(newLevelId, oldLevelId) {
-        if (newLevelId > oldLevelId)
-          this.sendStats()
-      }
-    }
-  },
+  const logsCopy = [...logs.value] // Copy logs so we can safely remove them from state later without affecting new logs that were added during this process
 
-  data() {
-    return {
-      gameStateLoaded: false,
-      sendingStats: false,
-    }
-  },
+  const body = JSON.stringify({
+    deviceOS: deviceInfo.osVersion || null,
+    deviceModel: deviceInfo.model || null,
+    letterlockVersion: appInfo.version || null,
+    levelHistory: levelHistory.value,
+    stats: stats.value,
+    settings: settings.value,
+    adsWatched: adsWatched.value,
+    logs: logsCopy,
+    platform
+  })
 
-  async created() {
-    await this.gameStore.setInitialState()
-    this.gameStore.getLeaderboard()
-    this.adsStore.initialiseRewardAd()
-    this.adsStore.prepareRewardAd()
-    this.gameStateLoaded = true
-    this.initialiseFirebase()
-    this.checkAdAttributionAndLog()
+  // const url = 'http://localhost:3020/api/letterlock-stats-upsert'
+  const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
 
-    window.screen.orientation.lock('portrait')
+  await axios.post(url, body)
+    .then(() => {
+      gameStore.$patch(state => state.logs = state.logs.filter(log => !logsCopy.includes(log)))
+      adsStore.$patch({ adsWatched: [] })
+    })
+    .catch(error => console.error(error))
 
-    App.addListener('appStateChange', ({ isActive }) => isActive ? playTrack() : pauseTrack())
-  },
+  sendingStats.value = false
+}
 
-  methods: {
-    async sendStats() {
-      if (this.sendingStats) return
+const initialiseFirebase = async () => {
+  const appInfo = await App.getInfo()
+  await setFirebaseUserId(settings.value.id)
+  await setFirebaseUserProperty({ 'letterlockVersion': appInfo.version || 'Unknown' })
+}
 
-      this.sendingStats = true
-      let deviceInfo = {};
-      let appInfo = {};
-      const platform = Capacitor.getPlatform()
-
-      if (platform !== 'web') {
-        deviceInfo = await Device.getInfo();
-        appInfo = await App.getInfo();
-      }
-
-      const logsCopy = [...this.logs] // Copy logs so we can safely remove them from state later without affecting new logs that were added during this process
-
-      const body = JSON.stringify({
-        deviceOS: deviceInfo.osVersion || null,
-        deviceModel: deviceInfo.model || null,
-        letterlockVersion: appInfo.version || null,
-        levelHistory: this.gameStore.levelHistory,
-        stats: this.gameStore.stats,
-        settings: this.gameStore.settings,
-        adsWatched: this.adsStore.adsWatched,
-        logs: logsCopy,
-        platform
-      })
-
-      // const url = 'http://localhost:3020/api/letterlock-stats-upsert'
-      const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
-
-      await axios.post(url, body)
-        .then(() => {
-          this.gameStore.$patch(state => state.logs = state.logs.filter(log => !logsCopy.includes(log)))
-          this.adsStore.$patch({ adsWatched: [] })
-        })
-        .catch(error => console.error(error))
-
-      this.sendingStats = false
-    },
-
-    async initialiseFirebase() {
-      const appInfo = await App.getInfo();
-      await setFirebaseUserId(this.gameStore.settings.id)
-      await setFirebaseUserProperty({ 'letterlockVersion': appInfo.version || 'Unknown' })
-    },
-
-    async checkAdAttributionAndLog() {
-      console.log('Checking ad attribution')
-      const attributionData = await checkAdAttribution();
-      if (attributionData?.attribution) {
-        logFirebaseEvent("apple_search_ads_attribution", {
-          campaign_id: attributionData.campaignId,
-          ad_group_id: attributionData.adGroupId,
-          ad_group_name: attributionData.adGroupName,
-          keyword: attributionData.keyword
-        });
-      }
-    }
+const checkAdAttributionAndLog = async () => {
+  const attributionData = await checkAdAttribution()
+  if (attributionData?.attribution) {
+    logFirebaseEvent("apple_search_ads_attribution", {
+      campaign_id: attributionData.campaignId,
+      ad_group_id: attributionData.adGroupId,
+      ad_group_name: attributionData.adGroupName,
+      keyword: attributionData.keyword
+    })
   }
 }
+
+onMounted(async () => {
+  await gameStore.setInitialState()
+  gameStore.getLeaderboard()
+  adsStore.initialiseRewardAd()
+  adsStore.prepareRewardAd()
+  gameStateLoaded.value = true
+  initialiseFirebase()
+  checkAdAttributionAndLog()
+
+  window.screen.orientation.lock('portrait')
+
+  App.addListener('appStateChange', ({ isActive }) => isActive ? playTrack() : pauseTrack())
+})
+
+watch(rewardAdsLoaded, (newValue) => {
+  if (newValue <= 0) {
+    adsStore.prepareRewardAd()
+  }
+})
+
+watch(stats, () => {
+  sendStats()
+}, { deep: true })
+
+watch(logs, () => {
+  sendStats()
+}, { deep: true })
+
+watch(currentLevelId, (newLevelId, oldLevelId) => {
+  if (newLevelId > oldLevelId) {
+    sendStats()
+  }
+})
 </script>
+
 
 <style>
 * {

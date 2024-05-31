@@ -3,7 +3,7 @@ import { IndexedLevelData } from "@/types/types";
 const levels: IndexedLevelData = {
   1: {
     gridSize: 3,
-    maxMoves: 9,
+    maxMoves: 8,
     par: 5,
     tiles: [{
       id: 1,
@@ -20,7 +20,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 4,
       isPartOfWord: false,
-      letter: ""
+      letter: "A"
     }, {
       id: 5,
       isPartOfWord: false,
@@ -36,7 +36,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: "A"
+      letter: ""
     }, {
       id: 9,
       isPartOfWord: false,
@@ -46,7 +46,7 @@ const levels: IndexedLevelData = {
   },
   10: {
     gridSize: 4,
-    maxMoves: 8,
+    maxMoves: 12,
     par: 16,
     tiles: [{
       id: 1,
@@ -731,7 +731,7 @@ const levels: IndexedLevelData = {
   },
   11: {
     gridSize: 4,
-    maxMoves: 5,
+    maxMoves: 9,
     par: 30,
     tiles: [{
       id: 1,
@@ -1372,7 +1372,7 @@ const levels: IndexedLevelData = {
   },
   12: {
     gridSize: 4,
-    maxMoves: 5,
+    maxMoves: 10,
     par: 30,
     tiles: [{
       id: 1,
@@ -2177,7 +2177,7 @@ const levels: IndexedLevelData = {
   },
   13: {
     gridSize: 4,
-    maxMoves: 11,
+    maxMoves: 21,
     par: 19,
     tiles: [{
       id: 1,
@@ -2776,7 +2776,7 @@ const levels: IndexedLevelData = {
   },
   22: {
     gridSize: 3,
-    maxMoves: 4,
+    maxMoves: 5,
     par: 19,
     tiles: [{
       id: 1,
@@ -2862,7 +2862,7 @@ const levels: IndexedLevelData = {
   },
   14: {
     gridSize: 3,
-    maxMoves: 8,
+    maxMoves: 11,
     par: 19,
     tiles: [{
       id: 1,
@@ -5220,7 +5220,7 @@ const levels: IndexedLevelData = {
   },
   15: {
     gridSize: 3,
-    maxMoves: 8,
+    maxMoves: 9,
     par: 7,
     tiles: [{
       id: 1,
@@ -5377,7 +5377,7 @@ const levels: IndexedLevelData = {
   },
   17: {
     gridSize: 3,
-    maxMoves: 6,
+    maxMoves: 8,
     par: 19,
     tiles: [{
       id: 1,
@@ -6062,7 +6062,7 @@ const levels: IndexedLevelData = {
   },
   18: {
     gridSize: 3,
-    maxMoves: 5,
+    maxMoves: 7,
     par: 30,
     tiles: [{
       id: 1,
@@ -7549,7 +7549,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 6,
       isPartOfWord: false,
-      letter: "P"
+      letter: ""
     }, {
       id: 7,
       isPartOfWord: false,
@@ -7561,7 +7561,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 9,
       isPartOfWord: false,
-      letter: ""
+      letter: "P"
     }],
     validWords: ["RIP", "DIP"]
   },
@@ -8003,7 +8003,7 @@ const levels: IndexedLevelData = {
   },
   23: {
     gridSize: 4,
-    maxMoves: 17,
+    maxMoves: 20,
     par: 19,
     tiles: [{
       id: 1,
@@ -8074,7 +8074,7 @@ const levels: IndexedLevelData = {
   },
   24: {
     gridSize: 4,
-    maxMoves: 10,
+    maxMoves: 13,
     par: 30,
     tiles: [{
       id: 1,
@@ -8480,7 +8480,7 @@ const levels: IndexedLevelData = {
   },
   3: {
     gridSize: 3,
-    maxMoves: 7,
+    maxMoves: 8,
     par: 7,
     tiles: [{
       id: 1,
@@ -8513,11 +8513,11 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: "T"
+      letter: ""
     }, {
       id: 9,
       isPartOfWord: false,
-      letter: ""
+      letter: "T"
     }],
     validWords: ["HAT", "MAT"]
   },
@@ -9274,11 +9274,11 @@ const levels: IndexedLevelData = {
     }, {
       id: 4,
       isPartOfWord: false,
-      letter: ""
+      letter: "S"
     }, {
       id: 5,
       isPartOfWord: false,
-      letter: "S"
+      letter: ""
     }, {
       id: 6,
       isPartOfWord: false,
@@ -9290,11 +9290,11 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: "T"
+      letter: "I"
     }, {
       id: 9,
       isPartOfWord: false,
-      letter: "I"
+      letter: "T"
     }],
     validWords: ["SIT", "PIT"]
   },
@@ -9875,15 +9875,15 @@ const levels: IndexedLevelData = {
     tiles: [{
       id: 1,
       isPartOfWord: false,
-      letter: "E"
+      letter: ""
     }, {
       id: 2,
       isPartOfWord: false,
-      letter: "A"
+      letter: ""
     }, {
       id: 3,
       isPartOfWord: false,
-      letter: ""
+      letter: "S"
     }, {
       id: 4,
       isPartOfWord: false,
@@ -9891,7 +9891,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 5,
       isPartOfWord: false,
-      letter: ""
+      letter: "E"
     }, {
       id: 6,
       isPartOfWord: false,
@@ -9903,7 +9903,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: "S"
+      letter: "A"
     }, {
       id: 9,
       isPartOfWord: false,
@@ -10552,7 +10552,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 6,
       isPartOfWord: false,
-      letter: "P"
+      letter: ""
     }, {
       id: 7,
       isPartOfWord: false,
@@ -10560,11 +10560,11 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: "T"
+      letter: "P"
     }, {
       id: 9,
       isPartOfWord: false,
-      letter: ""
+      letter: "T"
     }],
     validWords: ["TIP", "HIT"]
   },
@@ -11148,7 +11148,7 @@ const levels: IndexedLevelData = {
   },
   7: {
     gridSize: 3,
-    maxMoves: 8,
+    maxMoves: 10,
     par: 6,
     tiles: [{
       id: 1,
@@ -11945,7 +11945,7 @@ const levels: IndexedLevelData = {
   },
   8: {
     gridSize: 3,
-    maxMoves: 7,
+    maxMoves: 10,
     par: 6,
     tiles: [{
       id: 1,
@@ -12711,15 +12711,15 @@ const levels: IndexedLevelData = {
     }, {
       id: 4,
       isPartOfWord: false,
-      letter: "D"
+      letter: "B"
     }, {
       id: 5,
       isPartOfWord: false,
-      letter: "G"
+      letter: "D"
     }, {
       id: 6,
       isPartOfWord: false,
-      letter: "B"
+      letter: "G"
     }, {
       id: 7,
       isPartOfWord: false,

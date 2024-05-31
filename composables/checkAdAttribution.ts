@@ -1,10 +1,10 @@
 import { registerPlugin } from '@capacitor/core';
 import type { SearchAdsAttributionPlugin } from '@/types/types';
 
-const ScreenOrientation = registerPlugin<SearchAdsAttributionPlugin>(
-  'ScreenOrientation',
+const SearchAdsAttribution = registerPlugin<SearchAdsAttributionPlugin>(
+  'SearchAdsAttribution',
 );
 
 export const checkAdAttribution = () => {
-  return ScreenOrientation.checkAdAttribution();
+  return SearchAdsAttribution.checkAdAttribution();
 }
