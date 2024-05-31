@@ -88,7 +88,7 @@ export const useAdsStore = defineStore('ads', {
     },
 
     async showRewardAd(reward: Reward) {
-      logFirebaseEvent('adWatched', { reward: reward.type, level: useGameStore().currentLevelId})
+      logFirebaseEvent('ad_watched', { reward: reward.type, level: useGameStore().currentLevelId})
       this.currentReward = reward
       this.prepareRewardAd()
       await AdMob.showRewardVideoAd()

@@ -123,17 +123,17 @@ export default {
     async initialiseFirebase() {
       const appInfo = await App.getInfo();
       await setFirebaseUserId(this.gameStore.settings.id)
-      await setFirebaseUserProperties({ 'letterlockVersion': appInfo.version || 'Unknown' })
+      await setFirebaseUserProperty({ 'letterlockVersion': appInfo.version || 'Unknown' })
     },
 
     async checkAdAttributionAndLog() {
       console.log('Checking ad attribution')
       const attributionData = await checkAdAttribution();
       if (attributionData?.attribution) {
-        logFirebaseEvent("appleSearchAdsAttribution", {
-          campaignId: attributionData.campaignId,
-          adGroupId: attributionData.adGroupId,
-          adGroupName: attributionData.adGroupName,
+        logFirebaseEvent("apple_search_ads_attribution", {
+          campaign_id: attributionData.campaignId,
+          ad_group_id: attributionData.adGroupId,
+          ad_group_name: attributionData.adGroupName,
           keyword: attributionData.keyword
         });
       }
