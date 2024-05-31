@@ -7,7 +7,7 @@ public class FirebaseAnalytics: NSObject {
     @objc func setUserId(_ call: CAPPluginCall) {
         print("FIREBASE 3: Setting user ID")
         guard let userId = call.getString("userId") else {
-            print("FIREBASE 3: User ID must be provided")
+            print("FIREBASE: User ID must be provided")
             call.reject("User ID must be provided")
             return
         }

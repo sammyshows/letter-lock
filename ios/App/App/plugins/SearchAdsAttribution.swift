@@ -5,6 +5,7 @@ import Capacitor
 public class SearchAdsAttribution: NSObject {
     
     @objc func checkAdAttribution(_ call: CAPPluginCall) {
+        print("WHOOOOOOO HOOOOOOO")
         if #available(iOS 14.3, *) {
             if let attributionToken = try? AAAttribution.attributionToken() {
                 let url = URL(string: "https://api-adservices.apple.com/api/v1/")!.appendingPathComponent("searchads_attribution")
