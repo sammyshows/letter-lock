@@ -18,8 +18,8 @@ Sortable.mount(new Swap())
 const gameStore = useGameStore()
 const adsStore = useAdsStore()
 
-const { settings, logs, stats, currentLevelId, levelHistory } = storeToRefs(gameStore)
-const { rewardAdsLoaded, adsWatched } = storeToRefs(adsStore)
+const { settings, logs, stats, currentLevelId, levelHistory } = toRefs(gameStore)
+const { rewardAdsLoaded, adsWatched } = toRefs(adsStore)
 
 const gameStateLoaded = ref(false)
 const sendingStats = ref(false)

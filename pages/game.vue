@@ -21,11 +21,12 @@
             <div :class="[ platform === 'ios' ? 'pb-1' : 'pb-2' ]" class="moves-text absolute font-medium sm:text-5xl sm:pb-4 lg:text-7xl lg:pb-5">{{ remainingMoves }}</div>
           </div>
 
-          <div v-if="settings.testMode && replayingLevel" :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end ml-2">
+          <!-- -------------------------- Purple lock for testing -------------------------- -->
+          <!-- <div v-if="settings.testMode && replayingLevel" :class="{ 'slide-down-and-grow': levelCompleted }" class="relative flex justify-center items-end ml-2">
             <IconsLock class="h-12 w-12 mx-auto text-purple-400 duration-700"></IconsLock>
             <div class="lock-bolt"></div>
             <div class="absolute pb-0.5 text-lg font-medium">{{ remainingMoves - bestRemainingMoves }}</div>
-          </div>
+          </div> -->
         </div>
 
         <div class="flex flex-col justify-center grow p-4">

@@ -108,7 +108,6 @@ const {
   lives,
   maxLives,
   stats,
-  settings,
   leaderboardDisplayedOnMount,
   leaderboardAllTime
 } = storeToRefs(gameStore);

@@ -52,13 +52,13 @@
           </div>
   
           <!-- TEST MODE BUTTON -->
-          <!-- <div class="w-full flex justify-between mt-4">
+          <div class="w-full flex justify-between mt-4">
             <span class="flex items-center font-medium text-slate-500">Test Mode</span>
             <label @click="playSound('switch')" class="relative inline-flex items-center cursor-pointer">
               <input v-model="settings.testMode" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
               <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
             </label>
-          </div> -->
+          </div>
   
           <div v-if="settings.testMode" class="w-full flex flex-col items-center">
             <div class="w-full flex justify-between mt-4">
@@ -75,13 +75,6 @@
                 <input v-model="settings.realLives" type="checkbox" class="sr-only peer" style="touch-action: manipulation;">
                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600 sm:h-9 sm:w-16 sm:after:h-7 sm:after:w-7 sm:after:top-[4px] sm:after:left-[4px]"></div>
               </label>
-            </div>
-  
-            <span class="mt-4 flex items-center font-medium text-slate-500">Level</span>
-            <div class="flex items-center mt-2">
-              <button type="button" style="touch-action: manipulation" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" @click="changeLevel(-1)">Prev</button>
-              <input type="number" :value="currentLevelId" @keyup="setLevel" class="w-20 text-2xl text-center text-green-500 bg-transparent focus:outline-none" />
-              <button type="button" style="touch-action: manipulation" class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm" @click="changeLevel(1)">Next</button>
             </div>
   
             <span class="mt-4 flex items-center font-medium text-slate-500">Lives</span>
@@ -166,13 +159,6 @@ export default defineComponent({
   methods: {
     changeLevel(levelIncrement) {
       this.gameStore.setCurrentLevel(this.currentLevelId + levelIncrement)
-    },
-
-    setLevel(event) {
-      if (!event.target.valueAsNumber)
-        this.gameStore.setCurrentLevel(1)
-      else
-        this.gameStore.setCurrentLevel(event.target.valueAsNumber)
     },
 
     changeLives(lifeIncrement) {
