@@ -67,7 +67,7 @@ const sendStats = async () => {
 const initialiseFirebase = async () => {
   const appInfo = await App.getInfo()
   await setFirebaseUserId(settings.value.id)
-  await setFirebaseUserProperty({ 'letterlockVersion': appInfo.version || 'Unknown' })
+  await setFirebaseUserProperty('letterlockVersion', appInfo.version || 'Unknown')
 }
 
 const checkAdAttributionAndLog = async () => {
@@ -89,7 +89,9 @@ onMounted(async () => {
   adsStore.prepareRewardAd()
   gameStateLoaded.value = true
   initialiseFirebase()
-  checkAdAttributionAndLog()
+
+  if (Capacitor.getPlatform() === 'ios')
+    checkAdAttributionAndLog()
 
   window.screen.orientation.lock('portrait')
 

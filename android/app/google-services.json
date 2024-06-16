@@ -7,6 +7,26 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:884029722007:android:a394e9920fbd76434348d2",
+        "android_client_info": {
+          "package_name": "app.letterlock"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp_tA19slIzM-qqC1MjCbH8n99YDPFJKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      },
+      "admob_app_id": "ca-app-pub-7719091147897476~5255329863"
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:884029722007:android:1c32c5ae92db5f554348d2",
         "android_client_info": {
           "package_name": "app.letterlock.com"
