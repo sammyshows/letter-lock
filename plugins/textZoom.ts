@@ -8,7 +8,6 @@ export default defineNuxtPlugin( async () => {
 
     // Display content under transparent status bar (Android only)
 
-    console.log(Capacitor.getPlatform())
     if (Capacitor.getPlatform() !== 'web')
         configureStatusBar()
 

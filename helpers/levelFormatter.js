@@ -173,7 +173,6 @@ const formatLevels = (data) => {
     startKey++
   })
 
-  console.log(levelObj);
   return levelObj
 }
 
