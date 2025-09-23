@@ -358,7 +358,7 @@ export const useGameStore = defineStore('game', {
 
     async getLeaderboard() {
       // const url = 'http://localhost:3020/api/letterlock-leaderboard-read' // testing
-      const url = 'https://www.stockwise.app/api/letterlock-leaderboard-read'
+      const url = 'https://letterlock.app/api/letterlock-leaderboard-read'
 
       const body = JSON.stringify({
         userId: this.settings.id

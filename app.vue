@@ -52,7 +52,7 @@ const sendStats = async () => {
   })
 
   // const url = 'http://localhost:3020/api/letterlock-stats-upsert'
-  const url = 'https://www.stockwise.app/api/letterlock-stats-upsert'
+  const url = 'https://letterlock.app/api/letterlock-stats-upsert'
 
   await axios.post(url, body)
     .then(() => {
