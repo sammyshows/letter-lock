@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace 'app.letterlock.com'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "app.letterlock"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 13
-        versionName "3.4"
+        versionCode 15
+        versionName "4.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
