@@ -14,7 +14,7 @@
     <p v-html="HTMLText" :class="[ fontSizeClass(offerExtraMoves ? 1 : 2) ]" class="px-6 font-medium text-slate-500"></p>
 
     <div v-if="offerExtraMoves" class="flex justify-center items-center mt-3 text-green-500 drop-shadow">
-      <span class="pt-3 text-4xl font-medium tracking-widest sm:pt-5 sm:text-6xl lg:text-7-5xl" style="font-family: 'Luckiest Guy';">+3</span>
+      <span class="pt-3 text-4xl font-medium tracking-widest sm:pt-5 sm:text-6xl lg:text-7-5xl" style="font-family: 'Luckiest Guy';">+{{ gameStore?.gridSize || 3 }}</span>
       <IconsArrowsLeftRight class="w-12 h-12 ml-2 sm:w-16 sm:h-16 lg:w-24 lg:h-24" />
     </div>
     
@@ -113,7 +113,7 @@ export default defineComponent({
 
       const moveReward = {
         type: 'additionalMoves',
-        quantity: 3
+        quantity: this.gameStore?.gridSize || 3
       }
 
       this.adStore.showRewardAd(moveReward)
