@@ -2,7 +2,6 @@
     <div :class="[ getResponsiveValue(platform === 'ios' ? 'topPadding2' : 'topPadding1') ]" class="game-background min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
       <img v-if="isMobile" src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
       <img v-else src="@/assets/images/background-large.png" alt="background" class="h-full w-full absolute top-0 left-0">
-      <div class="background-overlay"></div>
 
       <div class="w-full flex justify-between px-4 z-10">
         <IconsArrowLeft @click="showLoseLifeModal = true; playSound('click')" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" style="touch-action: manipulation;" />
@@ -56,7 +55,7 @@
                     class="tile w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl"
                   >
                     <div class="tile-shine"></div>
-                    <span class="tile-letter">{{ tile.letter }}</span>
+                    <span>{{ tile.letter }}</span>
                   </div>
                 </div>
               </div>
@@ -830,16 +829,6 @@ const closeLoseLifeModal = async (resetLevel) => {
     opacity: 0.7;
   }
 
-  /* Letter styling with subtle text shadow for depth */
-  .tile-letter {
-    position: relative;
-    z-index: 1;
-    text-shadow:
-      0 1px 1px rgba(0, 0, 0, 0.1),
-      0 0 1px rgba(255, 255, 255, 0.6);
-    filter: drop-shadow(0 0.5px 0.5px rgba(0, 0, 0, 0.08));
-  }
-
   /* Empty tiles with subtle 3D effect */
   .empty-tile {
     background: linear-gradient(135deg,
@@ -875,41 +864,6 @@ const closeLoseLifeModal = async (resetLevel) => {
   .game-background {
     position: relative;
   }
-
-  .background-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-    background-image:
-      /* Subtle bubble orbs */
-      radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 25%),
-      radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.06) 0%, transparent 20%),
-      radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.07) 0%, transparent 30%),
-      radial-gradient(circle at 90% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 25%),
-      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
-      /* Micro bubble texture */
-      radial-gradient(circle at 25% 40%, rgba(255, 255, 255, 0.04) 0%, transparent 15%),
-      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.04) 0%, transparent 15%),
-      radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 12%),
-      radial-gradient(circle at 65% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 12%);
-    background-size:
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%,
-      100% 100%;
-    opacity: 0.6;
-    mix-blend-mode: overlay;
-  }
-
 
   .lock-size {
     width: 5rem;

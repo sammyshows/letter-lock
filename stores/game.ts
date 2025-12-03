@@ -390,6 +390,14 @@ export const useGameStore = defineStore('game', {
       if (res && res.data) {
         this.leaderboardAllTime = res.data.leaderboardAllTime
 
+        // Sort by levels completed (descending), then by position (ascending) for ties
+        this.leaderboardAllTime.sort((a, b) => {
+          if (b.levels_completed_count !== a.levels_completed_count) {
+            return b.levels_completed_count - a.levels_completed_count
+          }
+          return a.position - b.position
+        })
+
         Preferences.set({
           key: 'letterlock-leaderboard',
           value: JSON.stringify(this.leaderboardAllTime)

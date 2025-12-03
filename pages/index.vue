@@ -48,7 +48,7 @@
             <span class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-xl font-medium sm:text-3xl lg:text-5xl">{{ lives.count }}</span>
           </div>
 
-          <IconsChart @click="showLeaderboard(); playSound('click')" class="icons-1 sm:h-16 lg:h-24" style="touch-action: manipulation;"/>
+          <IconsChart @click="handleLeaderboardClick(); playSound('click')" class="icons-1 sm:h-16 lg:h-24" style="touch-action: manipulation;"/>
         </div>
 
         <div class="icons-bar flex justify-between items-center mt-10 px-12 sm:mt-16 sm:px-24 lg:mt-20 lg:px-32">
@@ -135,6 +135,7 @@ const showLetterSwapReminderModal = ref(false);
 const hideLetterSwapReminderModal = ref(false);
 const showReviewPromptModal = ref(false);
 const hideReviewPromptModal = ref(false);
+const handlingLeaderboardClick = ref(false);
 const levelUp = ref(false);
 let lifeCheckInterval = null;
 const letters = ref([
@@ -158,6 +159,21 @@ const startGame = async () => {
     } else {
       showLivesModal.value = true;
     }
+  }
+};
+
+const handleLeaderboardClick = async () => {
+  try {
+    handlingLeaderboardClick.value = true;
+
+    setTimeout(() => {
+      showLeaderboardModal.value = true;
+    }, 1000);
+    await gameStore.getLeaderboard();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    handlingLeaderboardClick.value = false;
   }
 };
 
