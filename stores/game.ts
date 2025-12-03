@@ -78,19 +78,26 @@ export const useGameStore = defineStore('game', {
       zeroLivesTally: 0
     },
 
+    // Review
+    review: {
+      hasReviewed: false,
+      lastReviewPromptLevel: 0
+    },
+
     // Logs
     logs: [] as Array<{ logType: number, levelId: number, createdAt: string }>, // UserId is added to the log on the server side
   }),
 
   actions: {
     async setInitialState() {
-      const [levelHistory, settings, lives, currency, stats, leaderboard] = await Promise.all([
+      const [levelHistory, settings, lives, currency, stats, leaderboard, review] = await Promise.all([
         Preferences.get({ key: 'letterlock-levels' }),
         Preferences.get({ key: 'letterlock-settings' }),
         Preferences.get({ key: 'letterlock-lives' }),
         Preferences.get({ key: 'letterlock-currency' }),
         Preferences.get({ key: 'letterlock-stats' }),
-        Preferences.get({ key: 'letterlock-leaderboard' })
+        Preferences.get({ key: 'letterlock-leaderboard' }),
+        Preferences.get({ key: 'letterlock-review' })
       ])
 
       if (levelHistory.value)
@@ -135,6 +142,9 @@ export const useGameStore = defineStore('game', {
 
       if (leaderboard.value)
         this.leaderboardAllTime = JSON.parse((leaderboard.value))
+
+      if (review.value)
+        this.review = JSON.parse((review.value))
 
       await this.setCurrentLevel()
     },
@@ -353,6 +363,13 @@ export const useGameStore = defineStore('game', {
       await Preferences.set({
         key: 'letterlock-stats',
         value: JSON.stringify(this.stats)
+      })
+    },
+
+    async saveReview() {
+      await Preferences.set({
+        key: 'letterlock-review',
+        value: JSON.stringify(this.review)
       })
     },
 

@@ -86,7 +86,12 @@
                 :hideLetterSwapReminderModal="hideLetterSwapReminderModal"
                 @close="closeLetterSwapReminderModal" />
 
-    <div :class="[ showLeaderboardModal || showSettingsModal || showLivesModal || showAllLevelsCompleteModal || showLetterSwapReminderModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-500 pointer-events-none z-10"></div>
+    <ReviewPromptModal v-if="showReviewPromptModal || hideReviewPromptModal"
+                :showReviewPromptModal="showReviewPromptModal"
+                :hideReviewPromptModal="hideReviewPromptModal"
+                @close="closeReviewPromptModal" />
+
+    <div :class="[ showLeaderboardModal || showSettingsModal || showLivesModal || showAllLevelsCompleteModal || showLetterSwapReminderModal || showReviewPromptModal ? 'opacity-1' : 'opacity-0' ]" class="fixed top-0 left-0 right-0 bottom-0 backdrop-blur duration-500 pointer-events-none z-10"></div>
   </div>
 </template>
 
@@ -109,7 +114,8 @@ const {
   maxLives,
   stats,
   leaderboardDisplayedOnMount,
-  leaderboardAllTime
+  leaderboardAllTime,
+  review
 } = storeToRefs(gameStore);
 const { rewardAdsLoaded } = storeToRefs(adsStore);
 
@@ -127,6 +133,8 @@ const showAllLevelsCompleteModal = ref(false);
 const hideAllLevelsCompleteModal = ref(false);
 const showLetterSwapReminderModal = ref(false);
 const hideLetterSwapReminderModal = ref(false);
+const showReviewPromptModal = ref(false);
+const hideReviewPromptModal = ref(false);
 const levelUp = ref(false);
 let lifeCheckInterval = null;
 const letters = ref([
@@ -196,6 +204,15 @@ const closeLetterSwapReminderModal = () => {
   }, 700);
 };
 
+const closeReviewPromptModal = () => {
+  hideReviewPromptModal.value = true;
+
+  setTimeout(() => {
+    showReviewPromptModal.value = false;
+    hideReviewPromptModal.value = false;
+  }, 700);
+};
+
 const closeLeaderboardModal = () => {
   hideLeaderboardModal.value = true;
 
@@ -230,6 +247,14 @@ onMounted(() => {
   if (!allLevelsCompleteModalShown.value && currentLevelId.value > totalLevelCount.value) {
     showAllLevelsCompleteModal.value = true;
     allLevelsCompleteModalShown.value = true;
+  } else if (
+    !review.value.hasReviewed &&
+    currentLevelId.value >= 10 &&
+    currentLevelId.value % 10 === 0 &&
+    currentLevelId.value > review.value.lastReviewPromptLevel
+  ) {
+    // Show review prompt every 10 levels if they haven't reviewed
+    showReviewPromptModal.value = true;
   } else if (!leaderboardDisplayedOnMount.value && currentLevelId.value > 4) {
     showLeaderboard();
     gameStore.$patch({ leaderboardDisplayedOnMount: true });
