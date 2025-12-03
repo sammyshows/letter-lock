@@ -1,7 +1,8 @@
   <template>
-    <div :class="[ getResponsiveValue(platform === 'ios' ? 'topPadding2' : 'topPadding1') ]" class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
+    <div :class="[ getResponsiveValue(platform === 'ios' ? 'topPadding2' : 'topPadding1') ]" class="game-background min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-blue-700 via-blue-500 to-blue-600">
       <img v-if="isMobile" src="@/assets/images/background.png" alt="background" class="h-full w-full absolute top-0 left-0">
       <img v-else src="@/assets/images/background-large.png" alt="background" class="h-full w-full absolute top-0 left-0">
+      <div class="background-overlay"></div>
 
       <div class="w-full flex justify-between px-4 z-10">
         <IconsArrowLeft @click="showLoseLifeModal = true; playSound('click')" class="h-10 w-10 sm:w-20 sm:h-20 sm:ml-3 sm:mt-2" style="touch-action: manipulation;" />
@@ -31,7 +32,7 @@
 
         <div class="flex flex-col justify-center grow p-4">
           <div class="relative">
-            <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute bg-gray-100 sm:p-4 sm:rounded-2xl lg:p-5 lg:rounded-3xl"></div>
+            <div :class="{ 'hide-board': !displayBoard }" class="board-size absolute bg-gray-100/50 sm:p-4 sm:rounded-2xl lg:p-5 lg:rounded-3xl"></div>
             <div :class="{ 'slide-right': !displayBoard }" class="board-size sm:p-4 lg:p-5">
               <div
                 ref="gameBoard"
@@ -48,13 +49,14 @@
                   <div
                     :class="[
                         { 'empty-tile': !tile.letter, 'glow': showCollideEffect },
-                        tile.isPartOfWord ? 'z-20 bg-amber-400' : 'bg-gray-200',
+                        tile.isPartOfWord ? 'z-20 tile-word' : 'tile-normal',
                         levelCompleted ? animationClasses[index] : '',
                         borderRadiusClasses ? borderRadiusClasses[index] : ''
                     ]"
                     class="tile w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl"
                   >
-                    {{ tile.letter }}
+                    <div class="tile-shine"></div>
+                    <span class="tile-letter">{{ tile.letter }}</span>
                   </div>
                 </div>
               </div>
@@ -763,46 +765,150 @@ const closeLoseLifeModal = async (resetLevel) => {
 </script>
 
 <style>
-  /* .tile {
+  /* ==================== PREMIUM 3D TILE EFFECTS ==================== */
+
+  .tile {
     position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease-out;
+  }
+
+  /* Normal tile (gray) - 3D bubble effect */
+  .tile-normal {
+    background: linear-gradient(135deg,
+      #fafafa 0%,
+      #f0f0f0 45%,
+      #e8e8e8 55%,
+      #e0e0e0 100%
+    );
+    box-shadow:
+      /* Outer depth shadow - balanced */
+      0 5px 10px -2px rgba(0, 0, 0, 0.12),
+      0 3px 6px -2px rgba(0, 0, 0, 0.08),
+      /* Inner highlights for bubble effect */
+      inset 0 1px 2px 0 rgba(255, 255, 255, 0.95),
+      inset -1px -1px 3px 0 rgba(0, 0, 0, 0.06),
+      /* Subtle outer glow */
+      0 0 0 1px rgba(255, 255, 255, 0.4);
+  }
+
+  /* Word tile (amber) - Premium gold 3D effect */
+  .tile-word {
+    background: linear-gradient(135deg,
+      #ffe89d 0%,
+      #fcd34d 45%,
+      #fbbf24 55%,
+      #f59e0b 100%
+    );
+    box-shadow:
+      /* Balanced outer depth shadow */
+      0 6px 12px -2px rgba(217, 119, 6, 0.25),
+      0 4px 8px -2px rgba(217, 119, 6, 0.18),
+      /* Inner highlights for shine */
+      inset 0 1px 2px 0 rgba(255, 255, 255, 0.7),
+      inset -1px -1px 3px 0 rgba(180, 83, 9, 0.2),
+      /* Golden outer glow */
+      0 0 0 1px rgba(254, 215, 170, 0.6),
+      0 0 18px -5px rgba(251, 191, 36, 0.3);
+  }
+
+  /* Glossy shine overlay effect */
+  .tile-shine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 45%;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.25) 0%,
+      rgba(255, 255, 255, 0.1) 40%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  /* Letter styling with subtle text shadow for depth */
+  .tile-letter {
+    position: relative;
+    z-index: 1;
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.1),
+      0 0 1px rgba(255, 255, 255, 0.6);
+    filter: drop-shadow(0 0.5px 0.5px rgba(0, 0, 0, 0.08));
+  }
+
+  /* Empty tiles with subtle 3D effect */
+  .empty-tile {
+    background: linear-gradient(135deg,
+      rgba(250, 250, 250, 0.6) 0%,
+      rgba(240, 240, 240, 0.50) 45%,
+      rgba(232, 232, 232, 0.4) 55%,
+      rgba(230, 230, 230, 0.3) 100%
+    ) !important;
+    box-shadow:
+      /* Soft outer shadow */
+      0 3px 6px -2px rgba(0, 0, 0, 0.08),
+      0 2px 4px -2px rgba(0, 0, 0, 0.06),
+      /* Very subtle inner highlights */
+      inset 0 1px 2px 0 rgba(255, 255, 255, 0.5),
+      inset -1px -1px 2px 0 rgba(0, 0, 0, 0.03),
+      0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* Hover effect for interactive feedback */
+  .tile:not(.empty-tile):active {
+    transform: scale(0.98);
+    box-shadow:
+      0 3px 6px -1px rgba(0, 0, 0, 0.15),
+      inset 0 2px 4px 0 rgba(0, 0, 0, 0.1);
   }
 
   .left-shadow {
     position: relative;
   }
 
-  .tile:before {
-    content: "";
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 90%;
-    height: 2px;
-    background: white;
-    filter: blur(4px);
+  /* ==================== PREMIUM BACKGROUND EFFECTS ==================== */
+
+  .game-background {
+    position: relative;
   }
 
-  .tile:after {
-    content: "";
+  .background-overlay {
     position: absolute;
-    top: 5%;
-    right: 5%;
-    width: 2px;
-    height: 90%;
-    background: rgba(106, 106, 106, 0.2);
-    filter: blur(4px);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    background-image:
+      /* Subtle bubble orbs */
+      radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 25%),
+      radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.06) 0%, transparent 20%),
+      radial-gradient(circle at 10% 80%, rgba(255, 255, 255, 0.07) 0%, transparent 30%),
+      radial-gradient(circle at 90% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 25%),
+      radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 40%),
+      /* Micro bubble texture */
+      radial-gradient(circle at 25% 40%, rgba(255, 255, 255, 0.04) 0%, transparent 15%),
+      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.04) 0%, transparent 15%),
+      radial-gradient(circle at 40% 70%, rgba(255, 255, 255, 0.03) 0%, transparent 12%),
+      radial-gradient(circle at 65% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 12%);
+    background-size:
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%;
+    opacity: 0.6;
+    mix-blend-mode: overlay;
   }
-
-  .left-shadow::after {
-    content: "";
-    position: absolute;
-    top: 5%;
-    left: 5%;
-    width: 2px;
-    height: 90%;
-    background: rgba(106, 106, 106, 0.2);
-    filter: blur(4px);
-  } */
 
 
   .lock-size {

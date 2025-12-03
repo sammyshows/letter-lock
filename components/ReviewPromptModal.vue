@@ -56,12 +56,23 @@ export default defineComponent({
     hideReviewPromptModal(newValue) {
       if (newValue)
         playSound('swoosh')
+    },
+    showReviewPromptModal(newValue) {
+      if (newValue) {
+        logFirebaseEvent('review-suggested', {
+          level: this.gameStore.maxLevelId
+        })
+      }
     }
   },
 
   methods: {
     async handleRateNow() {
       playSound('click')
+
+      logFirebaseEvent('review-started', {
+        level: this.gameStore.maxLevelId
+      })
 
       // Mark as reviewed
       this.gameStore.review.hasReviewed = true
@@ -80,6 +91,10 @@ export default defineComponent({
 
     async handleMaybeLater() {
       playSound('click')
+
+      logFirebaseEvent('review-postponed', {
+        level: this.gameStore.maxLevelId
+      })
 
       // Update last prompt level so we don't show again for another 10 levels
       this.gameStore.review.lastReviewPromptLevel = this.gameStore.maxLevelId

@@ -9,15 +9,15 @@
       </div>
 
       <div class="text-ll-orange text-3xl font-bold tracking-widest drop-shadow-sm sm:text-6xl lg:text-7xl" style="font-family: 'Luckiest Guy';">
-        <p class="word-slide-left ml-8 sm:ml-16">ALL-TIME</p>
+        <p class="word-slide-left ml-8 sm:ml-16">ALL TIME</p>
         <p class="word-slide-right mr-8 sm:mr-16">LEADERBOARD</p>
       </div>
 
       <p class="my-2 px-2 text-center font-medium text-slate-500 text-xs xs:text-base sm:my-4 sm:text-2xl lg:text-3xl">You currently sit at <span class="text-ll-orange">{{ leaderboardPosition }}</span> for most levels completed all-time!</p>
 
-      <div class="w-full flex flex-col px-6">
-        <div class="flex flex-col justify-center items-center gap-y-2 mt-4 text-slate-600 lg:gap-y-4">
-          <div v-for="(user, index) in leaderboardAllTime" :key="user.user_id" class="w-full h-9 grow flex justify-center items-center gap-x-2 xs:h-11 sm:h-16 sm:gap-x-4 lg:h-20 lg:gap-x-6">
+      <div class="w-full flex flex-col px-6 overflow-hidden">
+        <div ref="scrollContainer" class="leaderboard-scroll-container flex flex-col items-center gap-y-2 mt-4 text-slate-600 lg:gap-y-4">
+          <div v-for="(user, index) in leaderboardAllTime" :key="user.user_id" :ref="user.user_id === settings.id ? 'userRow' : undefined" class="w-full h-9 grow flex justify-center items-center gap-x-2 xs:h-11 sm:h-16 sm:gap-x-4 lg:h-20 lg:gap-x-6">
             <div class="relative w-10 h-9 flex justify-center xs:w-12 xs:h-11 sm:w-16 sm:h-16 lg:w-20 lg:h-20">
               <div class="circle w-9 h-9 rounded-xl border-4 xs:w-11 xs:h-11 sm:w-16 sm:h-16 sm:rounded-2xl lg:w-20 lg:h-20 lg:rounded-3xl" :style="{ backgroundColor: getColor(index, 0.8) || 'rgb(230,230,230)', borderColor: getColor(index, 1) || 'rgb(230,230,230)' }"></div>
               <p class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xl font-medium sm:text-4xl lg:text-4-5xl">{{ user.position }}</p>
@@ -45,9 +45,12 @@ export default defineComponent({
   setup() {
     const gameStore = useGameStore()
 
-    const { settings, leaderboardAllTime } = storeToRefs(gameStore)
+    const { settings, leaderboardAllTime, leaderboardScrollAnimationShown } = storeToRefs(gameStore)
 
-    return { gameStore, settings, leaderboardAllTime }
+    const scrollContainer = ref(null)
+    const userRow = ref(null)
+
+    return { gameStore, settings, leaderboardAllTime, leaderboardScrollAnimationShown, scrollContainer, userRow }
   },
 
   props: [
@@ -65,10 +68,36 @@ export default defineComponent({
     }
   },
 
+  mounted() {
+    // Handle scroll animation on mount if modal is showing
+    if (this.showLeaderboardModal) {
+      this.handleScrollAnimation()
+    }
+  },
+
   watch: {
     hideLeaderboardModal(newValue) {
       if (newValue)
         playSound('swoosh')
+    },
+    showLeaderboardModal(newValue) {
+      if (newValue) {
+        this.handleScrollAnimation()
+      }
+    },
+    leaderboardAllTime: {
+      handler(newValue, oldValue) {
+        // If modal is showing and data was updated, re-trigger scroll
+        if (this.showLeaderboardModal && newValue && oldValue) {
+          // Wait a bit for DOM to update with new data
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.handleScrollAnimation()
+            }, 100)
+          })
+        }
+      },
+      deep: true
     }
   },
 
@@ -81,12 +110,145 @@ export default defineComponent({
       ]
 
       return colors[index]
+    },
+
+    calculateTargetScrollPosition(container, element) {
+      const containerRect = container.getBoundingClientRect()
+      const elementRect = element.getBoundingClientRect()
+      const containerHeight = container.clientHeight
+      const elementHeight = element.clientHeight
+
+      // Calculate the relative position of element within the scrollable area
+      const relativeElementTop = elementRect.top - containerRect.top + container.scrollTop
+
+      // Center the element in the container
+      const target = relativeElementTop - (containerHeight / 2) + (elementHeight / 2)
+
+      return {
+        target,
+        relativeElementTop,
+        containerRect,
+        elementRect,
+        containerHeight,
+        elementHeight
+      }
+    },
+
+    handleScrollAnimation() {
+      // Wait for the modal slide-in animation to complete and DOM to update
+      this.$nextTick(() => {
+        setTimeout(() => {
+        if (!this.scrollContainer || !this.userRow) {
+          return
+        }
+
+        const container = this.scrollContainer
+        const targetElement = Array.isArray(this.userRow) ? this.userRow[0] : this.userRow
+
+        if (!targetElement) {
+          return
+        }
+
+        // Don't scroll if user is in top 4
+        if (this.leaderboardPosition <= 4) {
+          container.scrollTop = 0
+          this.gameStore.$patch({ leaderboardScrollAnimationShown: true })
+          return
+        }
+
+        if (!this.leaderboardScrollAnimationShown) {
+          // First time: animate from top to user position over 3 seconds
+          container.scrollTop = 0
+
+          setTimeout(() => {
+            this.animateScrollToElement(container, targetElement, 3000)
+            this.gameStore.$patch({ leaderboardScrollAnimationShown: true })
+          }, 500)
+        } else {
+          // Subsequent times: instantly jump to user position
+          this.scrollToElementInstant(container, targetElement)
+        }
+        }, 200)
+      })
+    },
+
+    animateScrollToElement(container, element, duration) {
+      const start = container.scrollTop
+      const scrollCalc = this.calculateTargetScrollPosition(container, element)
+      const target = scrollCalc.target
+      const change = target - start
+      const startTime = performance.now()
+
+      const easeInOutCubic = (t) => {
+        if (t < 0.5) {
+          return 4 * t * t * t
+        } else {
+          const f = (2 * t) - 2
+          return 0.5 * f * f * f + 1
+        }
+      }
+
+      const animateScroll = (currentTime) => {
+        const elapsed = currentTime - startTime
+        const progress = Math.min(elapsed / duration, 1)
+        const easedProgress = easeInOutCubic(progress)
+
+        container.scrollTop = start + (change * easedProgress)
+
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll)
+        }
+      }
+
+      requestAnimationFrame(animateScroll)
+    },
+
+    scrollToElementInstant(container, element) {
+      const scrollCalc = this.calculateTargetScrollPosition(container, element)
+      container.scrollTop = scrollCalc.target
     }
   }
 })
 </script>
 
 <style scoped>
+.leaderboard-scroll-container {
+  max-height: 40vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: auto; /* We handle smooth scrolling with JS */
+}
+
+@media (min-width: 640px) {
+  .leaderboard-scroll-container {
+    max-height: 45vh;
+  }
+}
+
+@media (min-width: 1024px) {
+  .leaderboard-scroll-container {
+    max-height: 50vh;
+  }
+}
+
+/* Hide scrollbar for cleaner look but keep functionality */
+.leaderboard-scroll-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.leaderboard-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.leaderboard-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 2px;
+}
+
+.leaderboard-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
 .circle::after {
   content: '';
   position: absolute;

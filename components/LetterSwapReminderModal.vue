@@ -18,18 +18,21 @@
 
         <div class="grow flex justify-center items-center mt-4">
           <div class="grow flex justify-center items-center">
-            <div class="tile flex justify-center items-center bg-white rounded-lg shadow-lg rounded-12pc">
-              <p class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl"></p>
+            <div class="tile tile-premium flex justify-center items-center rounded-lg rounded-12pc">
+              <div class="tile-shine"></div>
+              <p class="tile-letter w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl"></p>
             </div>
             <div class="relative flex items-center" style="margin-left: 3%; gap: 5%">
-              <div class="tile-animate tile flex justify-center items-center bg-white rounded-lg shadow-lg rounded-12pc">
-                <p class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl">B</p>
+              <div class="tile-animate tile tile-premium flex justify-center items-center rounded-lg rounded-12pc">
+                <div class="tile-shine"></div>
+                <p class="tile-letter w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl">B</p>
               </div>
 
               <IconsArrowsLeftRight class="animate-pulse-centered origin-bottom-right absolute right-1/2 bottom-1/2 h-8 w-8 text-ll-orange duration-700 z-30 sm:h-16 sm:w-16 lg:h-20 lg:w-20" />
 
-              <div class="tile-animate-reverse tile flex justify-center items-center bg-white rounded-lg shadow-lg rounded-12pc">
-                <p class="w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl">C</p>
+              <div class="tile-animate-reverse tile tile-premium flex justify-center items-center rounded-lg rounded-12pc">
+                <div class="tile-shine"></div>
+                <p class="tile-letter w-full h-full relative text-blue-700 font-medium text-3xl flex justify-center items-center sm:text-5xl lg:text-6xl">C</p>
               </div>
             </div>
           </div>
@@ -89,6 +92,53 @@ export default defineComponent({
 .tile {
   width: 20vw;
   height: 20vw;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease-out;
+}
+
+/* Premium 3D tile effect for modal */
+.tile-premium {
+  background: linear-gradient(135deg,
+    #fafafa 0%,
+    #f0f0f0 45%,
+    #e8e8e8 55%,
+    #e0e0e0 100%
+  );
+  box-shadow:
+    0 5px 10px -2px rgba(0, 0, 0, 0.12),
+    0 3px 6px -2px rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 3px 0 rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+/* Glossy shine overlay effect */
+.tile-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Letter styling with subtle text shadow for depth */
+.tile-letter {
+  position: relative;
+  z-index: 1;
+  text-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.1),
+    0 0 1px rgba(255, 255, 255, 0.6);
+  filter: drop-shadow(0 0.5px 0.5px rgba(0, 0, 0, 0.08));
 }
 
 @media (min-width: 640px) {

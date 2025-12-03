@@ -163,7 +163,6 @@ const startGame = async () => {
 
 const showLeaderboard = () => {
   if (leaderboardAllTime.value) {
-    gameStore.getLeaderboard();
     showLeaderboardModal.value = true;
   }
 };
@@ -224,6 +223,9 @@ const closeLeaderboardModal = () => {
 
 onMounted(() => {
   playTrack('home');
+
+  // Fetch leaderboard data in the background on every home page visit
+  gameStore.getLeaderboard();
 
   if (rewardAdsLoaded.value <= 0) {
     adsStore.prepareRewardAd();

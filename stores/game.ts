@@ -28,7 +28,8 @@ export const useGameStore = defineStore('game', {
     processingLife: false,
 
     leaderboardDisplayedOnMount: false,
-    leaderboardAllTime: null as (Array<{}> | null), // top 5 users
+    leaderboardScrollAnimationShown: false,
+    leaderboardAllTime: null as (Array<{}> | null), // top 100 users
 
     event: {
       type: '',
