@@ -166,10 +166,12 @@ const handleLeaderboardClick = async () => {
   try {
     handlingLeaderboardClick.value = true;
 
-    setTimeout(() => {
-      showLeaderboardModal.value = true;
-    }, 1000);
-    await gameStore.getLeaderboard();
+    // Race between API call and 1000ms timeout
+    const apiCall = gameStore.getLeaderboard();
+    const timeout = new Promise(resolve => setTimeout(resolve, 1000));
+
+    await Promise.race([apiCall, timeout]);
+    showLeaderboardModal.value = true;
   } catch (error) {
     console.error(error);
   } finally {
