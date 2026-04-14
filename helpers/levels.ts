@@ -35335,7 +35335,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 8,
       isPartOfWord: false,
-      letter: "O"
+      letter: "A"
     }, {
       id: 9,
       isPartOfWord: false,
@@ -35545,7 +35545,7 @@ const levels: IndexedLevelData = {
   },
   440: {
     gridSize: 5,
-    maxMoves: 32,
+    maxMoves: 26,
     par: 30,
     tiles: [{
       id: 1,
@@ -35723,7 +35723,7 @@ const levels: IndexedLevelData = {
   },
   442: {
     gridSize: 4,
-    maxMoves: 20,
+    maxMoves: 16,
     par: 14,
     tiles: [{
       id: 1,
@@ -35794,7 +35794,7 @@ const levels: IndexedLevelData = {
   },
   443: {
     gridSize: 5,
-    maxMoves: 31,
+    maxMoves: 29,
     par: 30,
     tiles: [{
       id: 1,
@@ -36079,7 +36079,7 @@ const levels: IndexedLevelData = {
   },
   446: {
     gridSize: 3,
-    maxMoves: 9,
+    maxMoves: 8,
     par: 19,
     tiles: [{
       id: 1,
@@ -36165,7 +36165,7 @@ const levels: IndexedLevelData = {
   },
   448: {
     gridSize: 4,
-    maxMoves: 15,
+    maxMoves: 10,
     par: 19,
     tiles: [{
       id: 1,
@@ -36284,7 +36284,7 @@ const levels: IndexedLevelData = {
     tiles: [{
       id: 1,
       isPartOfWord: false,
-      letter: "Y"
+      letter: "T"
     }, {
       id: 2,
       isPartOfWord: false,
@@ -36292,7 +36292,7 @@ const levels: IndexedLevelData = {
     }, {
       id: 3,
       isPartOfWord: false,
-      letter: "A"
+      letter: "Y"
     }, {
       id: 4,
       isPartOfWord: false,
@@ -36318,7 +36318,7 @@ const levels: IndexedLevelData = {
       isPartOfWord: false,
       letter: "M"
     }],
-    validWords: ["YA", "MUM"]
+    validWords: ["TY", "MUM"]
   },
 }
 
